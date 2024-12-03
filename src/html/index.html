@@ -8,12 +8,7 @@
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/layout.css" rel="stylesheet">
-
-    <style>
-      .tea-card h2 {
-        font-size: 1rem;
-      }
-    </style>
+    <link href="../css/index.css" rel="stylesheet">
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -55,12 +50,44 @@
 
       <section class="jumbotron text-center">
         <div class="container">
-          <h1 class="jumbotron-heading">Album example</h1>
-          <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
-          <p>
-            <a href="#" class="btn btn-primary my-2">Main call to action</a>
-            <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+          <h1 class="jumbotron-heading">My Tea Collection</h1>
+          <p class="lead text-muted">
+            A list of all teas in <strong>Dušan Rychnovský</strong>'s collection.
+            Use below filters to simplify searching for a tea from a certain vendor, etc.
+            Press View to see all details about particular tea.
           </p>
+          <form id="tea-search">
+            <div class="form-row justify-content-center">
+              <div class="form-group col-md-3">
+                <label for="select-tea-type">Tea type:</label>
+                <select class="form-control" id="select-tea-type">
+                  <option>All</option>
+                  <option>White tea</option>
+                  <option>Yellow tea</option>
+                  <option>Green tea</option>
+                  <option>Oolong tea</option>
+                  <option>Red tea</option>
+                  <option>Hei Cha</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="select-tea-vendor">Vendor:</label>
+                <select class="form-control" id="select-tea-vendor">
+                  <option>All</option>
+                  <option>Meileaf</option>
+                  <option>Meetea</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="select-tea-availability">Availablity:</label>
+                <select class="form-control" id="select-tea-availability">
+                  <option>All</option>
+                  <option>In stock</option>
+                  <option>Out of stock</option>
+                </select>
+              </div>
+            </div>
+          </form>
         </div>
       </section>
 

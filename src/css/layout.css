@@ -10,7 +10,7 @@ body {
 
 
 :root {
-  --jumbotron-padding-y: 3rem;
+  --jumbotron-padding-y: 1.5rem;
 }
 
 .jumbotron {
