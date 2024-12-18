@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
+// https://www.baeldung.com/dockerizing-spring-boot-application
 
 @SpringBootApplication
 @RestController
