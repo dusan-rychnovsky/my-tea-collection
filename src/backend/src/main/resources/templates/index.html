@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My tea collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/layout.css" rel="stylesheet">
+    <link href="../css/index.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="index">All Teas<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Add Tea</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+    <main role="main">
+      <!-- bootstrap example https://getbootstrap.com/docs/4.0/examples/album/ -->
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">My Tea Collection</h1>
+          <p class="lead text-muted">
+            A list of all teas in <strong>Dušan Rychnovský</strong>'s collection.
+            Use below filters to simplify searching for a tea from a certain vendor, etc.
+            Press View to see all details about particular tea.
+          </p>
+          <form id="tea-search">
+            <div class="form-row justify-content-center">
+              <div class="form-group col-md-3">
+                <label for="select-tea-type">Tea type:</label>
+                <select class="form-control" id="select-tea-type">
+                  <option>All</option>
+                  <option>White tea</option>
+                  <option>Yellow tea</option>
+                  <option>Green tea</option>
+                  <option>Oolong tea</option>
+                  <option>Red tea</option>
+                  <option>Hei Cha</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="select-tea-vendor">Vendor:</label>
+                <select class="form-control" id="select-tea-vendor">
+                  <option>All</option>
+                  <option>Meileaf</option>
+                  <option>Meetea</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="select-tea-availability">Availablity:</label>
+                <select class="form-control" id="select-tea-availability">
+                  <option>All</option>
+                  <option>In stock</option>
+                  <option>Out of stock</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <div class="album bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col d-flex justify-content-end">
+              <a href="#" class="btn btn-dark my-2">+ Add Tea</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="../img/tea/find-your-sunshine-2-01.jpg" width="348" height="225" alt="Find Your Sunshine 2">
+                <div class="tea-card card-body">
+                  <h2>
+                    Find Your Sunshine 2<br />
+                    2018 Mengku Shu & 2014 Xinhui Chen Pi
+                  </h2>
+                  <p class="card-text">Mengku old tree ripe PuErh blended with aged mandarin peel. White chocolate, apple cellars, chamomile flowers, mandarin and cocoa.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <form>
+                        <button formaction="tea-view" type="submit" class="btn btn-sm btn-outline-secondary">View</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
+                      </form>
+                    </div>
+                    <small class="text-muted">Blend</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="../img/tea/sushong-liquor-01.png" width="348" height="225" alt="Sushong Liquor">
+                <div class="tea-card card-body">
+                  <h2>
+                    Souchong Liquor<br />
+                    Tong Mu Zhengshan Xiaozhong
+                  </h2>
+                  <p class="card-text">An unsmoked Lapsang that shows the true depth of flavour of this famous tea. Dark cocoa, charred bourbon casks and rambutan.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <form>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
+                      </form>
+                    </div>
+                    <small class="text-muted">Red</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="../img/tea/simple-dreams-2-01.jpg" width="348" height="225" alt="Simple Dreams 2">
+                <div class="tea-card card-body">
+                  <h2>
+                    Simple Dreams 2<br />
+                    2021 Zhenghe Shou Mei Blend
+                  </h2>
+                  <p class="card-text">An experimental blend of 'Green and Brown' Zhenghe White tea. Strawberry jam on buttered raisin scones, elderflower, honey, warm milk and lotus.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <form>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
+                      </form>
+                    </div>
+                    <small class="text-muted">White</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="../img/tea/royal-peach-orchid-01.png" width="348" height="225" alt="Royal Peach Orchid">
+                <div class="tea-card card-body">
+                  <h2>
+                    Royal Peach Orchid<br />
+                    Mi Lan Xiang Dan Cong
+                  </h2>
+                  <p class="card-text">Known as a doppelganger tea for its ability to imitate surrounding plants. Forest honey, sweet potato and orchid. Ripe pear with a rocky mineral finish and teasing acidity.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <form>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
+                      </form>
+                    </div>
+                    <small class="text-muted">Oolong</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="../js/bootstrap.min.js"></script>
+  </body>
+</html>

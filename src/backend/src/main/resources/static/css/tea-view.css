@@ -1,0 +1,15 @@
+body > .container {
+padding: 0px 15px 0;
+}
+
+.subtitle {
+  font-size: 50%;
+}
+
+#tea-images {
+  width: 470px;
+}
+
+#tea-details p strong {
+  display: block;
+}

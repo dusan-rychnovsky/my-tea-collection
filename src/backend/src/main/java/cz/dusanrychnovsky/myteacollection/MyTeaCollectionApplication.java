@@ -24,12 +24,13 @@ public class MyTeaCollectionApplication {
   @Autowired
   private TestRepository testRepository;
 
-  @GetMapping("/hello")
-  public String hello(Model model) {
-    var all = testRepository.findAll();
-    var rnd = all.get(new Random().nextInt(all.size()));
-    var name = rnd.getTest();
-    model.addAttribute("message", String.format("Hello %s!", name));
-    return "hello";
+  @GetMapping({"/", "/index"})
+  public String index(Model model) {
+    return "index";
+  }
+
+  @GetMapping("/tea-view")
+  public String teaView(Model model) {
+    return "tea-view";
   }
 }
