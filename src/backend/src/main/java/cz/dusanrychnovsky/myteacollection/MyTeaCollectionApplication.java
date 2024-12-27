@@ -3,9 +3,9 @@ package cz.dusanrychnovsky.myteacollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;
 
@@ -14,7 +14,7 @@ import java.util.Random;
 // https://www.baeldung.com/dockerizing-spring-boot-application
 
 @SpringBootApplication
-@RestController
+@Controller
 public class MyTeaCollectionApplication {
 
   public static void main(String[] args) {
@@ -25,12 +25,11 @@ public class MyTeaCollectionApplication {
   private TestRepository testRepository;
 
   @GetMapping("/hello")
-  public String hello(@RequestParam(value = "name", defaultValue = "") String name) {
-    if (name.isEmpty()) {
-      var all = testRepository.findAll();
-      var rnd = all.get(new Random().nextInt(all.size()));
-      name = rnd.getTest();
-    }
-    return String.format("Hello %s!", name);
+  public String hello(Model model) {
+    var all = testRepository.findAll();
+    var rnd = all.get(new Random().nextInt(all.size()));
+    var name = rnd.getTest();
+    model.addAttribute("message", String.format("Hello %s!", name));
+    return "hello";
   }
 }
