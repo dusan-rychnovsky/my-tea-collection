@@ -1,13 +1,13 @@
 package cz.dusanrychnovsky.myteacollection;
 
+import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Random;
+import org.springframework.web.bind.annotation.PathVariable;
 
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
@@ -22,15 +22,19 @@ public class MyTeaCollectionApplication {
   }
 
   @Autowired
-  private TestRepository testRepository;
+  private TeaRepository teaRepository;
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
+    var allTeas = teaRepository.findAll();
+    model.addAttribute("teas", allTeas);
     return "index";
   }
 
-  @GetMapping("/tea-view")
-  public String teaView(Model model) {
+  @GetMapping("/teas/{id}")
+  public String teaView(@PathVariable("id") Long teaId, Model model) {
+    var tea = teaRepository.findById(teaId).get();
+    model.addAttribute("tea", tea);
     return "tea-view";
   }
 }

@@ -15,7 +15,7 @@
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="index">All Teas<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/index">All Teas<span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Add Tea</a>
@@ -30,26 +30,27 @@
     <main role="main" class="container">
       <div class="row">
         <div class="col d-flex justify-content-end">
-          <a href="index" class="btn btn-dark my-2 mb-4">< All Teas</a>
+          <a href="/index" class="btn btn-dark my-2 mb-4">< All Teas</a>
           <a href="#" class="btn btn-dark my-2 mb-4 ml-2">Edit Tea</a>
         </div>
       </div>
       <div id="tea-images" class="float-end">
-        <img src="../img/tea/find-your-sunshine-2-01.jpg" class="img-thumbnail mb-2" width="470" height="304" alt="Find Your Sunshine 2" />
+        <img th:alt="${tea.title}" src="../img/tea/find-your-sunshine-2-01.jpg" class="img-thumbnail mb-2" width="470" height="304" />
         <img src="../img/tea/find-your-sunshine-2-02.jpg" class="img-thumbnail mb-2" width="156" height="101" />
         <img src="../img/tea/find-your-sunshine-2-03.jpg" class="img-thumbnail mb-2" width="156" height="101" />
       </div>
       <h1 class="jumbotron-heading mb-3">
-        Find Your Sunshine 2
-        <div class="subtitle mt-1">2018 Mengku Shu & 2014 Xinhui Chen Pi</div>
+        <span th:text="${tea.title}"></span>
+        <div th:text="${tea.name}" class="subtitle mt-1"></div>
       </h1>
-      <p>
-        Mengku old tree ripe PuErh blended with aged mandarin peel. White chocolate, apple cellars, chamomile flowers, mandarin and cocoa.
+      <p th:text="${tea.description}">
       </p>
       <div id="tea-details">
-        <p>
-          <strong>Tea type:</strong>
-          Blend
+        <p class="mb-1">
+          <strong>Tea type(s):</strong>
+          <ul>
+            <li th:each="type : ${tea.types}" th:text="${type.name}"></li>
+          </ul>
         </p>
         <p>
           <strong>Vendor:</strong>
@@ -61,23 +62,23 @@
         </p>
         <p>
           <strong>Season:</strong>
-          Spring 2018
+          <span th:text="${tea.season}"></span>
         </p>
         <p>
           <strong>Origin:</strong>
-          Mengku, Lincang, Yunan, China
+          <span th:text="${tea.origin}"></span>
         </p>
         <p>
           <strong>Elevation:</strong>
-          1450m
+          <span th:text="${tea.elevation}"></span>
         </p>
         <p>
           <strong>Cultivar:</strong>
-          Da Ye Zhong
+          <span th:text="${tea.cultivar}"></span>
         </p>
         <p>
           <strong>Brewing instructions:</strong>
-          99°C, 5g/100ml, 20s+5s
+          <span th:text="${tea.brewingInstructions}"></span>
         </p>
       </div>
     </main>

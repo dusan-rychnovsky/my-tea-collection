@@ -80,87 +80,23 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-4">
+            <div th:each="tea : ${teas}" class="col-md-4">
               <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="../img/tea/find-your-sunshine-2-01.jpg" width="348" height="225" alt="Find Your Sunshine 2">
+                <img th:alt="${tea.title}" class="card-img-top" src="../img/tea/find-your-sunshine-2-01.jpg" width="348" height="225">
                 <div class="tea-card card-body">
                   <h2>
-                    Find Your Sunshine 2<br />
-                    2018 Mengku Shu & 2014 Xinhui Chen Pi
+                    <span th:text="${tea.title}"></span><br />
+                    <span th:text="${tea.name}"></span>
                   </h2>
-                  <p class="card-text">Mengku old tree ripe PuErh blended with aged mandarin peel. White chocolate, apple cellars, chamomile flowers, mandarin and cocoa.</p>
+                  <p th:text="${tea.description}" class="card-text"></p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <form>
-                        <button formaction="tea-view" type="submit" class="btn btn-sm btn-outline-secondary">View</button>
+                        <button th:formaction="@{/teas/{id}(id=${tea.id})}" type="submit" class="btn btn-sm btn-outline-secondary">View</button>
                         <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
                       </form>
                     </div>
-                    <small class="text-muted">Blend</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="../img/tea/sushong-liquor-01.png" width="348" height="225" alt="Sushong Liquor">
-                <div class="tea-card card-body">
-                  <h2>
-                    Souchong Liquor<br />
-                    Tong Mu Zhengshan Xiaozhong
-                  </h2>
-                  <p class="card-text">An unsmoked Lapsang that shows the true depth of flavour of this famous tea. Dark cocoa, charred bourbon casks and rambutan.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <form>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
-                      </form>
-                    </div>
-                    <small class="text-muted">Red</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="../img/tea/simple-dreams-2-01.jpg" width="348" height="225" alt="Simple Dreams 2">
-                <div class="tea-card card-body">
-                  <h2>
-                    Simple Dreams 2<br />
-                    2021 Zhenghe Shou Mei Blend
-                  </h2>
-                  <p class="card-text">An experimental blend of 'Green and Brown' Zhenghe White tea. Strawberry jam on buttered raisin scones, elderflower, honey, warm milk and lotus.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <form>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
-                      </form>
-                    </div>
-                    <small class="text-muted">White</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="../img/tea/royal-peach-orchid-01.png" width="348" height="225" alt="Royal Peach Orchid">
-                <div class="tea-card card-body">
-                  <h2>
-                    Royal Peach Orchid<br />
-                    Mi Lan Xiang Dan Cong
-                  </h2>
-                  <p class="card-text">Known as a doppelganger tea for its ability to imitate surrounding plants. Forest honey, sweet potato and orchid. Ripe pear with a rocky mineral finish and teasing acidity.</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <form>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">View</button>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
-                      </form>
-                    </div>
-                    <small class="text-muted">Oolong</small>
+                    <small th:each="type : ${tea.types}" th:text="${type.name}" class="text-muted"></small>
                   </div>
                 </div>
               </div>
