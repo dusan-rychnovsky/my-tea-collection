@@ -35,9 +35,8 @@
         </div>
       </div>
       <div id="tea-images" class="float-end">
-        <img th:alt="${tea.title}" src="../img/tea/find-your-sunshine-2-01.jpg" class="img-thumbnail mb-2" width="470" height="304" />
-        <img src="../img/tea/find-your-sunshine-2-02.jpg" class="img-thumbnail mb-2" width="156" height="101" />
-        <img src="../img/tea/find-your-sunshine-2-03.jpg" class="img-thumbnail mb-2" width="156" height="101" />
+        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="img-thumbnail mb-2" width="470" height="304" />
+        <img th:each="img : ${tea.additionalImages}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${img.id})}" class="img-thumbnail mb-2" width="156" height="101" />
       </div>
       <h1 class="jumbotron-heading mb-3">
         <span th:text="${tea.title}"></span>

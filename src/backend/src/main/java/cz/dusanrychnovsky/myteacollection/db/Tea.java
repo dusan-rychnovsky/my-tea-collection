@@ -1,7 +1,13 @@
 package cz.dusanrychnovsky.myteacollection.db;
 
 import jakarta.persistence.*;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Comparator.comparingInt;
 
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
@@ -54,6 +60,10 @@ public class Tea {
 
   private String description;
 
+  @OneToMany
+  @JoinColumn(name = "tea_id")
+  private Set<TeaImage> images;
+
   private String url;
 
   private String season;
@@ -89,6 +99,27 @@ public class Tea {
 
   public String getDescription() {
     return description;
+  }
+
+  public Set<TeaImage> getImages() {
+    return images;
+  }
+
+  public Tea setImages(Set<TeaImage> images) {
+    this.images = images;
+    return this;
+  }
+
+  public Optional<TeaImage> getMainImage() {
+    return images.stream()
+      .min(comparingInt(TeaImage::getIndex));
+  }
+
+  public Set<TeaImage> getAdditionalImages() {
+    var result = new HashSet<TeaImage>(images);
+    var mainImg = getMainImage();
+    mainImg.ifPresent(result::remove);
+    return result;
   }
 
   public String getUrl() {

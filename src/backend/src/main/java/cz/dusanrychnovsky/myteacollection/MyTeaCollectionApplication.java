@@ -1,9 +1,15 @@
 package cz.dusanrychnovsky.myteacollection;
 
+import cz.dusanrychnovsky.myteacollection.db.TeaImage;
+import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +30,9 @@ public class MyTeaCollectionApplication {
   @Autowired
   private TeaRepository teaRepository;
 
+  @Autowired
+  private TeaImageRepository teaImageRepository;
+
   @GetMapping({"/", "/index"})
   public String index(Model model) {
     var allTeas = teaRepository.findAll();
@@ -36,5 +45,16 @@ public class MyTeaCollectionApplication {
     var tea = teaRepository.findById(teaId).get();
     model.addAttribute("tea", tea);
     return "tea-view";
+  }
+
+  @GetMapping("/images/{id}")
+  public ResponseEntity<byte[]> image(@PathVariable("id") Long imgId) {
+    return teaImageRepository.findById(imgId)
+      .map(image -> {
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(image.getData(), headers, HttpStatus.OK);
+      })
+      .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 }
