@@ -10,8 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TeaTests {
+
   @Test
-  public void loadFrom_loadsTeaFromGivenFolder() throws IOException {
+  public void loadFrom_loadsTeaFromGivenDirectory() {
     var tea = Tea.loadFrom(toFile("teas/01"));
 
     assertEquals(1, tea.getId());
@@ -28,6 +29,15 @@ public class TeaTests {
     assertEquals("100°C, 5g/100ml, 15s-10s-5s-10s-20s", tea.getBrewingInstructions());
     assertTrue(tea.isInStock());
     assertEquals(2, tea.getImages().size());
+  }
+
+  @Test
+  public void loadAllFrom_loadsAllTeasFromGivenRootDirectory() {
+    var tea = Tea.loadAllFrom(toFile("teas"));
+
+    assertEquals(2, tea.size());
+    assertEquals(1, tea.get(0).getId());
+    assertEquals(2, tea.get(1).getId());
   }
 
   private File toFile(String dirPath) {

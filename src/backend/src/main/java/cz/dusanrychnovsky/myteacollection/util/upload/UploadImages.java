@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util;
+package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
@@ -9,8 +9,12 @@ import java.nio.file.Paths;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Arrays.stream;
 
 public class UploadImages {
   public static void main(String[] args) throws SQLException, IOException {

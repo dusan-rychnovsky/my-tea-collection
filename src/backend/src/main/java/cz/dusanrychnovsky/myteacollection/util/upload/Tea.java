@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Arrays.stream;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
 
 public class Tea {
 
@@ -64,7 +67,14 @@ public class Tea {
     images = new ArrayList<>();
   }
 
-  public static Tea loadFrom(File dir) throws IOException {
+  public static List<Tea> loadAllFrom(File rootDir) {
+    return stream(rootDir.listFiles())
+      .filter(File::isDirectory)
+      .map(Tea::loadFrom)
+      .sorted(comparingInt(tea -> tea.id))
+      .collect(toList());
+  }
+  public static Tea loadFrom(File dir) {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
     tea.id = parseInt(dir.getName());
     for (var file : dir.listFiles()) {
@@ -76,13 +86,23 @@ public class Tea {
     return tea;
   }
 
-  private static Tea loadInfo(File infoFile) throws IOException {
+  private static Tea loadInfo(File infoFile) {
     var mapper = new ObjectMapper();
-    return mapper.readValue(infoFile, Tea.class);
+    try {
+      return mapper.readValue(infoFile, Tea.class);
+    }
+    catch (IOException ex) {
+      throw new LoadTeaException(ex);
+    }
   }
 
-  private static Image loadImg(File imgFile) throws IOException {
-    return ImageIO.read(imgFile);
+  private static Image loadImg(File imgFile) {
+    try {
+      return ImageIO.read(imgFile);
+    }
+    catch (IOException ex) {
+      throw new LoadTeaException(ex);
+    }
   }
 
   public Integer getId() {
