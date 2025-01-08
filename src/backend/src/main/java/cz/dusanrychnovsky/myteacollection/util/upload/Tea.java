@@ -12,10 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Integer.parseInt;
+
 public class Tea {
 
   public static final String INFO_FILE_NAME = "info.json";
 
+  private Integer id;
   private String title;
   private String name;
   private String description;
@@ -63,6 +66,7 @@ public class Tea {
 
   public static Tea loadFrom(File dir) throws IOException {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
+    tea.id = parseInt(dir.getName());
     for (var file : dir.listFiles()) {
       if (file.getName().equals(INFO_FILE_NAME)) {
         continue;
@@ -79,6 +83,10 @@ public class Tea {
 
   private static Image loadImg(File imgFile) throws IOException {
     return ImageIO.read(imgFile);
+  }
+
+  public Integer getId() {
+    return id;
   }
 
   public String getTitle() {
