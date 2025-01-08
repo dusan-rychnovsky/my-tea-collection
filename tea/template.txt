@@ -1,0 +1,12 @@
+Title
+Name
+Description
+Type(s)
+Vendor
+Url
+Origin
+Cultivar
+Season
+Elevation
+Brewing instructions
+In stock
