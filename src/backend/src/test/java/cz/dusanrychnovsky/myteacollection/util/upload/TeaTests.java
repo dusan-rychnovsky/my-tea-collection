@@ -33,11 +33,19 @@ public class TeaTests {
 
   @Test
   public void loadAllFrom_loadsAllTeasFromGivenRootDirectory() {
-    var tea = Tea.loadAllFrom(toFile("teas"));
+    var teas = Tea.loadAllFrom(toFile("teas"));
 
-    assertEquals(2, tea.size());
-    assertEquals(1, tea.get(0).getId());
-    assertEquals(2, tea.get(1).getId());
+    assertEquals(2, teas.size());
+    assertEquals(1, teas.get(0).getId());
+    assertEquals(2, teas.get(1).getId());
+  }
+
+  @Test
+  public void loadNewFrom_loadsAllTeasFromGivenRootDirectoryWithIdHigherOrEqualsGivenId() {
+    var teas = Tea.loadNewFrom(toFile("teas"), 2);
+
+    assertEquals(1, teas.size());
+    assertEquals(2, teas.get(0).getId());
   }
 
   private File toFile(String dirPath) {

@@ -67,13 +67,19 @@ public class Tea {
     images = new ArrayList<>();
   }
 
-  public static List<Tea> loadAllFrom(File rootDir) {
+  public static List<Tea> loadNewFrom(File rootDir, int minId) {
     return stream(rootDir.listFiles())
       .filter(File::isDirectory)
+      .filter(file -> { var id = parseInt(file.getName()); return id >= minId; })
       .map(Tea::loadFrom)
       .sorted(comparingInt(tea -> tea.id))
       .collect(toList());
   }
+
+  public static List<Tea> loadAllFrom(File rootDir) {
+    return loadNewFrom(rootDir, 0);
+  }
+  
   public static Tea loadFrom(File dir) {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
     tea.id = parseInt(dir.getName());
