@@ -1,11 +1,14 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -17,25 +20,31 @@ import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
 
 public class UploadImages {
+
+  private static final String DB_URL = System.getenv("SPRING_DATASOURCE_URL");
+  private static final String DB_USER = System.getenv("SPRING_DATASOURCE_USERNAME");
+  private static final String DB_PASSWORD = System.getenv("SPRING_DATASOURCE_PASSWORD");
+
+  private static final String INPUT_DIR_PATH = "C:\\Users\\durychno\\Dev\\my-tea-collection\\tea";
+
   public static void main(String[] args) throws SQLException, IOException {
+    try (var connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+      var maxTeaId = getMaxTeaId(connection);
+      var teas = Tea.loadNewFrom(new File(INPUT_DIR_PATH), maxTeaId + 1);
 
-    var INPUT_DIR = "C:\\Users\\durychno\\OneDrive - Microsoft\\Desktop\\img";
-
-    var DB_URL = System.getenv("SPRING_DATASOURCE_URL");
-    var DB_USER = System.getenv("SPRING_DATASOURCE_USERNAME");
-    var DB_PASSWORD = System.getenv("SPRING_DATASOURCE_PASSWORD");
-
-    try (var connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-      var stmt = connection.prepareStatement(
-        "INSERT INTO myteacollection.TeaImages (tea_id, index, data)" +
-          "VALUES (?, ?, ?)"
-      )) {
-
-      var dirPath = Paths.get(INPUT_DIR);
-      try (var filePaths = Files.newDirectoryStream(dirPath)) {
-        for (var filePath : filePaths) {
-          System.out.println("Uploading img: " + filePath);
-          uploadImg(filePath.toFile(), stmt);
+      try (var insertTeaStmt = connection.prepareStatement(
+        "INSERT INTO myteacollection.Teas " +
+          "(id, title, name, description, vendor_id, url, origin, cultivar, season, elevation, brewing_instructions, in_stock)" +
+          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+           var insertTeaTypeStmt = connection.prepareStatement(
+             "INSERT INTO myteacollection.Teas_TeaTypes (tea_id, type_id) VALUES (?, ?)"
+           );
+        var insertImgStmt = connection.prepareStatement(
+          "INSERT INTO myteacollection.TeaImages (tea_id, index, data)" +
+            "VALUES (?, ?, ?)"
+        )) {
+        for (var tea : teas) {
+          uploadTea(tea, insertTeaStmt, insertTeaTypeStmt, insertImgStmt);
         }
       }
     }
@@ -43,31 +52,59 @@ public class UploadImages {
     System.out.println("DONE");
   }
 
-  private static void uploadImg(File imgFile, PreparedStatement stmt)
-    throws IOException, SQLException {
+  private static void uploadTea(Tea tea, PreparedStatement insertTeaStmt, PreparedStatement insertTeaTypeStmt, PreparedStatement insertImgStmt)
+    throws SQLException, IOException {
 
-    var tokens = imgFile.getName().split("\\.")[0].split("_");
+    System.out.println("Uploading tea: " + tea.getId());
 
-    var teaId = parseInt(tokens[0]);
-    var index = parseInt(tokens[1]);
+    // TODO: refactor so that creating prepared statement and executing it are colocated
+    insertTeaStmt.setInt(1, tea.getId());
+    insertTeaStmt.setString(2, tea.getTitle());
+    insertTeaStmt.setString(3, tea.getName());
+    insertTeaStmt.setString(4, tea.getDescription());
+    insertTeaStmt.setInt(5, tea.getVendorId());
+    insertTeaStmt.setString(6, tea.getUrl());
+    insertTeaStmt.setString(7, tea.getOrigin());
+    insertTeaStmt.setString(8, tea.getCultivar());
+    insertTeaStmt.setString(9, tea.getSeason());
+    insertTeaStmt.setString(10, tea.getElevation());
+    insertTeaStmt.setString(11, tea.getBrewingInstructions());
+    insertTeaStmt.setBoolean(12, tea.isInStock());
 
-    var data = toBytes(imgFile);
+    insertTeaStmt.execute();
 
-    stmt.setInt(1, teaId);
-    stmt.setInt(2, index);
-    stmt.setBytes(3, data);
+    for (var typeId : tea.getTypeIds()) {
+      insertTeaTypeStmt.setInt(1, tea.getId());
+      insertTeaTypeStmt.setInt(2, typeId);
+      insertTeaTypeStmt.execute();
+    }
 
-    stmt.executeUpdate();
+    // TODO: load tea images in correct order
+    // TODO: jpg compression
+    var idx = 0;
+    for (var img : tea.getImages()) {
+      idx++;
+      insertImgStmt.setInt(1, tea.getId());
+      insertImgStmt.setInt(2, idx);
+      insertImgStmt.setBytes(3, toBytes(img));
+
+      insertImgStmt.executeUpdate();
+    }
   }
 
-  private static byte[] toBytes(File imgFile) throws IOException {
-    var extension = getFileExtension(imgFile);
-    if (!extension.equals("jpg")) {
-      throw new IllegalArgumentException("Only jpg is supported: " + imgFile);
+  private static Integer getMaxTeaId(Connection connection) throws SQLException {
+    try (var stmt = connection.prepareStatement("SELECT MAX(id) AS maxId FROM myteacollection.Teas");
+      var rs = stmt.executeQuery()) {
+        if (rs.next()) {
+          return rs.getInt("maxId");
+        }
+      return 0;
     }
-    var bufferedImage = ImageIO.read(imgFile);
+  }
+
+  private static byte[] toBytes(BufferedImage img) throws IOException {
     var byteArrayOutputStream = new ByteArrayOutputStream();
-    ImageIO.write(bufferedImage, extension, byteArrayOutputStream);
+    ImageIO.write(img, "jpg", byteArrayOutputStream);
     return byteArrayOutputStream.toByteArray();
   }
 

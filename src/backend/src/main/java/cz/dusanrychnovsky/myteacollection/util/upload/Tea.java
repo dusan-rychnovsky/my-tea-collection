@@ -1,11 +1,12 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +35,9 @@ public class Tea {
   private String elevation;
   private String brewingInstructions;
   private boolean inStock;
-  private List<Image> images;
+
+  @JsonIgnore
+  private List<BufferedImage> images;
 
   @JsonCreator
   public Tea(
@@ -102,7 +105,7 @@ public class Tea {
     }
   }
 
-  private static Image loadImg(File imgFile) {
+  private static BufferedImage loadImg(File imgFile) {
     try {
       return ImageIO.read(imgFile);
     }
@@ -163,7 +166,7 @@ public class Tea {
     return inStock;
   }
 
-  public List<Image> getImages() {
+  public List<BufferedImage> getImages() {
     return images;
   }
 }

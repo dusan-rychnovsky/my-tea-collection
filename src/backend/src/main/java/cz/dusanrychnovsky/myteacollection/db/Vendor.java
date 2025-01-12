@@ -13,8 +13,9 @@ public class Vendor {
       url VARCHAR(255) NOT NULL
     );
 
-    INSERT INTO Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
-    INSERT INTO Vendors (id, name, url) VALUES (2, 'Meetea', 'https://www.meetea.cz');
+    INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
+    INSERT INTO myteacollection.Vendors (id, name, url) VALUES (2, 'Meetea', 'https://www.meetea.cz');
+    INSERT INTO myteacollection.Vendors (id, name, url) VALUES (3, 'Chuť Čaje', 'https://www.chutcaje.cz/');
    */
 
   @Id

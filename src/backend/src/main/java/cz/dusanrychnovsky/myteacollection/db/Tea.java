@@ -21,11 +21,12 @@ public class Tea {
       name VARCHAR(255),
       description TEXT,
       url VARCHAR(255),
-      season VARCHAR(255),
       origin VARCHAR(255),
-      elevation VARCHAR(255),
       cultivar VARCHAR(255),
+      season VARCHAR(255),
+      elevation VARCHAR(255),
       brewing_instructions VARCHAR(255),
+      in_stock BOOLEAN,
       FOREIGN KEY (vendor_id) REFERENCES myteacollection.Vendors(id)
     );
 
@@ -76,6 +77,9 @@ public class Tea {
 
   @Column(name = "brewing_instructions")
   private String brewingInstructions;
+
+  @Column(name = "in_stock")
+  private Boolean inStock;
 
   public Long getId() {
     return id;
