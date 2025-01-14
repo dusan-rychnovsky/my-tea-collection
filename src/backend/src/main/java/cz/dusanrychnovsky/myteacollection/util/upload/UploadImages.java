@@ -32,64 +32,31 @@ public class UploadImages {
       var maxTeaId = getMaxTeaId(connection);
       var teas = Tea.loadNewFrom(new File(INPUT_DIR_PATH), maxTeaId + 1);
 
-      try (var insertTeaStmt = connection.prepareStatement(
-        "INSERT INTO myteacollection.Teas " +
-          "(id, title, name, description, vendor_id, url, origin, cultivar, season, elevation, brewing_instructions, in_stock)" +
-          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-           var insertTeaTypeStmt = connection.prepareStatement(
-             "INSERT INTO myteacollection.Teas_TeaTypes (tea_id, type_id) VALUES (?, ?)"
-           );
-        var insertImgStmt = connection.prepareStatement(
-          "INSERT INTO myteacollection.TeaImages (tea_id, index, data)" +
-            "VALUES (?, ?, ?)"
-        )) {
+      try (var insertTeaStmt = new InsertTeaStatement(connection);
+           var insertTeaToTeaTypeStmt = new InsertTeaToTeaTypeStatement(connection);
+           var insertImgStmt = new InsertTeaImageStatement(connection)) {
+
         for (var tea : teas) {
-          uploadTea(tea, insertTeaStmt, insertTeaTypeStmt, insertImgStmt);
+          // TODO: proper logging
+          System.out.println("Uploading tea: " + tea.getId());
+
+          insertTeaStmt.execute(tea);
+          for (var typeId : tea.getTypeIds()) {
+            insertTeaToTeaTypeStmt.execute(tea.getId(), typeId);
+          }
+
+          var idx = 0;
+          for (var image : tea.getImages()) {
+            idx++;
+            // TODO: load tea images in correct order
+            // TODO: jpg compression
+            insertImgStmt.execute(tea.getId(), idx, toBytes(image));
+          }
         }
       }
     }
 
     System.out.println("DONE");
-  }
-
-  private static void uploadTea(Tea tea, PreparedStatement insertTeaStmt, PreparedStatement insertTeaTypeStmt, PreparedStatement insertImgStmt)
-    throws SQLException, IOException {
-
-    System.out.println("Uploading tea: " + tea.getId());
-
-    // TODO: refactor so that creating prepared statement and executing it are colocated
-    insertTeaStmt.setInt(1, tea.getId());
-    insertTeaStmt.setString(2, tea.getTitle());
-    insertTeaStmt.setString(3, tea.getName());
-    insertTeaStmt.setString(4, tea.getDescription());
-    insertTeaStmt.setInt(5, tea.getVendorId());
-    insertTeaStmt.setString(6, tea.getUrl());
-    insertTeaStmt.setString(7, tea.getOrigin());
-    insertTeaStmt.setString(8, tea.getCultivar());
-    insertTeaStmt.setString(9, tea.getSeason());
-    insertTeaStmt.setString(10, tea.getElevation());
-    insertTeaStmt.setString(11, tea.getBrewingInstructions());
-    insertTeaStmt.setBoolean(12, tea.isInStock());
-
-    insertTeaStmt.execute();
-
-    for (var typeId : tea.getTypeIds()) {
-      insertTeaTypeStmt.setInt(1, tea.getId());
-      insertTeaTypeStmt.setInt(2, typeId);
-      insertTeaTypeStmt.execute();
-    }
-
-    // TODO: load tea images in correct order
-    // TODO: jpg compression
-    var idx = 0;
-    for (var img : tea.getImages()) {
-      idx++;
-      insertImgStmt.setInt(1, tea.getId());
-      insertImgStmt.setInt(2, idx);
-      insertImgStmt.setBytes(3, toBytes(img));
-
-      insertImgStmt.executeUpdate();
-    }
   }
 
   private static Integer getMaxTeaId(Connection connection) throws SQLException {
@@ -106,14 +73,5 @@ public class UploadImages {
     var byteArrayOutputStream = new ByteArrayOutputStream();
     ImageIO.write(img, "jpg", byteArrayOutputStream);
     return byteArrayOutputStream.toByteArray();
-  }
-
-  private static String getFileExtension(File file) {
-    String fileName = file.getName();
-    int lastIndexOfDot = fileName.lastIndexOf('.');
-    if (lastIndexOfDot == -1) {
-      throw new IllegalArgumentException("File has empty extension: " + fileName);
-    }
-    return fileName.substring(lastIndexOfDot + 1);
   }
 }
