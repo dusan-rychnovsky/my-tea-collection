@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.myteacollection.db;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -52,5 +53,11 @@ public class TeaTests {
     for (var img : result) {
       assertTrue(img.getIndex() > 1);
     }
+  }
+
+  @Test
+  public void getUrlDomain_returnsDomainPortionOfTheUrl() throws MalformedURLException {
+    var tea = new Tea().setUrl("https://meileaf.com/tea/find-your-sunshine-2/");
+    assertEquals("meileaf.com", tea.getUrlDomain());
   }
 }

@@ -2,6 +2,8 @@ package cz.dusanrychnovsky.myteacollection.db;
 
 import jakarta.persistence.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
@@ -128,6 +130,15 @@ public class Tea {
 
   public String getUrl() {
     return url;
+  }
+
+  public Tea setUrl(String url) {
+    this.url = url;
+    return this;
+  }
+
+  public String getUrlDomain() throws MalformedURLException {
+    return new URL(url).getHost();
   }
 
   public String getSeason() {
