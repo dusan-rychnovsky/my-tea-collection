@@ -42,12 +42,19 @@ public class UploadNewTeas {
           }
 
           var idx = 0;
+          // TODO: load tea images in correct order
           for (var image : tea.getImages()) {
             idx++;
             logger.info("Going to upload image: #{}", idx);
-            // TODO: load tea images in correct order
-            // TODO: jpg compression
-            insertImgStmt.execute(tea.getId(), idx, toBytes(image));
+
+            var origBytes = getBytes(image);
+            var origLen = origBytes.length;
+            var compressedBytes = new JpgCompression(image).getBytes();
+            var compressedLen = compressedBytes.length;
+            logger.info("JPG compression: original size {}, compressed size {}, ratio {}",
+              origLen, compressedLen, (float) compressedLen / origLen);
+
+            insertImgStmt.execute(tea.getId(), idx, compressedBytes);
           }
         }
       }
@@ -65,9 +72,9 @@ public class UploadNewTeas {
     }
   }
 
-  private static byte[] toBytes(BufferedImage img) throws IOException {
-    var byteArrayOutputStream = new ByteArrayOutputStream();
-    ImageIO.write(img, "jpg", byteArrayOutputStream);
-    return byteArrayOutputStream.toByteArray();
+  private static byte[] getBytes(BufferedImage img) throws IOException {
+    var os = new ByteArrayOutputStream();
+    ImageIO.write(img, "jpg", os);
+    return os.toByteArray();
   }
 }

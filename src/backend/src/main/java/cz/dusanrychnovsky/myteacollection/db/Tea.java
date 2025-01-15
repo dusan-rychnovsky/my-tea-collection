@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Comparator.comparingInt;
 
+// TODO: see how many queries get generated to fetch a tea or list of teas
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
 public class Tea {
