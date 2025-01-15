@@ -1,25 +1,19 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static java.lang.Integer.parseInt;
-import static java.util.Arrays.stream;
+public class UploadNewTeas {
 
-public class UploadImages {
+  private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
   private static final String DB_URL = System.getenv("SPRING_DATASOURCE_URL");
   private static final String DB_USER = System.getenv("SPRING_DATASOURCE_USERNAME");
@@ -28,8 +22,10 @@ public class UploadImages {
   private static final String INPUT_DIR_PATH = "C:\\Users\\durychno\\Dev\\my-tea-collection\\tea";
 
   public static void main(String[] args) throws SQLException, IOException {
+    logger.info("Going to upload new teas to production db.");
     try (var connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
       var maxTeaId = getMaxTeaId(connection);
+      logger.info("max tea id: {}", maxTeaId);
       var teas = Tea.loadNewFrom(new File(INPUT_DIR_PATH), maxTeaId + 1);
 
       try (var insertTeaStmt = new InsertTeaStatement(connection);
@@ -37,17 +33,18 @@ public class UploadImages {
            var insertImgStmt = new InsertTeaImageStatement(connection)) {
 
         for (var tea : teas) {
-          // TODO: proper logging
-          System.out.println("Uploading tea: " + tea.getId());
+          logger.info("Going to upload tea: #{}", tea.getId());
 
           insertTeaStmt.execute(tea);
           for (var typeId : tea.getTypeIds()) {
+            logger.info("Going to upload type id mapping: {}", typeId);
             insertTeaToTeaTypeStmt.execute(tea.getId(), typeId);
           }
 
           var idx = 0;
           for (var image : tea.getImages()) {
             idx++;
+            logger.info("Going to upload image: #{}", idx);
             // TODO: load tea images in correct order
             // TODO: jpg compression
             insertImgStmt.execute(tea.getId(), idx, toBytes(image));
@@ -55,8 +52,7 @@ public class UploadImages {
         }
       }
     }
-
-    System.out.println("DONE");
+    logger.info("Upload finished.");
   }
 
   private static Integer getMaxTeaId(Connection connection) throws SQLException {
