@@ -29,6 +29,14 @@ public class TeaType {
 
   private String name;
 
+  public TeaType(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
+  public TeaType() {
+  }
+
   public long getId() {
     return id;
   }

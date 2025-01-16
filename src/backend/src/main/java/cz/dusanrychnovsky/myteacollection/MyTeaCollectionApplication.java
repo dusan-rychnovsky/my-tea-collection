@@ -1,8 +1,8 @@
 package cz.dusanrychnovsky.myteacollection;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaImage;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.db.*;
+import cz.dusanrychnovsky.myteacollection.model.Availability;
+import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,6 +28,12 @@ public class MyTeaCollectionApplication {
   }
 
   @Autowired
+  private VendorRepository vendorRepository;
+
+  @Autowired
+  private TeaTypeRepository teaTypeRepository;
+
+  @Autowired
   private TeaRepository teaRepository;
 
   @Autowired
@@ -35,6 +41,23 @@ public class MyTeaCollectionApplication {
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
+
+    // search
+    var allVendors = vendorRepository.findAll();
+    allVendors.add(0, new Vendor(0L, "All", null));
+    model.addAttribute("vendors", allVendors);
+
+    var allTeaTypes = teaTypeRepository.findAll();
+    allTeaTypes.add(0, new TeaType(0L, "All"));
+    model.addAttribute("teaTypes", allTeaTypes);
+
+    var availabilities = Availability.getAll();
+    model.addAttribute("availabilities", availabilities);
+    
+    var criteria = new SearchCriteria(3, 1, 0);
+    model.addAttribute("search", criteria);
+
+    // listing
     var allTeas = teaRepository.findAll();
     model.addAttribute("teas", allTeas);
     return "index";

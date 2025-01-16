@@ -26,6 +26,15 @@ public class Vendor {
 
   private String url;
 
+  public Vendor(Long id, String name, String url) {
+    this.id = id;
+    this.name = name;
+    this.url = url;
+  }
+
+  public Vendor() {
+  }
+
   public long getId() {
     return id;
   }
