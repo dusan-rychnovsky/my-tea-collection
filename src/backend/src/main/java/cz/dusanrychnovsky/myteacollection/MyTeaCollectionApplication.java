@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
@@ -41,7 +43,11 @@ public class MyTeaCollectionApplication {
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
+    return search(new SearchCriteria(0, 0, 0), model);
+  }
 
+  @PostMapping("/search")
+  public String search(@ModelAttribute SearchCriteria criteria, Model model) {
     // search
     var allVendors = vendorRepository.findAll();
     allVendors.add(0, new Vendor(0L, "All", null));
@@ -53,19 +59,18 @@ public class MyTeaCollectionApplication {
 
     var availabilities = Availability.getAll();
     model.addAttribute("availabilities", availabilities);
-    
-    var criteria = new SearchCriteria(3, 1, 0);
+
     model.addAttribute("search", criteria);
 
     // listing
-    var allTeas = teaRepository.findAll();
-    model.addAttribute("teas", allTeas);
+    var teas = teaRepository.findByCriteria(criteria);
+    model.addAttribute("teas", teas);
     return "index";
   }
 
   @GetMapping("/teas/{id}")
   public String teaView(@PathVariable("id") Long teaId, Model model) {
-    var tea = teaRepository.findById(teaId).get();
+    var tea = teaRepository.findById(teaId);
     model.addAttribute("tea", tea);
     return "tea-view";
   }

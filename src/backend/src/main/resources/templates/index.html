@@ -37,24 +37,24 @@
             Use below filters to simplify searching for a tea from a certain vendor, etc.
             Press View to see all details about particular tea.
           </p>
-          <form id="tea-search">
+          <form th:object="${search}" th:action="@{/search}" id="tea-search-form" method="post">
             <div class="form-row justify-content-center">
               <div class="form-group col-md-3">
                 <label for="select-tea-type">Tea type:</label>
-                <select th:object="${search}" class="form-control" id="select-tea-type">
-                  <option th:field="*{teaTypeId}" th:each="type : ${teaTypes}" th:value="${type.id}" th:text="${type.name}"></option>
+                <select th:field="*{teaTypeId}" class="form-control" id="select-tea-type" onchange="submitSearchForm()">
+                  <option th:each="type : ${teaTypes}" th:value="${type.id}" th:text="${type.name}"></option>
                 </select>
               </div>
               <div class="form-group col-md-3">
                 <label for="select-tea-vendor">Vendor:</label>
-                <select th:object="${search}" class="form-control" id="select-tea-vendor">
-                  <option th:field="*{vendorId}" th:each="vendor : ${vendors}" th:value="${vendor.id}" th:text="${vendor.name}"></option>
+                <select th:field="*{vendorId}"  class="form-control" id="select-tea-vendor" onchange="submitSearchForm()">
+                  <option th:each="vendor : ${vendors}" th:value="${vendor.id}" th:text="${vendor.name}"></option>
                 </select>
               </div>
               <div class="form-group col-md-3">
                 <label for="select-tea-availability">Availablity:</label>
-                <select th:object="${search}" class="form-control" id="select-tea-availability">
-                  <option th:field="*{availabilityId}" th:each="availability : ${availabilities}" th:value="${availability.id}" th:text="${availability.label}"></option>
+                <select th:field="*{availabilityId}" class="form-control" id="select-tea-availability" onchange="submitSearchForm()">
+                  <option th:each="availability : ${availabilities}" th:value="${availability.id}" th:text="${availability.label}"></option>
                 </select>
               </div>
             </div>
@@ -98,5 +98,10 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../js/bootstrap.min.js"></script>
+    <script>
+      function submitSearchForm() {
+        document.getElementById("tea-search-form").submit();
+      }
+    </script>
   </body>
 </html>
