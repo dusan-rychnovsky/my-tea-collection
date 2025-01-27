@@ -1,0 +1,14 @@
+{
+  "title": "Da Hong Pao",
+  "name": "Wuyi Da Hong Pao 2023",
+  "description": "Rozmanitý, likérovitý polozelený čaj s bohatou minerální chutí a vůní exotického ovoce, mangostanu, datlí a vzácných pryskyřic a chladnou sladkou dochutí.",
+  "typeIds": [ 5 ],
+  "vendorId": 2,
+  "url": "https://store.meetea.cz/caj/da-hong-pao-wuyi-oolong/",
+  "origin": "Wuyishan, Fujian, China",
+  "cultivar": "Da Hong Pao",
+  "season": "2023",
+  "elevation": "NA",
+  "brewingInstructions": "100°C, 4g/100ml, 15s-10s-15s-20s-30s",
+  "inStock": true
+}
