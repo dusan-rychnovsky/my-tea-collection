@@ -36,10 +36,13 @@ public class MyTeaCollectionApplication {
   private TeaTypeRepository teaTypeRepository;
 
   @Autowired
-  private TeaRepository teaRepository;
+  private TeaSearchRepository teaSearchRepository;
 
   @Autowired
   private TeaImageRepository teaImageRepository;
+
+  @Autowired
+  private TeaRepository teaRepository;
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
@@ -63,7 +66,7 @@ public class MyTeaCollectionApplication {
     model.addAttribute("search", criteria);
 
     // listing
-    var teas = teaRepository.findByCriteria(criteria);
+    var teas = teaSearchRepository.findByCriteria(criteria);
     model.addAttribute("teas", teas);
     return "index";
   }
