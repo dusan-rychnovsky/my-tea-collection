@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.db;
 
+import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,7 +33,8 @@ public class TeaSearchRepository {
       predicates.add(builder.equal(vendor.get("id"), criteria.vendorId()));
     }
     if (criteria.availabilityId() != 0) {
-      // TODO implement search by availability
+      var availability = Availability.toBoolean(criteria.availabilityId());
+      predicates.add(builder.equal(tea.get("inStock"), availability));
     }
     query.where(predicates.toArray(new Predicate[0]));
 

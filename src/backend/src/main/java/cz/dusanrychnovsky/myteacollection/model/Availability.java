@@ -10,4 +10,14 @@ public record Availability(Long id, String label) {
       new Availability(2L, "Out of stock")
     );
   }
+
+  public static boolean toBoolean(long availabilityId) {
+    return switch ((int) availabilityId) {
+      case 1 -> true;
+      case 2 -> false;
+      default -> throw new IllegalArgumentException(
+        "Unexpected availabilityId: " + availabilityId
+      );
+    };
+  }
 }
