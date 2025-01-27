@@ -11,7 +11,7 @@ import static javax.imageio.ImageWriteParam.MODE_EXPLICIT;
 
 public class JpgCompression {
 
-  private static final float QUALITY = 0.1f; // 0.1 = 10%
+  private static final float QUALITY = 0.5f; // 0.5 = 50%
 
   private BufferedImage img;
 

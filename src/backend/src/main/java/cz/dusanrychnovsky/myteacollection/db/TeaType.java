@@ -12,15 +12,15 @@ public class TeaType {
       name VARCHAR(255) NOT NULL
     );
 
-    INSERT INTO TeaTypes (id, name) VALUES (1, 'Blend');
-    INSERT INTO TeaTypes (id, name) VALUES (2, 'White');
-    INSERT INTO TeaTypes (id, name) VALUES (3, 'Yellow');
-    INSERT INTO TeaTypes (id, name) VALUES (4, 'Green');
-    INSERT INTO TeaTypes (id, name) VALUES (5, 'Oolong');
-    INSERT INTO TeaTypes (id, name) VALUES (6, 'Black');
-    INSERT INTO TeaTypes (id, name) VALUES (7, 'Dark');
-    INSERT INTO TeaTypes (id, name) VALUES (8, 'Sheng Puerh');
-    INSERT INTO TeaTypes (id, name) VALUES (9, 'Shu Puerh');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (1, 'Blend');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (2, 'White');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (3, 'Yellow');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (4, 'Green');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (5, 'Oolong');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (6, 'Black');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (7, 'Dark');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (8, 'Sheng Puerh');
+    INSERT INTO myteacollection.TeaTypes (id, name) VALUES (9, 'Shu Puerh');
    */
 
   @Id
