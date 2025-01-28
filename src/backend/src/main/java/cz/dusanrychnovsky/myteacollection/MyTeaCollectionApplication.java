@@ -73,7 +73,7 @@ public class MyTeaCollectionApplication {
 
   @GetMapping("/teas/{id}")
   public String teaView(@PathVariable("id") Long teaId, Model model) {
-    var tea = teaRepository.findById(teaId);
+    var tea = teaRepository.findById(teaId).get();
     model.addAttribute("tea", tea);
     return "tea-view";
   }
