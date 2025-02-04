@@ -16,6 +16,8 @@ public class Vendor {
     INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
     INSERT INTO myteacollection.Vendors (id, name, url) VALUES (2, 'Meetea', 'https://www.meetea.cz');
     INSERT INTO myteacollection.Vendors (id, name, url) VALUES (3, 'Chuť Čaje', 'https://www.chutcaje.cz/');
+    INSERT INTO myteacollection.Vendors (id, name, url) VALUES (4, 'Lao Tea', 'https://www.laoteashop.cz/');
+    INSERT INTO myteacollection.Vendors (id, name, url) VALUES (5, 'Klasek Tea', 'https://www.darjeeling.cz/');
    */
 
   @Id
