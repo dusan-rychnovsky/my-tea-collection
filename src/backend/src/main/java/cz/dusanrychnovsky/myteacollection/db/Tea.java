@@ -39,6 +39,14 @@ public class Tea {
       FOREIGN KEY (tea_id) REFERENCES myteacollection.Teas(id),
       FOREIGN KEY (type_id) REFERENCES myteacollection.TeaTypes(id)
     );
+
+    CREATE TABLE myteacollection.Teas_Tags (
+      tea_id BIGINT NOT NULL,
+      tag_id BIGINT NOT NULL,
+      PRIMARY KEY (tea_id, tag_id),
+      FOREIGN KEY (tea_id) REFERENCES myteacollection.Teas(id),
+      FOREIGN KEY (tag_id) REFERENCES myteacollection.Tags(id)
+    );
    */
 
   @Id
@@ -82,6 +90,14 @@ public class Tea {
 
   @Column(name = "in_stock")
   private Boolean inStock;
+
+  @ManyToMany
+  @JoinTable(
+    schema = "myteacollection",
+    name = "Teas_Tags",
+    joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+  private Set<Tag> tags;
 
   public Long getId() {
     return id;
@@ -159,5 +175,9 @@ public class Tea {
 
   public String getBrewingInstructions() {
     return brewingInstructions;
+  }
+
+  public Set<Tag> getTags() {
+    return tags;
   }
 }

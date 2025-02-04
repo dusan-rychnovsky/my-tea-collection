@@ -45,6 +45,12 @@
       <p th:text="${tea.description}">
       </p>
       <div id="tea-details">
+        <p th:if="${!tea.tags.isEmpty()}" class="mb-1">
+          <strong>Tags:</strong>
+          <ul>
+            <li th:each="tag : ${tea.tags}" th:text="${tag.label}"></li>
+          </ul>
+        </p>
         <p class="mb-1">
           <strong>Tea type(s):</strong>
           <ul>
