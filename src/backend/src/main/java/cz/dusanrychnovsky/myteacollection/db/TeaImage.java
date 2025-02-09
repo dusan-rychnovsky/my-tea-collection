@@ -20,12 +20,29 @@ public class TeaImage {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "tea_id", nullable = false)
+  private Tea tea;
+
   private Integer index;
 
   private byte[] data;
 
+  public TeaImage(Tea tea, Integer index, byte[] data) {
+    this.tea = tea;
+    this.index = index;
+    this.data = data;
+  }
+
+  public TeaImage() {
+  }
+
   public Long getId() {
     return id;
+  }
+
+  public Tea getTea() {
+    return tea;
   }
 
   public Integer getIndex() {

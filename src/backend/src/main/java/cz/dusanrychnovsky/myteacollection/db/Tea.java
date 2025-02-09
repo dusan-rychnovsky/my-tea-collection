@@ -50,7 +50,6 @@ public class Tea {
    */
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne
@@ -63,7 +62,7 @@ public class Tea {
     name = "Teas_TeaTypes",
     joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "type_id", referencedColumnName = "id"))
-  private Set<TeaType> types;
+  private Set<TeaType> types = new HashSet<>();
 
   private String title;
 
@@ -71,9 +70,9 @@ public class Tea {
 
   private String description;
 
-  @OneToMany
+  @OneToMany(cascade = CascadeType.ALL)
   @JoinColumn(name = "tea_id")
-  private Set<TeaImage> images;
+  private Set<TeaImage> images = new HashSet<>();
 
   private String url;
 
@@ -98,6 +97,42 @@ public class Tea {
     joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
   private Set<Tag> tags;
+
+  public Tea(
+    long id,
+    Vendor vendor,
+    Set<TeaType> types,
+    String title,
+    String name,
+    String description,
+    String url,
+    String season,
+    String origin,
+    String elevation,
+    String cultivar,
+    String brewingInstructions,
+    boolean inStock,
+    Set<Tag> tags) {
+
+    this.id = id;
+    this.vendor = vendor;
+    this.types = types;
+    this.title = title;
+    this.name = name;
+    this.description = description;
+    this.images = new HashSet<>();
+    this.url = url;
+    this.season = season;
+    this.origin = origin;
+    this.elevation = elevation;
+    this.cultivar = cultivar;
+    this.brewingInstructions = brewingInstructions;
+    this.inStock = inStock;
+    this.tags = tags;
+  }
+
+  public Tea() {
+  }
 
   public Long getId() {
     return id;
@@ -125,6 +160,10 @@ public class Tea {
 
   public Set<TeaImage> getImages() {
     return images;
+  }
+
+  public void addImage(TeaImage image) {
+    images.add(image);
   }
 
   public Tea setImages(Set<TeaImage> images) {

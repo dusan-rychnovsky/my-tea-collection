@@ -26,8 +26,8 @@ public class Tea {
   private String title;
   private String name;
   private String description;
-  private Set<Integer> typeIds;
-  private Integer vendorId;
+  private Set<Long> typeIds;
+  private Long vendorId;
   private String url;
   private String origin;
   private String cultivar;
@@ -44,8 +44,8 @@ public class Tea {
     @JsonProperty(value = "title", required = true) String title,
     @JsonProperty(value = "name", required = true) String name,
     @JsonProperty(value = "description", required = true) String description,
-    @JsonProperty(value = "typeIds", required = true) Set<Integer> typeIds,
-    @JsonProperty(value = "vendorId", required = true) Integer vendorId,
+    @JsonProperty(value = "typeIds", required = true) Set<Long> typeIds,
+    @JsonProperty(value = "vendorId", required = true) Long vendorId,
     @JsonProperty(value = "url", required = true) String url,
     @JsonProperty(value = "origin", required = true) String origin,
     @JsonProperty(value = "cultivar", required = true) String cultivar,
@@ -130,11 +130,11 @@ public class Tea {
     return description;
   }
 
-  public Set<Integer> getTypeIds() {
+  public Set<Long> getTypeIds() {
     return typeIds;
   }
 
-  public Integer getVendorId() {
+  public Long getVendorId() {
     return vendorId;
   }
 
