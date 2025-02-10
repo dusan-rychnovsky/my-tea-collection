@@ -2,9 +2,9 @@ package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Set;
 
+import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,11 +45,5 @@ public class TeaTests {
 
     assertEquals(1, teas.size());
     assertEquals(2, teas.get(0).getId());
-  }
-
-  private File toFile(String dirPath) {
-    var classLoader = TeaTests.class.getClassLoader();
-    var resourceUrl = classLoader.getResource(dirPath);
-    return new File(resourceUrl.getFile());
   }
 }

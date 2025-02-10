@@ -26,6 +26,7 @@ public class TeaImage {
 
   private Integer index;
 
+  @Column(columnDefinition = "BYTEA")
   private byte[] data;
 
   public TeaImage(Tea tea, Integer index, byte[] data) {

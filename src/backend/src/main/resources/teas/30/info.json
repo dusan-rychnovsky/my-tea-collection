@@ -1,0 +1,14 @@
+{
+  "title": "Eight Immortals Oolong",
+  "name": "Ba Xian Dan Cong",
+  "description": "Famed but lesser produced cultivar of Dancong Oolong. Medium roasted over charcoal. Magnolia, fresh apricots and almond milk.",
+  "typeIds": [ 5 ],
+  "vendorId": 1,
+  "url": "https://meileaf.com/tea/eight-immortals/",
+  "origin": "Wudong, Guangdong, China",
+  "cultivar": "Ba Xian",
+  "season": "April 2021",
+  "elevation": "600m",
+  "brewingInstructions": "95°C, 5g/100ml, 25+5s",
+  "inStock": true
+}

@@ -2,7 +2,6 @@ package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -13,7 +12,6 @@ import cz.dusanrychnovsky.myteacollection.db.Tea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -21,6 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.imageio.ImageIO;
 
+import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.util.upload.Tea.loadNewFrom;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -28,9 +27,9 @@ import static java.util.stream.Collectors.toSet;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.db")
 @EntityScan(basePackages = "cz.dusanrychnovsky.myteacollection.db")
-public class UploadNewTeas implements CommandLineRunner {
+public class UploadNewTeas {
 
-  private static final String INPUT_DIR_PATH = "C:\\Users\\durychno\\Dev\\my-tea-collection\\tea";
+  private static final String INPUT_DIR_PATH = "teas";
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
@@ -47,18 +46,21 @@ public class UploadNewTeas implements CommandLineRunner {
 
   private Map<Long, TeaType> teaTypes;
 
-  public static void main(String[] args) {
-    SpringApplication.run(UploadNewTeas.class, args);
+  public static void main(String[] args) throws IOException {
+    logger.info("Starting UploadNewTeas.");
+    var context = SpringApplication.run(UploadNewTeas.class, args);
+    var bean = context.getBean(UploadNewTeas.class);
+    bean.run();
+    logger.info("UploadNewTeas successfully finished.");
   }
 
-  @Override
-  public void run(String... args) throws IOException {
-    logger.info("Going to upload new teas to production db.");
+  public void run() throws IOException {
+    logger.info("Going to upload new teas to db.");
 
     var maxTeaId = getMaxTeaId();
     logger.info("max tea id: {}", maxTeaId);
 
-    var teas = loadNewFrom(new File(INPUT_DIR_PATH), (int) maxTeaId + 1);
+    var teas = loadNewFrom(toFile(INPUT_DIR_PATH), (int) maxTeaId + 1);
     if (teas.isEmpty()) {
       logger.info("No new teas. Upload skipped.");
       return;

@@ -68,6 +68,7 @@ public class Tea {
 
   private String name;
 
+  @Column(columnDefinition = "VARCHAR(1024)")
   private String description;
 
   @OneToMany(cascade = CascadeType.ALL)
