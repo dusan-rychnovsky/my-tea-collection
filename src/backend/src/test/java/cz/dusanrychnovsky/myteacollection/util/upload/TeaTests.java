@@ -19,7 +19,7 @@ public class TeaTests {
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", tea.getName());
     assertEquals("Plný, zábavný tmavý čaj se sladce krémovou chutí a vůní třešňového kompotu, čerstvě pražených kávových zrn a svězí, ovocnatou dochutí.", tea.getDescription());
     assertEquals(Set.of(7L, 9L), tea.getTypeIds());
-    assertEquals(2, tea.getVendorId());
+    assertEquals("Meetea", tea.getVendor());
     assertEquals("https://store.meetea.cz/caj/doubleshot/", tea.getUrl());
     assertEquals("Ming Feng Shan, Yunnan, China", tea.getOrigin());
     assertEquals("Da Ye Zhong", tea.getCultivar());

@@ -1,47 +1,85 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaType;
+import cz.dusanrychnovsky.myteacollection.db.Vendor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
+import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEntity;
+import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest()
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace= NONE)
 public class UploadNewTeasTests {
 
-  @Autowired
-  private UploadNewTeas uploadNewTeas;
+  private final Map<String, Vendor> VENDORS = Map.of(
+    "Meetea", new Vendor(0L, "Meetea", "https://www.meetea.cz"),
+    "Mei Leaf", new Vendor(1L, "Mei Leaf", "https://meileaf.com")
+  );
 
-  @Autowired
-  private TeaRepository teaRepository;
+  private final Map<Long, TeaType> TEA_TYPES = Map.of(
+    7L, new TeaType(7L, "Dark"),
+    8L, new TeaType(8L, "Sheng Puerh")
+  );
+
+  private final Tea TEA = new Tea(
+    "Luminary Misfit",
+    "Lancang Gushu Sheng PuErh Spring 2022",
+    "Ultra-fruity and fragrant PuErh made from ancient trees growing in Lancang. Toffee apples, pear compote, cardamom buns, canned pineapple and banana.",
+    Set.of(7L, 8L),
+    "Mei Leaf",
+    "https://meileaf.com/tea/luminary-misfit/",
+    "Lancang, Puer, Yunnan, China",
+    "Da Ye Zhong",
+    "April 2022",
+    "1740-1970m",
+    "95°C, 5g/100ml, 25+5s",
+    true)
+    .setId(5);
 
   @Test
-  public void noTeasInDb_uploadsAllTeas() throws IOException {
-    uploadNewTeas.run();
-    var teas = teaRepository.findAll();
-    assertEquals(2, teas.size());
-    var first = teas.get(0);
-    assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
-    assertEquals(Set.of("Dark", "Shu Puerh"), getNames(first.getTypes()));
-    assertEquals("Meetea", first.getVendor().getName());
-    assertEquals(2, first.getImages().size());
-    var second = teas.get(1);
-    assertEquals("https://meileaf.com/tea/luminary-misfit/", second.getUrl());
-    assertEquals(3, second.getImages().size());
+  public void toEntity_translatesTeaToEntityRepresentation() {
+    var result = toEntity(TEA, VENDORS, TEA_TYPES);
+
+    assertEquals(TEA.getId(), result.getId());
+    assertEquals(TEA.getTitle(), result.getTitle());
+    assertEquals(TEA.getName(), result.getName());
+    assertEquals(TEA.getDescription(), result.getDescription());
+    assertEquals(TEA.getUrl(), result.getUrl());
+    assertEquals(TEA.getOrigin(), result.getOrigin());
+    assertEquals(TEA.getCultivar(), result.getCultivar());
+    assertEquals(TEA.getSeason(), result.getSeason());
+    assertEquals(TEA.getElevation(), result.getElevation());
+    assertEquals(TEA.getBrewingInstructions(), result.getBrewingInstructions());
+    assertEquals(TEA.isInStock(), result.isInStock());
+
+    assertEquals(TEA.getVendor(), result.getVendor().getName());
+    for (var typeId : TEA.getTypeIds()) {
+      assertTrue(result.getTypes().stream().anyMatch(type -> type.getId() == typeId));
+    }
   }
 
-  private Set<String> getNames(Set<TeaType> types) {
-    return types.stream().map(TeaType::getName).collect(toSet());
+  @Test
+  public void toEntity_invalidVendor_throws() {
+    var tea = withVendor(TEA, "Meileaf");
+    assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES));
+  }
+
+  private static Tea withVendor(Tea tea, String vendor) {
+    return new Tea(
+      tea.getTitle(),
+      tea.getName(),
+      tea.getDescription(),
+      tea.getTypeIds(),
+      vendor,
+      tea.getUrl(),
+      tea.getOrigin(),
+      tea.getCultivar(),
+      tea.getSeason(),
+      tea.getElevation(),
+      tea.getBrewingInstructions(),
+      tea.isInStock()
+    )
+      .setId(tea.getId());
   }
 }

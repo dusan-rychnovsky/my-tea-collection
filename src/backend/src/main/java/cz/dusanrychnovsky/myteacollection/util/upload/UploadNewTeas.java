@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,8 +20,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.imageio.ImageIO;
 
-import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.util.upload.Tea.loadNewFrom;
+import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -42,7 +43,7 @@ public class UploadNewTeas {
   @Autowired
   private TeaRepository teaRepository;
 
-  private Map<Long, Vendor> vendors;
+  private Map<String, Vendor> vendors;
 
   private Map<Long, TeaType> teaTypes;
 
@@ -50,17 +51,17 @@ public class UploadNewTeas {
     logger.info("Starting UploadNewTeas.");
     var context = SpringApplication.run(UploadNewTeas.class, args);
     var bean = context.getBean(UploadNewTeas.class);
-    bean.run();
+    bean.run(new File(args[0]));
     logger.info("UploadNewTeas successfully finished.");
   }
 
-  public void run() throws IOException {
-    logger.info("Going to upload new teas to db.");
+  public void run(File rootDir) throws IOException {
+    logger.info("Going to upload new teas to db from dir: {}.", rootDir);
 
     var maxTeaId = getMaxTeaId();
     logger.info("max tea id: {}", maxTeaId);
 
-    var teas = loadNewFrom(toFile(INPUT_DIR_PATH), (int) maxTeaId + 1);
+    var teas = loadNewFrom(rootDir, maxTeaId + 1);
     if (teas.isEmpty()) {
       logger.info("No new teas. Upload skipped.");
       return;
@@ -72,7 +73,7 @@ public class UploadNewTeas {
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
 
-      var teaEntity = toEntity(tea);
+      var teaEntity = toEntity(tea, vendors, teaTypes);
 
       var idx = 0;
       // TODO: load tea images in correct order
@@ -98,8 +99,8 @@ public class UploadNewTeas {
   }
 
   private long getMaxTeaId() {
-    var teas = teaRepository.findAll(); // Tea::getId
-    var latestTea = teas.stream().max(Comparator.comparingLong(cz.dusanrychnovsky.myteacollection.db.Tea::getId));
+    var teas = teaRepository.findAll();
+    var latestTea = teas.stream().max(comparingLong(cz.dusanrychnovsky.myteacollection.db.Tea::getId));
     if (latestTea.isPresent()) {
       return latestTea.get().getId();
     }
@@ -112,17 +113,26 @@ public class UploadNewTeas {
       .collect(toMap(TeaType::getId, teaType -> teaType));
   }
 
-  private Map<Long, Vendor> fetchVendors() {
+  private Map<String, Vendor> fetchVendors() {
     logger.info("Going to fetch available vendors.");
     return vendorRepository.findAll().stream()
-      .collect(toMap(Vendor::getId, vendor -> vendor));
+      .collect(toMap(Vendor::getName, vendor -> vendor));
   }
 
-  private Tea toEntity(cz.dusanrychnovsky.myteacollection.util.upload.Tea tea) {
-    var vendor = vendors.get(tea.getVendorId());
+  public static Tea toEntity(
+    cz.dusanrychnovsky.myteacollection.util.upload.Tea tea,
+    Map<String, Vendor> vendors,
+    Map<Long, TeaType> teaTypes) {
+
+    var vendor = vendors.get(tea.getVendor());
+    if (vendor == null) {
+      throw new IllegalArgumentException("Unknown vendor: " + tea.getVendor());
+    }
+
     var types = tea.getTypeIds().stream()
-      .map(id -> teaTypes.get(id))
+      .map(teaTypes::get)
       .collect(toSet());
+
     return new Tea(
       tea.getId(),
       vendor,

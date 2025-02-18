@@ -220,4 +220,8 @@ public class Tea {
   public Set<Tag> getTags() {
     return tags;
   }
+
+  public boolean isInStock() {
+    return inStock;
+  }
 }

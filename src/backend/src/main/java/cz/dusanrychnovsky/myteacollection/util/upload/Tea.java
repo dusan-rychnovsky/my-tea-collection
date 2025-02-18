@@ -13,21 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static java.util.Arrays.stream;
-import static java.util.Comparator.comparingInt;
+import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toList;
 
 public class Tea {
 
   public static final String INFO_FILE_NAME = "info.json";
 
-  private Integer id;
+  private Long id;
   private String title;
   private String name;
   private String description;
   private Set<Long> typeIds;
-  private Long vendorId;
+  private String vendor;
   private String url;
   private String origin;
   private String cultivar;
@@ -45,7 +45,7 @@ public class Tea {
     @JsonProperty(value = "name", required = true) String name,
     @JsonProperty(value = "description", required = true) String description,
     @JsonProperty(value = "typeIds", required = true) Set<Long> typeIds,
-    @JsonProperty(value = "vendorId", required = true) Long vendorId,
+    @JsonProperty(value = "vendor", required = true) String vendor,
     @JsonProperty(value = "url", required = true) String url,
     @JsonProperty(value = "origin", required = true) String origin,
     @JsonProperty(value = "cultivar", required = true) String cultivar,
@@ -58,7 +58,7 @@ public class Tea {
     this.name = name;
     this.description = description;
     this.typeIds = typeIds;
-    this.vendorId = vendorId;
+    this.vendor = vendor;
     this.url = url;
     this.origin = origin;
     this.cultivar = cultivar;
@@ -70,12 +70,12 @@ public class Tea {
     images = new ArrayList<>();
   }
 
-  public static List<Tea> loadNewFrom(File rootDir, int minId) {
+  public static List<Tea> loadNewFrom(File rootDir, long minId) {
     return stream(rootDir.listFiles())
       .filter(File::isDirectory)
-      .filter(file -> { var id = parseInt(file.getName()); return id >= minId; })
+      .filter(file -> { var id = parseLong(file.getName()); return id >= minId; })
       .map(Tea::loadFrom)
-      .sorted(comparingInt(tea -> tea.id))
+      .sorted(comparingLong(tea -> tea.id))
       .collect(toList());
   }
 
@@ -85,7 +85,7 @@ public class Tea {
   
   public static Tea loadFrom(File dir) {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
-    tea.id = parseInt(dir.getName());
+    tea.setId(parseLong(dir.getName()));
     for (var file : dir.listFiles()) {
       if (file.getName().equals(INFO_FILE_NAME)) {
         continue;
@@ -114,8 +114,13 @@ public class Tea {
     }
   }
 
-  public Integer getId() {
+  public long getId() {
     return id;
+  }
+
+  public Tea setId(long id) {
+    this.id = id;
+    return this;
   }
 
   public String getTitle() {
@@ -134,8 +139,8 @@ public class Tea {
     return typeIds;
   }
 
-  public Long getVendorId() {
-    return vendorId;
+  public String getVendor() {
+    return vendor;
   }
 
   public String getUrl() {
