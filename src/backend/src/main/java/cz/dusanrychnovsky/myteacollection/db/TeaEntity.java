@@ -13,7 +13,7 @@ import static java.util.Comparator.comparingInt;
 // TODO: see how many queries get generated to fetch a tea or list of teas
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
-public class Tea {
+public class TeaEntity {
 
   /*
     CREATE TABLE myteacollection.Teas (
@@ -54,7 +54,7 @@ public class Tea {
 
   @ManyToOne
   @JoinColumn(name = "vendor_id")
-  private Vendor vendor;
+  private VendorEntity vendor;
 
   @ManyToMany
   @JoinTable(
@@ -62,7 +62,7 @@ public class Tea {
     name = "Teas_TeaTypes",
     joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "type_id", referencedColumnName = "id"))
-  private Set<TeaType> types = new HashSet<>();
+  private Set<TeaTypeEntity> types = new HashSet<>();
 
   private String title;
 
@@ -73,7 +73,7 @@ public class Tea {
 
   @OneToMany(cascade = CascadeType.ALL)
   @JoinColumn(name = "tea_id")
-  private Set<TeaImage> images = new HashSet<>();
+  private Set<TeaImageEntity> images = new HashSet<>();
 
   private String url;
 
@@ -97,12 +97,12 @@ public class Tea {
     name = "Teas_Tags",
     joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-  private Set<Tag> tags;
+  private Set<TagEntity> tags;
 
-  public Tea(
+  public TeaEntity(
     long id,
-    Vendor vendor,
-    Set<TeaType> types,
+    VendorEntity vendor,
+    Set<TeaTypeEntity> types,
     String title,
     String name,
     String description,
@@ -113,7 +113,7 @@ public class Tea {
     String cultivar,
     String brewingInstructions,
     boolean inStock,
-    Set<Tag> tags) {
+    Set<TagEntity> tags) {
 
     this.id = id;
     this.vendor = vendor;
@@ -132,18 +132,18 @@ public class Tea {
     this.tags = tags;
   }
 
-  public Tea() {
+  public TeaEntity() {
   }
 
   public Long getId() {
     return id;
   }
 
-  public Vendor getVendor() {
+  public VendorEntity getVendor() {
     return vendor;
   }
 
-  public Set<TeaType> getTypes() {
+  public Set<TeaTypeEntity> getTypes() {
     return types;
   }
 
@@ -159,26 +159,26 @@ public class Tea {
     return description;
   }
 
-  public Set<TeaImage> getImages() {
+  public Set<TeaImageEntity> getImages() {
     return images;
   }
 
-  public void addImage(TeaImage image) {
+  public void addImage(TeaImageEntity image) {
     images.add(image);
   }
 
-  public Tea setImages(Set<TeaImage> images) {
+  public TeaEntity setImages(Set<TeaImageEntity> images) {
     this.images = images;
     return this;
   }
 
-  public Optional<TeaImage> getMainImage() {
+  public Optional<TeaImageEntity> getMainImage() {
     return images.stream()
-      .min(comparingInt(TeaImage::getIndex));
+      .min(comparingInt(TeaImageEntity::getIndex));
   }
 
-  public Set<TeaImage> getAdditionalImages() {
-    var result = new HashSet<TeaImage>(images);
+  public Set<TeaImageEntity> getAdditionalImages() {
+    var result = new HashSet<TeaImageEntity>(images);
     var mainImg = getMainImage();
     mainImg.ifPresent(result::remove);
     return result;
@@ -188,7 +188,7 @@ public class Tea {
     return url;
   }
 
-  public Tea setUrl(String url) {
+  public TeaEntity setUrl(String url) {
     this.url = url;
     return this;
   }
@@ -217,7 +217,7 @@ public class Tea {
     return brewingInstructions;
   }
 
-  public Set<Tag> getTags() {
+  public Set<TagEntity> getTags() {
     return tags;
   }
 

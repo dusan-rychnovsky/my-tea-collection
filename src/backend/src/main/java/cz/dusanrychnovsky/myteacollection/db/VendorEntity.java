@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "myteacollection", name = "Vendors")
-public class Vendor {
+public class VendorEntity {
 
   /*
     CREATE TABLE myteacollection.Vendors (
@@ -22,13 +22,13 @@ public class Vendor {
 
   private String url;
 
-  public Vendor(Long id, String name, String url) {
+  public VendorEntity(Long id, String name, String url) {
     this.id = id;
     this.name = name;
     this.url = url;
   }
 
-  public Vendor() {
+  public VendorEntity() {
   }
 
   public long getId() {

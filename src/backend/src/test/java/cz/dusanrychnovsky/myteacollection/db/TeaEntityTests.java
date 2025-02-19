@@ -10,11 +10,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TeaTests {
+public class TeaEntityTests {
 
   @Test
   public void getMainImage_NoImages_ReturnsEmptyResult() {
-    var tea = new Tea()
+    var tea = new TeaEntity()
       .setImages(new HashSet<>());
     assertEquals(Optional.empty(), tea.getMainImage());
   }
@@ -22,18 +22,18 @@ public class TeaTests {
   @Test
   public void getMainImage_MultipleImages_ReturnsImageWithLowestIndex() {
     var images = Set.of(
-      new TeaImage().setIndex(1),
-      new TeaImage().setIndex(3),
-      new TeaImage().setIndex(2)
+      new TeaImageEntity().setIndex(1),
+      new TeaImageEntity().setIndex(3),
+      new TeaImageEntity().setIndex(2)
     );
-    var tea = new Tea()
+    var tea = new TeaEntity()
       .setImages(images);
     assertEquals(1, tea.getMainImage().get().getIndex());
   }
 
   @Test
   public void getAdditionalImages_NoImages_ReturnsEmptySet() {
-    var tea = new Tea();
+    var tea = new TeaEntity();
     tea.setImages(new HashSet<>());
     assertTrue(tea.getAdditionalImages().isEmpty());
   }
@@ -41,11 +41,11 @@ public class TeaTests {
   @Test
   public void getAdditionalImages_MultipleImages_ReturnsAllImagesButTheOneWithLowestIndex() {
     var images = Set.of(
-      new TeaImage().setIndex(1),
-      new TeaImage().setIndex(3),
-      new TeaImage().setIndex(2)
+      new TeaImageEntity().setIndex(1),
+      new TeaImageEntity().setIndex(3),
+      new TeaImageEntity().setIndex(2)
     );
-    var tea = new Tea()
+    var tea = new TeaEntity()
       .setImages(images);
 
     var result = tea.getAdditionalImages();
@@ -57,7 +57,7 @@ public class TeaTests {
 
   @Test
   public void getUrlDomain_returnsDomainPortionOfTheUrl() throws MalformedURLException {
-    var tea = new Tea().setUrl("https://meileaf.com/tea/find-your-sunshine-2/");
+    var tea = new TeaEntity().setUrl("https://meileaf.com/tea/find-your-sunshine-2/");
     assertEquals("meileaf.com", tea.getUrlDomain());
   }
 }

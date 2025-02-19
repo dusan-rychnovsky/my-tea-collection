@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "myteacollection", name = "TeaImages")
-public class TeaImage {
+public class TeaImageEntity {
 
   /*
     CREATE TABLE myteacollection.TeaImages (
@@ -22,27 +22,27 @@ public class TeaImage {
 
   @ManyToOne
   @JoinColumn(name = "tea_id", nullable = false)
-  private Tea tea;
+  private TeaEntity tea;
 
   private Integer index;
 
   @Column(columnDefinition = "BYTEA")
   private byte[] data;
 
-  public TeaImage(Tea tea, Integer index, byte[] data) {
+  public TeaImageEntity(TeaEntity tea, Integer index, byte[] data) {
     this.tea = tea;
     this.index = index;
     this.data = data;
   }
 
-  public TeaImage() {
+  public TeaImageEntity() {
   }
 
   public Long getId() {
     return id;
   }
 
-  public Tea getTea() {
+  public TeaEntity getTea() {
     return tea;
   }
 
@@ -50,7 +50,7 @@ public class TeaImage {
     return index;
   }
 
-  public TeaImage setIndex(Integer index) {
+  public TeaImageEntity setIndex(Integer index) {
     this.index = index;
     return this;
   }

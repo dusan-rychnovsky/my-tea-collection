@@ -53,11 +53,11 @@ public class MyTeaCollectionApplication {
   public String search(@ModelAttribute SearchCriteria criteria, Model model) {
     // search
     var allVendors = vendorRepository.findAll();
-    allVendors.add(0, new Vendor(0L, "All", null));
+    allVendors.add(0, new VendorEntity(0L, "All", null));
     model.addAttribute("vendors", allVendors);
 
     var allTeaTypes = teaTypeRepository.findAll();
-    allTeaTypes.add(0, new TeaType(0L, "All"));
+    allTeaTypes.add(0, new TeaTypeEntity(0L, "All"));
     model.addAttribute("teaTypes", allTeaTypes);
 
     var availabilities = Availability.getAll();

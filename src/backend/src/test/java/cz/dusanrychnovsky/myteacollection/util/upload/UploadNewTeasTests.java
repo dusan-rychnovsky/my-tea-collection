@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaType;
-import cz.dusanrychnovsky.myteacollection.db.Vendor;
+import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -12,17 +12,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UploadNewTeasTests {
 
-  private final Map<String, Vendor> VENDORS = Map.of(
-    "Meetea", new Vendor(0L, "Meetea", "https://www.meetea.cz"),
-    "Mei Leaf", new Vendor(1L, "Mei Leaf", "https://meileaf.com")
+  private final Map<String, VendorEntity> VENDORS = Map.of(
+    "Meetea", new VendorEntity(0L, "Meetea", "https://www.meetea.cz"),
+    "Mei Leaf", new VendorEntity(1L, "Mei Leaf", "https://meileaf.com")
   );
 
-  private final Map<String, TeaType> TEA_TYPES = Map.of(
-    "Dark", new TeaType(7L, "Dark"),
-    "Sheng Puerh", new TeaType(8L, "Sheng Puerh")
+  private final Map<String, TeaTypeEntity> TEA_TYPES = Map.of(
+    "Dark", new TeaTypeEntity(7L, "Dark"),
+    "Sheng Puerh", new TeaTypeEntity(8L, "Sheng Puerh")
   );
 
-  private final Tea TEA = new Tea(
+  private final TeaRecord TEA = new TeaRecord(
     "Luminary Misfit",
     "Lancang Gushu Sheng PuErh Spring 2022",
     "Ultra-fruity and fragrant PuErh made from ancient trees growing in Lancang. Toffee apples, pear compote, cardamom buns, canned pineapple and banana.",
@@ -71,8 +71,8 @@ public class UploadNewTeasTests {
     assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES));
   }
 
-  private static Tea withTypes(Tea tea, Set<String> types) {
-    return new Tea(
+  private static TeaRecord withTypes(TeaRecord tea, Set<String> types) {
+    return new TeaRecord(
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),
@@ -89,8 +89,8 @@ public class UploadNewTeasTests {
       .setId(tea.getId());
   }
 
-  private static Tea withVendor(Tea tea, String vendor) {
-    return new Tea(
+  private static TeaRecord withVendor(TeaRecord tea, String vendor) {
+    return new TeaRecord(
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),

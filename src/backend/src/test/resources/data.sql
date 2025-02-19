@@ -19,3 +19,7 @@ INSERT INTO myteacollection.Vendors (id, name, url) VALUES (2, 'Meetea', 'https:
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (3, 'Chuť Čaje', 'https://www.chutcaje.cz/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (4, 'Lao Tea', 'https://www.laoteashop.cz/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (5, 'Klasek Tea', 'https://www.darjeeling.cz/');
+
+-- Tag
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (1, 'meetea-2025-leden', 'Čajové předplatné Meetea, leden 2025');

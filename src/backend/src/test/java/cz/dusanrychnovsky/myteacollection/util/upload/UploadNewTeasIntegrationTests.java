@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaType;
+import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -42,7 +42,7 @@ public class UploadNewTeasIntegrationTests {
     assertEquals(3, second.getImages().size());
   }
 
-  private Set<String> getNames(Set<TeaType> types) {
-    return types.stream().map(TeaType::getName).collect(toSet());
+  private Set<String> getNames(Set<TeaTypeEntity> types) {
+    return types.stream().map(TeaTypeEntity::getName).collect(toSet());
   }
 }

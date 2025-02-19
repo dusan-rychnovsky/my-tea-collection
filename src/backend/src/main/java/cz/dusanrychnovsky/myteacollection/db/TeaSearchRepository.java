@@ -16,11 +16,11 @@ public class TeaSearchRepository {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public List<Tea> findByCriteria(SearchCriteria criteria) {
+  public List<TeaEntity> findByCriteria(SearchCriteria criteria) {
 
     var builder = entityManager.getCriteriaBuilder();
-    var query = builder.createQuery(Tea.class);
-    var tea = query.from(Tea.class);
+    var query = builder.createQuery(TeaEntity.class);
+    var tea = query.from(TeaEntity.class);
 
     var predicates = new ArrayList<Predicate>();
 

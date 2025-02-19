@@ -4,12 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
-import cz.dusanrychnovsky.myteacollection.db.Tea;
+import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import javax.imageio.ImageIO;
 
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
-import static cz.dusanrychnovsky.myteacollection.util.upload.Tea.loadNewFrom;
+import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -30,8 +29,6 @@ import static java.util.stream.Collectors.toSet;
 @EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.db")
 @EntityScan(basePackages = "cz.dusanrychnovsky.myteacollection.db")
 public class UploadNewTeas {
-
-  private static final String INPUT_DIR_PATH = "teas";
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
@@ -44,9 +41,9 @@ public class UploadNewTeas {
   @Autowired
   private TeaRepository teaRepository;
 
-  private Map<String, Vendor> vendors;
+  private Map<String, VendorEntity> vendors;
 
-  private Map<String, TeaType> teaTypes;
+  private Map<String, TeaTypeEntity> teaTypes;
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
@@ -89,7 +86,7 @@ public class UploadNewTeas {
         logger.info("JPG compression: original size {}, compressed size {}, ratio {}",
           origLen, compressedLen, (float) compressedLen / origLen);
 
-        var imageEntity = new TeaImage(teaEntity, idx, compressedBytes);
+        var imageEntity = new TeaImageEntity(teaEntity, idx, compressedBytes);
         teaEntity.addImage(imageEntity);
       }
 
@@ -101,36 +98,36 @@ public class UploadNewTeas {
 
   private long getMaxTeaId() {
     var teas = teaRepository.findAll();
-    var latestTea = teas.stream().max(comparingLong(cz.dusanrychnovsky.myteacollection.db.Tea::getId));
+    var latestTea = teas.stream().max(comparingLong(TeaEntity::getId));
     if (latestTea.isPresent()) {
       return latestTea.get().getId();
     }
     return 0L;
   }
 
-  private Map<String, TeaType> fetchTeaTypes() {
+  private Map<String, TeaTypeEntity> fetchTeaTypes() {
     logger.info("Going to fetch available tea types.");
     return teaTypeRepository.findAll().stream()
-      .collect(toMap(TeaType::getName, teaType -> teaType));
+      .collect(toMap(TeaTypeEntity::getName, teaType -> teaType));
   }
 
-  private Map<String, Vendor> fetchVendors() {
+  private Map<String, VendorEntity> fetchVendors() {
     logger.info("Going to fetch available vendors.");
     return vendorRepository.findAll().stream()
-      .collect(toMap(Vendor::getName, vendor -> vendor));
+      .collect(toMap(VendorEntity::getName, vendor -> vendor));
   }
 
-  public static Tea toEntity(
-    cz.dusanrychnovsky.myteacollection.util.upload.Tea tea,
-    Map<String, Vendor> vendors,
-    Map<String, TeaType> teaTypes) {
+  public static TeaEntity toEntity(
+    TeaRecord tea,
+    Map<String, VendorEntity> vendors,
+    Map<String, TeaTypeEntity> teaTypes) {
 
     var vendor = getOrThrow(vendors, tea.getVendor());
     var types = tea.getTypes().stream()
       .map(type -> getOrThrow(teaTypes, type))
       .collect(toSet());
 
-    return new Tea(
+    return new TeaEntity(
       tea.getId(),
       vendor,
       types,

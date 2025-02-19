@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "myteacollection", name = "Tags")
-public class Tag {
+public class TagEntity {
 
   /*
     CREATE TABLE myteacollection.Tags (
@@ -12,9 +12,6 @@ public class Tag {
       label VARCHAR(255) NOT NULL,
       description TEXT
     );
-
-    INSERT INTO myteacollection.Tags (id, label, description)
-    VALUES (1, 'meetea-2025-leden', 'Čajové předplatné Meetea, leden 2025');
    */
 
   @Id

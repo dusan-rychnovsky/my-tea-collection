@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "myteacollection", name = "TeaTypes")
-public class TeaType {
+public class TeaTypeEntity {
 
   /*
     CREATE TABLE myteacollection.TeaTypes (
@@ -19,12 +19,12 @@ public class TeaType {
 
   private String name;
 
-  public TeaType(Long id, String name) {
+  public TeaTypeEntity(Long id, String name) {
     this.id = id;
     this.name = name;
   }
 
-  public TeaType() {
+  public TeaTypeEntity() {
   }
 
   public long getId() {

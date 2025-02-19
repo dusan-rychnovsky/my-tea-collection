@@ -18,7 +18,7 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toList;
 
-public class Tea {
+public class TeaRecord {
 
   public static final String INFO_FILE_NAME = "info.json";
 
@@ -40,7 +40,7 @@ public class Tea {
   private List<BufferedImage> images;
 
   @JsonCreator
-  public Tea(
+  public TeaRecord(
     @JsonProperty(value = "title", required = true) String title,
     @JsonProperty(value = "name", required = true) String name,
     @JsonProperty(value = "description", required = true) String description,
@@ -70,20 +70,20 @@ public class Tea {
     images = new ArrayList<>();
   }
 
-  public static List<Tea> loadNewFrom(File rootDir, long minId) {
+  public static List<TeaRecord> loadNewFrom(File rootDir, long minId) {
     return stream(rootDir.listFiles())
       .filter(File::isDirectory)
       .filter(file -> { var id = parseLong(file.getName()); return id >= minId; })
-      .map(Tea::loadFrom)
+      .map(TeaRecord::loadFrom)
       .sorted(comparingLong(tea -> tea.id))
       .collect(toList());
   }
 
-  public static List<Tea> loadAllFrom(File rootDir) {
+  public static List<TeaRecord> loadAllFrom(File rootDir) {
     return loadNewFrom(rootDir, 0);
   }
   
-  public static Tea loadFrom(File dir) {
+  public static TeaRecord loadFrom(File dir) {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
     tea.setId(parseLong(dir.getName()));
     for (var file : dir.listFiles()) {
@@ -95,10 +95,10 @@ public class Tea {
     return tea;
   }
 
-  private static Tea loadInfo(File infoFile) {
+  private static TeaRecord loadInfo(File infoFile) {
     var mapper = new ObjectMapper();
     try {
-      return mapper.readValue(infoFile, Tea.class);
+      return mapper.readValue(infoFile, TeaRecord.class);
     }
     catch (IOException ex) {
       throw new CannotLoadTeaInfoException(infoFile, ex);
@@ -118,7 +118,7 @@ public class Tea {
     return id;
   }
 
-  public Tea setId(long id) {
+  public TeaRecord setId(long id) {
     this.id = id;
     return this;
   }
