@@ -2,7 +2,7 @@
   "title": "Meng Wan Autumn Gushu 2017",
   "name": "Menghai Qiucha Gushu Shu Puer Taiwan Storage 2017",
   "description": "Jasný, hřejivý archivní tmavý čaj s hladivou, zemitou chutí a vůní starého dřeva, betelových ořechů a koření se svěže minerální dochutí.",
-  "typeIds": [ 7, 9 ],
+  "types": [ "Dark", "Shu Puerh" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/meng-wan-autumn-gushu-2017/",
   "origin": "Menghai, Yunnan, China",

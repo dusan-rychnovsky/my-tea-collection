@@ -2,7 +2,7 @@
   "title": "Supreme Oriental Beauty Oolong",
   "name": "",
   "description": "Nejvyšší sorta čaje typu Bai Hao nebo také Dongfang Mei Ren pocházející z keříků kultivaru Chin Xin Da Mu pěstovaných v nadmořské výšce 1000 m v okolí městečka Emei na severozápadě ostrova Taiwan. Ručně sbíraný byl pouze pupen a jeden rozvinutý lístek, následná oxidace dosáhla 65 – 75 %. Čaj pochází z rukou čajového mistra pana Xu.",
-  "typeIds": [ 5 ],
+  "types": [ "Oolong" ],
   "vendor": "Klasek Tea",
   "url": "https://www.darjeeling.cz/cz/oolong/supreme-oriental-beauty-oolong-502",
   "origin": "Emei, Taiwan",

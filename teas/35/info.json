@@ -2,7 +2,7 @@
   "title": "Dragon Claws 2024",
   "name": "Vietnam Hà Giang Trà Móng Rồng 2024",
   "description": "Éterický bílý čaj s lehoučkou chutí a vůní připomínající citrus yuzu, bezový květ a pryskyřice, s dlouhou, eukaliptově svěží, kyselkavou dochutí.",
-  "typeIds": [ 2 ],
+  "types": [ "Yabao" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/dragon-claws-2024/",
   "origin": "Tây Côn Lĩnh, Hà Giang, Vietnam",

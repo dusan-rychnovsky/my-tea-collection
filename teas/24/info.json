@@ -2,7 +2,7 @@
   "title": "Mist Pilgrim",
   "name": "Gao Shan Yiwu Gushu Sheng Spring 2021",
   "description": "Ancient tree Yiwu Gushu Puerh from Gao Shan village. Grape clafoutis, butter toffee, lotus flower and wet rocks.",
-  "typeIds": [ 7, 8 ],
+  "types": [ "Dark", "Sheng Puerh" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/mist-pilgrim/",
   "origin": "Gao Shan, Yiwu, Yunnan, China",

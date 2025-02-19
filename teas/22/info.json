@@ -2,7 +2,7 @@
   "title": "Amulet Majesty",
   "name": "Spring 2015 Gong Ting Zi Juan Ripe PuErh",
   "description": "Fruity and creamy fermented tea made from the purple Zi Juan cultivar. Blueberries, chocolate brioche, orange boiled sweets, sweet bean paste, and cranberry fudge.",
-  "typeIds": [ 7, 9 ],
+  "types": [ "Dark", "Shu Puerh" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/amulet-majesty/",
   "origin": "Bulang, Yunnan, China",

@@ -2,7 +2,7 @@
   "title": "Červená Orchidej 2024",
   "name": "Fujian Gaoshan Qilan Hongcha 2024",
   "description": "Dezertní hřejivý červený čaj s hustě sladkou chutí a vůní makového závinu, jablek a skořice a svěží dochutí nezralého ovoce.",
-  "typeIds": [ 6 ],
+  "types": [ "Black" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/cervena-orchidej-2024/",
   "origin": "Fujian, China",

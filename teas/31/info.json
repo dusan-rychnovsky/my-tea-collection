@@ -2,7 +2,7 @@
   "title": "Souchong Liquor",
   "name": "Tong Mu Zhengshan Xiaozhong",
   "description": "An unsmoked Lapsang that shows the true depth of flavour of this famous tea. Dark cocoa, charred bourbon casks and rambutan.",
-  "typeIds": [ 6 ],
+  "types": [ "Black" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/souchong-liquor/",
   "origin": "Zhengshan, Fujian, China",

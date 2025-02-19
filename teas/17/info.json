@@ -2,7 +2,7 @@
   "title": "Midnight Oracle",
   "name": "Spring 2010 Lincang Dashu Sheng",
   "description": "Spring 2010 old-tree PuErh from Lincang with vibrating body sensation. Apple candy, apricots, overipe pineapple, chestnut honey, incense, flint, leather, dark soy and prune juice.",
-  "typeIds": [ 7, 8 ],
+  "types": [ "Dark", "Sheng Puerh" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/midnight-oracle/",
   "origin": "Lincang, Yunnan, China",

@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.imageio.ImageIO;
 
+import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
 import static cz.dusanrychnovsky.myteacollection.util.upload.Tea.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
@@ -45,7 +46,7 @@ public class UploadNewTeas {
 
   private Map<String, Vendor> vendors;
 
-  private Map<Long, TeaType> teaTypes;
+  private Map<String, TeaType> teaTypes;
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
@@ -107,10 +108,10 @@ public class UploadNewTeas {
     return 0L;
   }
 
-  private Map<Long, TeaType> fetchTeaTypes() {
+  private Map<String, TeaType> fetchTeaTypes() {
     logger.info("Going to fetch available tea types.");
     return teaTypeRepository.findAll().stream()
-      .collect(toMap(TeaType::getId, teaType -> teaType));
+      .collect(toMap(TeaType::getName, teaType -> teaType));
   }
 
   private Map<String, Vendor> fetchVendors() {
@@ -122,15 +123,11 @@ public class UploadNewTeas {
   public static Tea toEntity(
     cz.dusanrychnovsky.myteacollection.util.upload.Tea tea,
     Map<String, Vendor> vendors,
-    Map<Long, TeaType> teaTypes) {
+    Map<String, TeaType> teaTypes) {
 
-    var vendor = vendors.get(tea.getVendor());
-    if (vendor == null) {
-      throw new IllegalArgumentException("Unknown vendor: " + tea.getVendor());
-    }
-
-    var types = tea.getTypeIds().stream()
-      .map(teaTypes::get)
+    var vendor = getOrThrow(vendors, tea.getVendor());
+    var types = tea.getTypes().stream()
+      .map(type -> getOrThrow(teaTypes, type))
       .collect(toSet());
 
     return new Tea(

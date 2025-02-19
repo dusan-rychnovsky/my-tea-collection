@@ -2,7 +2,7 @@
   "title": "Oblak 2024",
   "name": "Lancang Yesheng Gushu Baicha 2024",
   "description": "Vzdušný, hladivý starostromový bílý čaj s komplexní plnou chutí a vůní připomínající luční byliny, sušené meruňky, meduňku a bonbóny s dlouhou sladkou dochutí.",
-  "typeIds": [ 2 ],
+  "types": [ "White" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/oblak-2024/",
   "origin": "Lancang, Yunnan, China",

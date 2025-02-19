@@ -17,16 +17,16 @@ public class UploadNewTeasTests {
     "Mei Leaf", new Vendor(1L, "Mei Leaf", "https://meileaf.com")
   );
 
-  private final Map<Long, TeaType> TEA_TYPES = Map.of(
-    7L, new TeaType(7L, "Dark"),
-    8L, new TeaType(8L, "Sheng Puerh")
+  private final Map<String, TeaType> TEA_TYPES = Map.of(
+    "Dark", new TeaType(7L, "Dark"),
+    "Sheng Puerh", new TeaType(8L, "Sheng Puerh")
   );
 
   private final Tea TEA = new Tea(
     "Luminary Misfit",
     "Lancang Gushu Sheng PuErh Spring 2022",
     "Ultra-fruity and fragrant PuErh made from ancient trees growing in Lancang. Toffee apples, pear compote, cardamom buns, canned pineapple and banana.",
-    Set.of(7L, 8L),
+    Set.of("Dark", "Sheng Puerh"),
     "Mei Leaf",
     "https://meileaf.com/tea/luminary-misfit/",
     "Lancang, Puer, Yunnan, China",
@@ -54,8 +54,8 @@ public class UploadNewTeasTests {
     assertEquals(TEA.isInStock(), result.isInStock());
 
     assertEquals(TEA.getVendor(), result.getVendor().getName());
-    for (var typeId : TEA.getTypeIds()) {
-      assertTrue(result.getTypes().stream().anyMatch(type -> type.getId() == typeId));
+    for (var type : TEA.getTypes()) {
+      assertTrue(result.getTypes().stream().anyMatch(t -> t.getName().equals(type)));
     }
   }
 
@@ -65,12 +65,36 @@ public class UploadNewTeasTests {
     assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES));
   }
 
+  @Test
+  public void toEntity_invalidType_throws() {
+    var tea = withTypes(TEA, Set.of("Dark", "Blend"));
+    assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES));
+  }
+
+  private static Tea withTypes(Tea tea, Set<String> types) {
+    return new Tea(
+      tea.getTitle(),
+      tea.getName(),
+      tea.getDescription(),
+      types,
+      tea.getVendor(),
+      tea.getUrl(),
+      tea.getOrigin(),
+      tea.getCultivar(),
+      tea.getSeason(),
+      tea.getElevation(),
+      tea.getBrewingInstructions(),
+      tea.isInStock()
+    )
+      .setId(tea.getId());
+  }
+
   private static Tea withVendor(Tea tea, String vendor) {
     return new Tea(
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),
-      tea.getTypeIds(),
+      tea.getTypes(),
       vendor,
       tea.getUrl(),
       tea.getOrigin(),

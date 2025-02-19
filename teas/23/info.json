@@ -2,7 +2,7 @@
   "title": "Jade Star 8",
   "name": "2013/2014 Fuding Bai Mu Dan & 2018 Pan Xi Shou Mei",
   "description": "Custom blend of three aged White tea batches from Fuding including the legendary Panxi fields. Salted butter, apricot jam, marzipan, fresh dates and summer rain on hot pavements.",
-  "typeIds": [ 2 ],
+  "types": [ "White" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/jade-star-8/",
   "origin": "Fuding, Fujian, China",

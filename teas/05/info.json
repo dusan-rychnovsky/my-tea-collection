@@ -2,7 +2,7 @@
   "title": "Simple Dreams 2",
   "name": "2021 Zhenghe Shou Mei Blend",
   "description": "An experimental blend of 'Green and Brown' Zhenghe White tea. Strawberry jam on buttered raisin scones, elderflower, honey, warm milk and lotus.",
-  "typeIds": [ 1, 2 ],
+  "types": [ "Blend", "White" ],
   "vendor": "Mei Leaf",
   "url": "https://meileaf.com/tea/simple-dreams-2/",
   "origin": "Zhenghe, Fujian, China",

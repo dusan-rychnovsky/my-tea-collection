@@ -2,7 +2,7 @@
   "title": "Doubleshot",
   "name": "Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022",
   "description": "Plný, zábavný tmavý čaj se sladce krémovou chutí a vůní třešňového kompotu, čerstvě pražených kávových zrn a svězí, ovocnatou dochutí.",
-  "typeIds": [ 7, 9 ],
+  "types": [ "Dark", "Shu Puerh" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/doubleshot/",
   "origin": "Ming Feng Shan, Yunnan, China",

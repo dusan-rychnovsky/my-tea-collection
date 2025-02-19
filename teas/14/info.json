@@ -2,7 +2,7 @@
   "title": "Wuliang 2008 Malajsie",
   "name": "Wuliang Sheng Puer 2008",
   "description": "Čistý, vyzrálý archivní čaj s výraznou chutí a bohatým aroma vlhkých dřev, špendlíkových povidel, čerstvých vlašských ořechů a mentolu s dlouhou chladivou dochutí.",
-  "typeIds": [ 7, 8 ],
+  "types": [ "Dark", "Sheng Puerh" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/wuliang/",
   "origin": "Wuliang, Yunnan, China",

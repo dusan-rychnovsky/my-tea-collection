@@ -26,7 +26,7 @@ public class Tea {
   private String title;
   private String name;
   private String description;
-  private Set<Long> typeIds;
+  private Set<String> types;
   private String vendor;
   private String url;
   private String origin;
@@ -44,7 +44,7 @@ public class Tea {
     @JsonProperty(value = "title", required = true) String title,
     @JsonProperty(value = "name", required = true) String name,
     @JsonProperty(value = "description", required = true) String description,
-    @JsonProperty(value = "typeIds", required = true) Set<Long> typeIds,
+    @JsonProperty(value = "types", required = true) Set<String> types,
     @JsonProperty(value = "vendor", required = true) String vendor,
     @JsonProperty(value = "url", required = true) String url,
     @JsonProperty(value = "origin", required = true) String origin,
@@ -57,7 +57,7 @@ public class Tea {
     this.title = title;
     this.name = name;
     this.description = description;
-    this.typeIds = typeIds;
+    this.types = types;
     this.vendor = vendor;
     this.url = url;
     this.origin = origin;
@@ -101,7 +101,7 @@ public class Tea {
       return mapper.readValue(infoFile, Tea.class);
     }
     catch (IOException ex) {
-      throw new LoadTeaException(ex);
+      throw new CannotLoadTeaInfoException(infoFile, ex);
     }
   }
 
@@ -110,7 +110,7 @@ public class Tea {
       return ImageIO.read(imgFile);
     }
     catch (IOException ex) {
-      throw new LoadTeaException(ex);
+      throw new CannotLoadTeaImageException(imgFile, ex);
     }
   }
 
@@ -135,8 +135,8 @@ public class Tea {
     return description;
   }
 
-  public Set<Long> getTypeIds() {
-    return typeIds;
+  public Set<String> getTypes() {
+    return types;
   }
 
   public String getVendor() {

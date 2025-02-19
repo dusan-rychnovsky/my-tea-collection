@@ -10,6 +10,8 @@ INSERT INTO myteacollection.TeaTypes (id, name) VALUES (7, 'Dark');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (8, 'Sheng Puerh');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (9, 'Shu Puerh');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (10, 'Liu Bao');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (11, 'Yabao');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (12, 'Fu Zhuan');
 
 -- Vendor
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');

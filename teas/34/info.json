@@ -2,7 +2,7 @@
   "title": "Laos Sunrise 2024",
   "name": "Ban Komaen Qiao Mu Hong Cha 2024",
   "description": "Lehký, veselý červený čaj s dlouhou, sladkou chutí a vůní pomerančů a tropického ovoce a větrovou, svěže hřejivou dochutí.",
-  "typeIds": [ 6 ],
+  "types": [ "Black" ],
   "vendor": "Meetea",
   "url": "https://store.meetea.cz/caj/laos-sunrise-2024/",
   "origin": "Ban Komaen, Phongsaly, Laos",
