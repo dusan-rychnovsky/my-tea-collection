@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import javax.imageio.ImageIO;
 
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
+import static cz.dusanrychnovsky.myteacollection.util.MapUtils.mapAll;
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
@@ -39,11 +40,14 @@ public class UploadNewTeas {
   private TeaTypeRepository teaTypeRepository;
 
   @Autowired
+  private TagRepository tagRepository;
+
+  @Autowired
   private TeaRepository teaRepository;
 
   private Map<String, VendorEntity> vendors;
-
   private Map<String, TeaTypeEntity> teaTypes;
+  private Map<String, TagEntity> tags;
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
@@ -67,11 +71,12 @@ public class UploadNewTeas {
 
     vendors = fetchVendors();
     teaTypes = fetchTeaTypes();
+    tags = fetchTags();
 
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
 
-      var teaEntity = toEntity(tea, vendors, teaTypes);
+      var teaEntity = toEntity(tea, vendors, teaTypes, tags);
 
       var idx = 0;
       // TODO: load tea images in correct order
@@ -117,20 +122,26 @@ public class UploadNewTeas {
       .collect(toMap(VendorEntity::getName, vendor -> vendor));
   }
 
+  private Map<String, TagEntity> fetchTags() {
+    logger.info("Going to fetch available tags.");
+    return tagRepository.findAll().stream()
+      .collect(toMap(TagEntity::getLabel, tag -> tag));
+  }
+
   public static TeaEntity toEntity(
     TeaRecord tea,
     Map<String, VendorEntity> vendors,
-    Map<String, TeaTypeEntity> teaTypes) {
+    Map<String, TeaTypeEntity> teaTypes,
+    Map<String, TagEntity> tags) {
 
-    var vendor = getOrThrow(vendors, tea.getVendor());
-    var types = tea.getTypes().stream()
-      .map(type -> getOrThrow(teaTypes, type))
-      .collect(toSet());
+    var vendorEntity = getOrThrow(vendors, tea.getVendor());
+    var typeEntities = mapAll(teaTypes, tea.getTypes());
+    var tagEntities = mapAll(tags, tea.getTags());
 
     return new TeaEntity(
       tea.getId(),
-      vendor,
-      types,
+      vendorEntity,
+      typeEntities,
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),
@@ -141,7 +152,7 @@ public class UploadNewTeas {
       tea.getCultivar(),
       tea.getBrewingInstructions(),
       tea.isInStock(),
-      new HashSet<>()
+      tagEntities
     );
   }
 

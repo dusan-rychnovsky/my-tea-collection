@@ -22,4 +22,6 @@ INSERT INTO myteacollection.Vendors (id, name, url) VALUES (5, 'Klasek Tea', 'ht
 
 -- Tag
 INSERT INTO myteacollection.Tags (id, label, description)
-VALUES (1, 'meetea-2025-leden', 'Čajové předplatné Meetea, leden 2025');
+VALUES (1, 'meetea-2025-jan', 'Čajové předplatné Meetea, leden 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (2, 'meetea-2024-dec', 'Čajové předplatné Meetea, prosinec 2024');

@@ -10,5 +10,6 @@
   "season": "Spring and Autumn 2022",
   "elevation": "NA",
   "brewingInstructions": "100°C, 5g/100ml, 15s-10s-5s-10s-20s",
-  "inStock": true
+  "inStock": true,
+  "tags": [ "meetea-2025-jan", "meetea-2024-dec" ]
 }

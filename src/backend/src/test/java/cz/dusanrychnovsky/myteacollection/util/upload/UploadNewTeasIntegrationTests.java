@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
+import cz.dusanrychnovsky.myteacollection.db.TagEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.Set;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
 
 @DataJpaTest()
@@ -37,9 +39,15 @@ public class UploadNewTeasIntegrationTests {
     assertEquals(Set.of("Dark", "Shu Puerh"), getNames(first.getTypes()));
     assertEquals("Meetea", first.getVendor().getName());
     assertEquals(2, first.getImages().size());
+    assertEquals(Set.of("meetea-2025-jan", "meetea-2024-dec"), getLabels(first.getTags()));
     var second = teas.get(1);
     assertEquals("https://meileaf.com/tea/luminary-misfit/", second.getUrl());
     assertEquals(3, second.getImages().size());
+    assertTrue(second.getTags().isEmpty());
+  }
+
+  private Set<String> getLabels(Set<TagEntity> tags) {
+    return tags.stream().map(TagEntity::getLabel).collect(toSet());
   }
 
   private Set<String> getNames(Set<TeaTypeEntity> types) {

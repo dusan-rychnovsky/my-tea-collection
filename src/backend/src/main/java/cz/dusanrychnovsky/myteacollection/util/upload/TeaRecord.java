@@ -16,6 +16,7 @@ import java.util.Set;
 import static java.lang.Long.parseLong;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingLong;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 
 public class TeaRecord {
@@ -35,6 +36,7 @@ public class TeaRecord {
   private String elevation;
   private String brewingInstructions;
   private boolean inStock;
+  private Set<String> tags;
 
   @JsonIgnore
   private List<BufferedImage> images;
@@ -52,7 +54,8 @@ public class TeaRecord {
     @JsonProperty(value = "season", required = true) String season,
     @JsonProperty(value = "elevation", required = true) String elevation,
     @JsonProperty(value = "brewingInstructions", required = true) String brewingInstructions,
-    @JsonProperty(value = "inStock", required = true) boolean inStock
+    @JsonProperty(value = "inStock", required = true) boolean inStock,
+    @JsonProperty(value = "tags") Set<String> tags
   ) {
     this.title = title;
     this.name = name;
@@ -66,6 +69,7 @@ public class TeaRecord {
     this.elevation = elevation;
     this.brewingInstructions = brewingInstructions;
     this.inStock = inStock;
+    this.tags = tags != null ? tags : emptySet();
 
     images = new ArrayList<>();
   }
@@ -173,5 +177,9 @@ public class TeaRecord {
 
   public List<BufferedImage> getImages() {
     return images;
+  }
+
+  public Set<String> getTags() {
+    return tags;
   }
 }

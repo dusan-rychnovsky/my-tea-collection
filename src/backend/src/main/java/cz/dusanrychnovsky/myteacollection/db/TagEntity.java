@@ -14,6 +14,15 @@ public class TagEntity {
     );
    */
 
+  public TagEntity(long id, String label, String description) {
+    this.id = id;
+    this.label = label;
+    this.description = description;
+  }
+
+  public TagEntity() {
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

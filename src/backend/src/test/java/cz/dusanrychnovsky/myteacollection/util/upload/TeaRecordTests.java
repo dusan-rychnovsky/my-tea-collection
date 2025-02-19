@@ -29,6 +29,7 @@ public class TeaRecordTests {
     assertEquals("100°C, 5g/100ml, 15s-10s-5s-10s-20s", tea.getBrewingInstructions());
     assertTrue(tea.isInStock());
     assertEquals(2, tea.getImages().size());
+    assertEquals(Set.of("meetea-2025-jan", "meetea-2024-dec"), tea.getTags());
   }
 
   @Test
@@ -38,6 +39,15 @@ public class TeaRecordTests {
     assertEquals(2, teas.size());
     assertEquals(1, teas.get(0).getId());
     assertEquals(2, teas.get(1).getId());
+  }
+
+  @Test
+  public void loadAllFrom_tagsAreOptional() {
+    var teas = loadAllFrom(toFile("teas"));
+
+    assertEquals(2, teas.size());
+    assertEquals(2, teas.get(0).getTags().size());
+    assertEquals(0, teas.get(1).getTags().size());
   }
 
   @Test
