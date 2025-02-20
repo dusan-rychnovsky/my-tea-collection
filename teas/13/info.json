@@ -10,5 +10,6 @@
   "season": "Spring 2024",
   "elevation": "NA",
   "brewingInstructions": "100°C, 4g/100ml, 20s-10s-20s-30s-60s",
-  "inStock": true
+  "inStock": true,
+  "tags": [ "meetea-2024-dec" ]
 }
