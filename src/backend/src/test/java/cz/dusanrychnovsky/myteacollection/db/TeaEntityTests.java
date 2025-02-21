@@ -60,4 +60,17 @@ public class TeaEntityTests {
     var tea = new TeaEntity().setUrl("https://meileaf.com/tea/find-your-sunshine-2/");
     assertEquals("meileaf.com", tea.getUrlDomain());
   }
+
+  @Test
+  public void printTypes_printsTypeNamesSortedByTypeIdsToString() {
+    var types = Set.of(
+      new TeaTypeEntity(1L, "Blend"),
+      new TeaTypeEntity(9L, "Shu Puerh"),
+      new TeaTypeEntity(7L, "Dark Tea")
+    );
+    var tea = new TeaEntity()
+      .setTypes(types);
+
+    assertEquals("Blend, Dark Tea, Shu Puerh", tea.printTypes());
+  }
 }

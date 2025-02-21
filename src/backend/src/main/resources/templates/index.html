@@ -78,6 +78,10 @@
                     <span th:text="${tea.title}"></span><br />
                     <span th:text="${tea.name}"></span>
                   </h2>
+                  <p class="basic-info">
+                    <span th:text="${tea.vendor.name}"></span>
+                    <span th:text="${tea.printTypes}"></span>
+                  </p>
                   <p th:text="${tea.description}" class="card-text"></p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
@@ -86,7 +90,7 @@
                         <button type="submit" class="btn btn-sm btn-outline-secondary">Edit</button>
                       </form>
                     </div>
-                    <small th:each="type : ${tea.types}" th:text="${type.name}" class="text-muted"></small>
+                    <small th:each="tag : ${tea.tags}" th:text="${tag.label}" th:title="${tag.description}" class="text-muted"></small>
                   </div>
                 </div>
               </div>
