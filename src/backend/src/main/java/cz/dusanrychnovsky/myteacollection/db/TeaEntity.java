@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.joining;
 
 // TODO: see how many queries get generated to fetch a tea or list of teas
 @Entity
@@ -145,6 +147,12 @@ public class TeaEntity {
 
   public Set<TeaTypeEntity> getTypes() {
     return types;
+  }
+
+  public String printTypes() {
+    return types.stream()
+      .map(TeaTypeEntity::getName)
+      .collect(joining(", "));
   }
 
   public String getTitle() {

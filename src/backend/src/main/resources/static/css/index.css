@@ -26,3 +26,11 @@
 .tea-card h2 {
   font-size: 1rem;
 }
+
+.tea-card p.basic-info {
+  margin-bottom: 8px;
+}
+
+.tea-card p.basic-info span {
+  display: block;
+}
