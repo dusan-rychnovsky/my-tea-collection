@@ -36,7 +36,7 @@ public class UploadNewTeasIntegrationTests {
     assertEquals(2, teas.size());
     var first = teas.get(0);
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
-    assertEquals(Set.of("Dark", "Shu Puerh"), getNames(first.getTypes()));
+    assertEquals(Set.of("Dark Tea", "Shu Puerh"), getNames(first.getTypes()));
     assertEquals("Meetea", first.getVendor().getName());
     assertEquals(2, first.getImages().size());
     assertEquals(Set.of("meetea-2025-jan", "meetea-2024-dec"), getLabels(first.getTags()));

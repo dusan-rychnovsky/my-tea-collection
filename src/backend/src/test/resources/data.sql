@@ -1,12 +1,12 @@
 
 -- TeaType
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (1, 'Blend');
-INSERT INTO myteacollection.TeaTypes (id, name) VALUES (2, 'White');
-INSERT INTO myteacollection.TeaTypes (id, name) VALUES (3, 'Yellow');
-INSERT INTO myteacollection.TeaTypes (id, name) VALUES (4, 'Green');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (2, 'White Tea');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (3, 'Yellow Tea');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (4, 'Green Tea');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (5, 'Oolong');
-INSERT INTO myteacollection.TeaTypes (id, name) VALUES (6, 'Black');
-INSERT INTO myteacollection.TeaTypes (id, name) VALUES (7, 'Dark');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (6, 'Red Tea');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (7, 'Dark Tea');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (8, 'Sheng Puerh');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (9, 'Shu Puerh');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (10, 'Liu Bao');
