@@ -80,6 +80,7 @@ public class MyTeaCollectionApplication {
 
   @GetMapping("/images/{id}")
   public ResponseEntity<byte[]> image(@PathVariable("id") Long imgId) {
+    // TODO: this query doesn't need to do a join with tea, vendor, etc
     return teaImageRepository.findById(imgId)
       .map(image -> {
         var headers = new HttpHeaders();

@@ -4,6 +4,7 @@ import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Repository;
 
@@ -18,27 +19,31 @@ public class TeaSearchRepository {
 
   public List<TeaEntity> findByCriteria(SearchCriteria criteria) {
 
-    var builder = entityManager.getCriteriaBuilder();
-    var query = builder.createQuery(TeaEntity.class);
-    var tea = query.from(TeaEntity.class);
+    var criteriaBuilder = entityManager.getCriteriaBuilder();
+    var criteriaQuery = criteriaBuilder.createQuery(TeaEntity.class);
+    var teaParent = criteriaQuery.from(TeaEntity.class);
+
+    teaParent.fetch("types", JoinType.INNER);
+    teaParent.fetch("vendor", JoinType.INNER);
+    teaParent.fetch("images", JoinType.LEFT);
+    teaParent.fetch("tags", JoinType.LEFT);
 
     var predicates = new ArrayList<Predicate>();
-
     if (criteria.teaTypeId() != 0) {
-      var type = tea.join("types");
-      predicates.add(builder.equal(type.get("id"), criteria.teaTypeId()));
+      var type = teaParent.join("types");
+      predicates.add(criteriaBuilder.equal(type.get("id"), criteria.teaTypeId()));
     }
     if (criteria.vendorId() != 0) {
-      var vendor = tea.join("vendor");
-      predicates.add(builder.equal(vendor.get("id"), criteria.vendorId()));
+      var vendor = teaParent.join("vendor");
+      predicates.add(criteriaBuilder.equal(vendor.get("id"), criteria.vendorId()));
     }
     if (criteria.availabilityId() != 0) {
       var availability = Availability.toBoolean(criteria.availabilityId());
-      predicates.add(builder.equal(tea.get("inStock"), availability));
+      predicates.add(criteriaBuilder.equal(teaParent.get("inStock"), availability));
     }
-    query.where(predicates.toArray(new Predicate[0]));
+    criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
     // TODO paginating .setFirstResult(offset).setMaxResults(limit)
-    return entityManager.createQuery(query).getResultList();
+    return entityManager.createQuery(criteriaQuery).getResultList();
   }
 }
