@@ -22,7 +22,7 @@ public class TeaImageEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(optional = false, fetch = FetchType.LAZY)
   @JoinColumn(name = "tea_id", nullable = false)
   private TeaEntity tea;
 
