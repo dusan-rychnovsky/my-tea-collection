@@ -91,7 +91,8 @@ public class UploadNewTeas {
         logger.info("JPG compression: original size {}, compressed size {}, ratio {}",
           origLen, compressedLen, (float) compressedLen / origLen);
 
-        var imageEntity = new TeaImageEntity(teaEntity, idx, compressedBytes);
+        var dataEntity = new TeaImageDataEntity(compressedBytes);
+        var imageEntity = new TeaImageEntity(teaEntity, idx, dataEntity);
         teaEntity.addImage(imageEntity);
       }
 
