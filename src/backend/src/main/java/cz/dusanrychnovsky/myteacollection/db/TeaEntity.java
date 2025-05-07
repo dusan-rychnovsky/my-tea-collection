@@ -17,40 +17,6 @@ import static java.util.stream.Collectors.joining;
 @Table(schema = "myteacollection", name = "Teas")
 public class TeaEntity {
 
-  /*
-    CREATE TABLE myteacollection.Teas (
-      id SERIAL PRIMARY KEY,
-      vendor_id BIGINT,
-      title VARCHAR(255),
-      name VARCHAR(255),
-      description TEXT,
-      url VARCHAR(255),
-      origin VARCHAR(255),
-      cultivar VARCHAR(255),
-      season VARCHAR(255),
-      elevation VARCHAR(255),
-      brewing_instructions VARCHAR(255),
-      in_stock BOOLEAN,
-      FOREIGN KEY (vendor_id) REFERENCES myteacollection.Vendors(id)
-    );
-
-    CREATE TABLE myteacollection.Teas_TeaTypes (
-      tea_id BIGINT NOT NULL,
-      type_id BIGINT NOT NULL,
-      PRIMARY KEY (tea_id, type_id),
-      FOREIGN KEY (tea_id) REFERENCES myteacollection.Teas(id),
-      FOREIGN KEY (type_id) REFERENCES myteacollection.TeaTypes(id)
-    );
-
-    CREATE TABLE myteacollection.Teas_Tags (
-      tea_id BIGINT NOT NULL,
-      tag_id BIGINT NOT NULL,
-      PRIMARY KEY (tea_id, tag_id),
-      FOREIGN KEY (tea_id) REFERENCES myteacollection.Teas(id),
-      FOREIGN KEY (tag_id) REFERENCES myteacollection.Tags(id)
-    );
-   */
-
   @Id
   private Long id;
 

@@ -8,16 +8,6 @@ import jakarta.persistence.*;
 @Table(schema = "myteacollection", name = "TeaImages")
 public class TeaImageEntity {
 
-  /*
-    CREATE TABLE myteacollection.TeaImages (
-      id SERIAL PRIMARY KEY,
-      tea_id BIGINT NOT NULL,
-      index INT,
-      data BYTEA,
-      FOREIGN KEY (tea_id) REFERENCES myteacollection.Teas(id)
-    );
-   */
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

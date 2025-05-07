@@ -14,16 +14,43 @@ The application is built using Java, Spring, Thymleaf and PostgreSQL, and is Doc
 
 ## How To
 
-### Build
+### Build the Application
 
 ```
 cd .\src\backend\
 mvn clean package
 ```
 
-### Run
+### Set Up the Database
 
-TODO: how to set up DB
+1) **Create the database schema.**  
+   Execute the following SQL statement:
+
+```
+CREATE SCHEMA myteacollection;
+```
+
+2) **Generate and apply DDL statements.**  
+Use the commands below to generate a file named `ddl-schema.sql` containing `CREATE TABLE` statements for all entities. Execute all of them:
+
+```
+$env:SPRING_DATASOURCE_URL = "X"
+$env:SPRING_DATASOURCE_USERNAME = "X"
+$env:SPRING_DATASOURCE_PASSWORD = "X"
+java `
+  "-Dspring.jpa.properties.jakarta.persistence.schema-generation.create-source=metadata" `
+  "-Dspring.jpa.properties.jakarta.persistence.schema-generation.scripts.action=create" `
+  "-Dspring.jpa.properties.jakarta.persistence.schema-generation.scripts.create-target=ddl-schema.sql" `
+  -jar .\target\myteacollection-0.0.1-SNAPSHOT.jar
+```
+
+3) **Insert bootstrapping data.**  
+Execute statements from file `src\backend\src\test\resources\data.sql`.
+
+4) **(Optional) Populate the database with teas from my collection.**  
+Run `UpladNewTeas` java class.
+
+### Run the Application
 
 ```
 docker build --tag=my-tea-collection:latest .

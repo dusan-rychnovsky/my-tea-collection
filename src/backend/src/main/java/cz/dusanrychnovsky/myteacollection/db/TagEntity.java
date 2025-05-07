@@ -6,14 +6,6 @@ import jakarta.persistence.*;
 @Table(schema = "myteacollection", name = "Tags")
 public class TagEntity {
 
-  /*
-    CREATE TABLE myteacollection.Tags (
-      id SERIAL PRIMARY KEY,
-      label VARCHAR(255) NOT NULL,
-      description TEXT
-    );
-   */
-
   public TagEntity(long id, String label, String description) {
     this.id = id;
     this.label = label;

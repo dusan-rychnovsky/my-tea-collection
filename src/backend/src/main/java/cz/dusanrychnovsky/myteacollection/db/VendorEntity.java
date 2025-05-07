@@ -6,14 +6,6 @@ import jakarta.persistence.*;
 @Table(schema = "myteacollection", name = "Vendors")
 public class VendorEntity {
 
-  /*
-    CREATE TABLE myteacollection.Vendors (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      url VARCHAR(255) NOT NULL
-    );
-   */
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -6,13 +6,6 @@ import jakarta.persistence.*;
 @Table(schema = "myteacollection", name = "TeaTypes")
 public class TeaTypeEntity {
 
-  /*
-    CREATE TABLE myteacollection.TeaTypes (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(255) NOT NULL
-    );
-   */
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
