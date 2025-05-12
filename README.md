@@ -17,7 +17,6 @@ The application is built using Java, Spring, Thymleaf and PostgreSQL, and is Doc
 ### Build the Application
 
 ```
-cd .\src\backend\
 mvn clean package
 ```
 
