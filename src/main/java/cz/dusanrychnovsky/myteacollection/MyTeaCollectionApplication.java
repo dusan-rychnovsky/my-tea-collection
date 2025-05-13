@@ -29,20 +29,26 @@ public class MyTeaCollectionApplication {
     SpringApplication.run(MyTeaCollectionApplication.class, args);
   }
 
-  @Autowired
   private VendorRepository vendorRepository;
-
-  @Autowired
   private TeaTypeRepository teaTypeRepository;
-
-  @Autowired
+  private TeaImageRepository teaImageRepository;
+  private TeaRepository teaRepository;
   private TeaSearchRepository teaSearchRepository;
 
   @Autowired
-  private TeaImageRepository teaImageRepository;
+  public MyTeaCollectionApplication(
+    VendorRepository vendorRepository,
+    TeaTypeRepository teaTypeRepository,
+    TeaImageRepository teaImageRepository,
+    TeaRepository teaRepository,
+    TeaSearchRepository teaSearchRepository) {
 
-  @Autowired
-  private TeaRepository teaRepository;
+    this.vendorRepository = vendorRepository;
+    this.teaTypeRepository = teaTypeRepository;
+    this.teaImageRepository = teaImageRepository;
+    this.teaRepository = teaRepository;
+    this.teaSearchRepository = teaSearchRepository;
+  }
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {

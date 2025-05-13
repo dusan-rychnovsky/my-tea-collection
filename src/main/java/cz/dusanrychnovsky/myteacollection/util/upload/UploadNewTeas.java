@@ -33,16 +33,9 @@ public class UploadNewTeas {
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
-  @Autowired
   private VendorRepository vendorRepository;
-
-  @Autowired
   private TeaTypeRepository teaTypeRepository;
-
-  @Autowired
   private TagRepository tagRepository;
-
-  @Autowired
   private TeaRepository teaRepository;
 
   private Map<String, VendorEntity> vendors;
@@ -55,6 +48,19 @@ public class UploadNewTeas {
     var bean = context.getBean(UploadNewTeas.class);
     bean.run(new File(args[0]));
     logger.info("UploadNewTeas successfully finished.");
+  }
+
+  @Autowired
+  public UploadNewTeas(
+    VendorRepository vendorRepository,
+    TeaTypeRepository teaTypeRepository,
+    TagRepository tagRepository,
+    TeaRepository teaRepository) {
+
+    this.vendorRepository = vendorRepository;
+    this.teaTypeRepository = teaTypeRepository;
+    this.tagRepository = tagRepository;
+    this.teaRepository = teaRepository;
   }
 
   public void run(File rootDir) throws IOException {
