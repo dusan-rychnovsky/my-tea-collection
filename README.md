@@ -1,3 +1,9 @@
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
+
 # My Tea Collection
 
 A web application designed to help you track your tea collection.
