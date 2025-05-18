@@ -7,6 +7,10 @@ import static java.util.stream.Collectors.toSet;
 
 public class MapUtils {
 
+  private MapUtils() {
+    throw new IllegalStateException("Utility class.");
+  }
+
   public static <K, V> V getOrThrow(Map<K, V> map, K key) {
     var result = map.get(key);
     if (result == null) {
