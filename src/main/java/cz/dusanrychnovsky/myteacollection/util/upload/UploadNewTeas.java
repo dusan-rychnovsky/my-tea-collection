@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
@@ -24,7 +23,6 @@ import static cz.dusanrychnovsky.myteacollection.util.MapUtils.mapAll;
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.db")
