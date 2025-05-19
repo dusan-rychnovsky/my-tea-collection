@@ -17,7 +17,6 @@ import static java.lang.Long.parseLong;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingLong;
 import static java.util.Collections.emptySet;
-import static java.util.stream.Collectors.toList;
 
 public class TeaRecord {
 
@@ -80,7 +79,7 @@ public class TeaRecord {
       .filter(file -> { var id = parseLong(file.getName()); return id >= minId; })
       .map(TeaRecord::loadFrom)
       .sorted(comparingLong(tea -> tea.id))
-      .collect(toList());
+      .toList();
   }
 
   public static List<TeaRecord> loadAllFrom(File rootDir) {
