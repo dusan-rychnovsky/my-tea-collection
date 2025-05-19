@@ -9,10 +9,10 @@ import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TeaRecordTests {
+class TeaRecordTests {
 
   @Test
-  public void loadFrom_loadsTeaFromGivenDirectory() {
+  void loadFrom_loadsTeaFromGivenDirectory() {
     var tea = loadFrom(toFile("teas/01"));
 
     assertEquals(1, tea.getId());
@@ -33,7 +33,7 @@ public class TeaRecordTests {
   }
 
   @Test
-  public void loadAllFrom_loadsAllTeasFromGivenRootDirectory() {
+  void loadAllFrom_loadsAllTeasFromGivenRootDirectory() {
     var teas = loadAllFrom(toFile("teas"));
 
     assertEquals(2, teas.size());
@@ -42,7 +42,7 @@ public class TeaRecordTests {
   }
 
   @Test
-  public void loadAllFrom_tagsAreOptional() {
+  void loadAllFrom_tagsAreOptional() {
     var teas = loadAllFrom(toFile("teas"));
 
     assertEquals(2, teas.size());
@@ -51,7 +51,7 @@ public class TeaRecordTests {
   }
 
   @Test
-  public void loadNewFrom_loadsAllTeasFromGivenRootDirectoryWithIdHigherOrEqualsGivenId() {
+  void loadNewFrom_loadsAllTeasFromGivenRootDirectoryWithIdHigherOrEqualsGivenId() {
     var teas = loadNewFrom(toFile("teas"), 2);
 
     assertEquals(1, teas.size());

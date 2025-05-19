@@ -33,13 +33,13 @@ class MyTeaCollectionApplicationTests {
 	private MockMvc mvc;
 
 	@BeforeAll
-	public void setup() throws IOException {
+	void setup() throws IOException {
 		// insert two teas in the DB
 		uploadNewTeas.run(toFile("teas"));
 	}
 
 	@Test
-	public void index_listsAllTeas() throws Exception {
+	void index_listsAllTeas() throws Exception {
 		// request index action
 		var actions = mvc.perform(get("/index"))
 			.andExpect(status().isOk());
@@ -79,7 +79,7 @@ class MyTeaCollectionApplicationTests {
 	}
 
 	@Test
-	public void teaView_showsGivenTea() throws Exception {
+	void teaView_showsGivenTea() throws Exception {
 		// request teaView action
 		var actions = mvc.perform(get("/teas/2"))
 			.andExpect(status().isOk());

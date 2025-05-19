@@ -11,7 +11,7 @@ import java.util.Set;
 import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UploadNewTeasTests {
+class UploadNewTeasTests {
 
   private final Map<String, VendorEntity> VENDORS = Map.of(
     "Meetea", new VendorEntity(0L, "Meetea", "https://www.meetea.cz"),
@@ -45,7 +45,7 @@ public class UploadNewTeasTests {
     .setId(5);
 
   @Test
-  public void toEntity_translatesTeaToEntityRepresentation() {
+  void toEntity_translatesTeaToEntityRepresentation() {
     var result = toEntity(TEA, VENDORS, TEA_TYPES, TAGS);
 
     assertEquals(TEA.getId(), result.getId());
@@ -70,19 +70,19 @@ public class UploadNewTeasTests {
   }
 
   @Test
-  public void toEntity_invalidVendor_throws() {
+  void toEntity_invalidVendor_throws() {
     var tea = withVendor(TEA, "Meileaf");
     assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
-  public void toEntity_invalidType_throws() {
+  void toEntity_invalidType_throws() {
     var tea = withTypes(TEA, Set.of("Dark", "Blend"));
     assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
-  public void toEntity_invalidTag_throws() {
+  void toEntity_invalidTag_throws() {
     var tea = withTags(TEA, Set.of("meetea-2025-jan", "unknown-tag"));
     assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
   }

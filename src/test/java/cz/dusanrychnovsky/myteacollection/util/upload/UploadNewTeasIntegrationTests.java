@@ -21,7 +21,7 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @DataJpaTest()
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace= NONE)
-public class UploadNewTeasIntegrationTests {
+class UploadNewTeasIntegrationTests {
 
   @Autowired
   private UploadNewTeas uploadNewTeas;
@@ -30,7 +30,7 @@ public class UploadNewTeasIntegrationTests {
   private TeaRepository teaRepository;
 
   @Test
-  public void noTeasInDb_uploadsAllTeas() throws IOException {
+  void noTeasInDb_uploadsAllTeas() throws IOException {
     uploadNewTeas.run(toFile("teas"));
     var teas = teaRepository.findAll();
     assertEquals(2, teas.size());
