@@ -43,7 +43,6 @@ public class TeaSearchRepository {
     }
     criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
-    // TODO paginating .setFirstResult(offset).setMaxResults(limit)
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 }

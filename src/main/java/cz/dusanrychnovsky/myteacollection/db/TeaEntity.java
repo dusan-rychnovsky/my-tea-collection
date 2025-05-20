@@ -12,7 +12,6 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.joining;
 
-// TODO: see how many queries get generated to fetch a tea or list of teas
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
 public class TeaEntity {
