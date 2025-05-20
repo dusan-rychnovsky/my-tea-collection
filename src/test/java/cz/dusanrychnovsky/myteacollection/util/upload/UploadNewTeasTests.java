@@ -13,22 +13,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UploadNewTeasTests {
 
-  private final Map<String, VendorEntity> VENDORS = Map.of(
+  private static final Map<String, VendorEntity> VENDORS = Map.of(
     "Meetea", new VendorEntity(0L, "Meetea", "https://www.meetea.cz"),
     "Mei Leaf", new VendorEntity(1L, "Mei Leaf", "https://meileaf.com")
   );
 
-  private final Map<String, TeaTypeEntity> TEA_TYPES = Map.of(
+  private static final Map<String, TeaTypeEntity> TEA_TYPES = Map.of(
     "Dark", new TeaTypeEntity(7L, "Dark"),
     "Sheng Puerh", new TeaTypeEntity(8L, "Sheng Puerh")
   );
 
-  private final Map<String, TagEntity> TAGS = Map.of(
+  private static final Map<String, TagEntity> TAGS = Map.of(
     "meetea-2025-jan", new TagEntity(1L, "meetea-2025-jan", "Čajové předplatné Meetea, leden 2025"),
     "meetea-2024-dec", new TagEntity(2L, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
   );
 
-  private final TeaRecord TEA = new TeaRecord(
+  private static final TeaRecord TEA = new TeaRecord(
     "Luminary Misfit",
     "Lancang Gushu Sheng PuErh Spring 2022",
     "Ultra-fruity and fragrant PuErh made from ancient trees growing in Lancang. Toffee apples, pear compote, cardamom buns, canned pineapple and banana.",
