@@ -151,10 +151,12 @@ public class UploadNewTeas {
       tea.getName(),
       tea.getDescription(),
       tea.getUrl(),
-      tea.getSeason(),
-      tea.getOrigin(),
-      tea.getElevation(),
-      tea.getCultivar(),
+      new TeaScope(
+        tea.getSeason(),
+        tea.getCultivar(),
+        tea.getOrigin(),
+        tea.getElevation()
+      ),
       tea.getBrewingInstructions(),
       tea.isInStock(),
       tagEntities

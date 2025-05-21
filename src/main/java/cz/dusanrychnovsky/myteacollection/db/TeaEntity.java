@@ -44,13 +44,8 @@ public class TeaEntity {
 
   private String url;
 
-  private String season;
-
-  private String origin;
-
-  private String elevation;
-
-  private String cultivar;
+  @Embedded
+  private TeaScope scope;
 
   @Column(name = "brewing_instructions")
   private String brewingInstructions;
@@ -74,10 +69,7 @@ public class TeaEntity {
     String name,
     String description,
     String url,
-    String season,
-    String origin,
-    String elevation,
-    String cultivar,
+    TeaScope scope,
     String brewingInstructions,
     boolean inStock,
     Set<TagEntity> tags) {
@@ -90,10 +82,7 @@ public class TeaEntity {
     this.description = description;
     this.images = new HashSet<>();
     this.url = url;
-    this.season = season;
-    this.origin = origin;
-    this.elevation = elevation;
-    this.cultivar = cultivar;
+    this.scope = scope;
     this.brewingInstructions = brewingInstructions;
     this.inStock = inStock;
     this.tags = tags;
@@ -176,20 +165,8 @@ public class TeaEntity {
     return new URL(url).getHost();
   }
 
-  public String getSeason() {
-    return season;
-  }
-
-  public String getOrigin() {
-    return origin;
-  }
-
-  public String getElevation() {
-    return elevation;
-  }
-
-  public String getCultivar() {
-    return cultivar;
+  public TeaScope getScope() {
+    return scope;
   }
 
   public String getBrewingInstructions() {

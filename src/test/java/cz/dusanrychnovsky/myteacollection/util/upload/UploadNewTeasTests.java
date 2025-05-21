@@ -53,10 +53,10 @@ class UploadNewTeasTests {
     assertEquals(TEA.getName(), result.getName());
     assertEquals(TEA.getDescription(), result.getDescription());
     assertEquals(TEA.getUrl(), result.getUrl());
-    assertEquals(TEA.getOrigin(), result.getOrigin());
-    assertEquals(TEA.getCultivar(), result.getCultivar());
-    assertEquals(TEA.getSeason(), result.getSeason());
-    assertEquals(TEA.getElevation(), result.getElevation());
+    assertEquals(TEA.getOrigin(), result.getScope().getOrigin());
+    assertEquals(TEA.getCultivar(), result.getScope().getCultivar());
+    assertEquals(TEA.getSeason(), result.getScope().getSeason());
+    assertEquals(TEA.getElevation(), result.getScope().getElevation());
     assertEquals(TEA.getBrewingInstructions(), result.getBrewingInstructions());
     assertEquals(TEA.isInStock(), result.isInStock());
 
