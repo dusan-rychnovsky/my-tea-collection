@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.db;
 
 import cz.dusanrychnovsky.myteacollection.model.Availability;
-import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.JoinType;
@@ -17,7 +17,7 @@ public class TeaSearchRepository {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public List<TeaEntity> findByCriteria(SearchCriteria criteria) {
+  public List<TeaEntity> filter(FilterCriteria criteria) {
 
     var criteriaBuilder = entityManager.getCriteriaBuilder();
     var criteriaQuery = criteriaBuilder.createQuery(TeaEntity.class);

@@ -2,7 +2,7 @@ package cz.dusanrychnovsky.myteacollection;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.model.Availability;
-import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,11 +52,11 @@ public class MyTeaCollectionApplication {
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
-    return search(new SearchCriteria(0, 0, 0), model);
+    return filter(new FilterCriteria(0, 0, 0), model);
   }
 
-  @PostMapping("/search")
-  public String search(@ModelAttribute SearchCriteria criteria, Model model) {
+  @PostMapping("/filter")
+  public String filter(@ModelAttribute FilterCriteria criteria, Model model) {
     // search
     var allVendors = vendorRepository.findAll();
     allVendors.add(0, new VendorEntity(0L, "All", null));
@@ -69,10 +69,10 @@ public class MyTeaCollectionApplication {
     var availabilities = Availability.getAll();
     model.addAttribute("availabilities", availabilities);
 
-    model.addAttribute("search", criteria);
+    model.addAttribute("filter", criteria);
 
     // listing
-    var teas = teaSearchRepository.findByCriteria(criteria);
+    var teas = teaSearchRepository.filter(criteria);
     model.addAttribute("teas", teas);
     return "index";
   }
