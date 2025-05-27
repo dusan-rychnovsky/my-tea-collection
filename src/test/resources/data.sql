@@ -46,3 +46,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (11, 'meetea-2025-mar', 'Čajové předplatné Meetea, březen 2025');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (12, 'meetea-2025-apr', 'Čajové předplatné Meetea, duben 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (13, 'meetea-2025-may', 'Čajové předplatné Meetea, květen 2025');
