@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.myteacollection.db;
 
 import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
+import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.JoinType;
@@ -44,5 +45,9 @@ public class TeaSearchRepository {
     criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
     return entityManager.createQuery(criteriaQuery).getResultList();
+  }
+
+  public List<TeaEntity> search(SearchCriteria criteria) {
+    return filter(FilterCriteria.EMPTY); // TODO
   }
 }

@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection;
 import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
+import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -55,26 +56,44 @@ public class MyTeaCollectionApplication {
   @GetMapping({"/", "/index"})
   public String index(Model model) {
     var filterCriteria = FilterCriteria.EMPTY;
+    var searchCriteria = SearchCriteria.EMPTY;
     return populateIndexView(
       model,
       teaSearchRepository.filter(filterCriteria),
-      filterCriteria
+      filterCriteria,
+      searchCriteria
     );
   }
 
   @PostMapping("/filter")
   public String filter(@ModelAttribute FilterCriteria criteria, Model model) {
+    var searchCriteria = SearchCriteria.EMPTY;
     return populateIndexView(
       model,
       teaSearchRepository.filter(criteria),
+      criteria,
+      searchCriteria
+    );
+  }
+
+  @PostMapping("/search")
+  public String search(@ModelAttribute SearchCriteria criteria, Model model) {
+    var filterCriteria = FilterCriteria.EMPTY;
+    return populateIndexView(
+      model,
+      teaSearchRepository.search(criteria),
+      filterCriteria,
       criteria
     );
   }
 
-  private String populateIndexView(Model model, List<TeaEntity> teas, FilterCriteria criteria) {
+  private String populateIndexView(
+    Model model, List<TeaEntity> teas, FilterCriteria filterCriteria, SearchCriteria searchCriteria) {
+
     populateDropdowns(model);
     model.addAttribute("teas", teas);
-    model.addAttribute("filter", criteria);
+    model.addAttribute("filter", filterCriteria);
+    model.addAttribute("search", searchCriteria);
     return "index";
   }
 
