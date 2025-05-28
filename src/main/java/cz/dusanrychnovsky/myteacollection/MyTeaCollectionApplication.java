@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
 // https://www.baeldung.com/dockerizing-spring-boot-application
@@ -52,12 +54,31 @@ public class MyTeaCollectionApplication {
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
-    return filter(new FilterCriteria(0, 0, 0), model);
+    var filterCriteria = FilterCriteria.EMPTY;
+    return populateIndexView(
+      model,
+      teaSearchRepository.filter(filterCriteria),
+      filterCriteria
+    );
   }
 
   @PostMapping("/filter")
   public String filter(@ModelAttribute FilterCriteria criteria, Model model) {
-    // search
+    return populateIndexView(
+      model,
+      teaSearchRepository.filter(criteria),
+      criteria
+    );
+  }
+
+  private String populateIndexView(Model model, List<TeaEntity> teas, FilterCriteria criteria) {
+    populateDropdowns(model);
+    model.addAttribute("teas", teas);
+    model.addAttribute("filter", criteria);
+    return "index";
+  }
+
+  private void populateDropdowns(Model model) {
     var allVendors = vendorRepository.findAll();
     allVendors.add(0, new VendorEntity(0L, "All", null));
     model.addAttribute("vendors", allVendors);
@@ -68,13 +89,6 @@ public class MyTeaCollectionApplication {
 
     var availabilities = Availability.getAll();
     model.addAttribute("availabilities", availabilities);
-
-    model.addAttribute("filter", criteria);
-
-    // listing
-    var teas = teaSearchRepository.filter(criteria);
-    model.addAttribute("teas", teas);
-    return "index";
   }
 
   @GetMapping("/teas/{id}")
