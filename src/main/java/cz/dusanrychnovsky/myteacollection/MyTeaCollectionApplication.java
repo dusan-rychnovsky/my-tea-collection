@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
 // https://www.baeldung.com/dockerizing-spring-boot-application
@@ -55,45 +53,41 @@ public class MyTeaCollectionApplication {
 
   @GetMapping({"/", "/index"})
   public String index(Model model) {
-    var filterCriteria = FilterCriteria.EMPTY;
-    var searchCriteria = SearchCriteria.EMPTY;
-    return populateIndexView(
+    return handleIndexView(
       model,
-      teaSearchRepository.filter(filterCriteria),
-      filterCriteria,
-      searchCriteria
+      FilterCriteria.EMPTY,
+      SearchCriteria.EMPTY
     );
   }
 
   @PostMapping("/filter")
   public String filter(@ModelAttribute FilterCriteria criteria, Model model) {
-    var searchCriteria = SearchCriteria.EMPTY;
-    return populateIndexView(
+    return handleIndexView(
       model,
-      teaSearchRepository.filter(criteria),
       criteria,
-      searchCriteria
+      SearchCriteria.EMPTY
     );
   }
 
   @PostMapping("/search")
   public String search(@ModelAttribute SearchCriteria criteria, Model model) {
-    var filterCriteria = FilterCriteria.EMPTY;
-    return populateIndexView(
+    return handleIndexView(
       model,
-      teaSearchRepository.search(criteria),
-      filterCriteria,
+      FilterCriteria.EMPTY,
       criteria
     );
   }
 
-  private String populateIndexView(
-    Model model, List<TeaEntity> teas, FilterCriteria filterCriteria, SearchCriteria searchCriteria) {
+  private String handleIndexView(
+    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria) {
 
     populateDropdowns(model);
-    model.addAttribute("teas", teas);
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
+
+    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria);
+    model.addAttribute("teas", teas);
+
     return "index";
   }
 

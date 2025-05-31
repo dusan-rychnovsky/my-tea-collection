@@ -1,9 +1,7 @@
 package cz.dusanrychnovsky.myteacollection;
 
-import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,10 +97,10 @@ class MyTeaCollectionApplicationTests {
       "<span>95°C, 5g/100ml, 25+5s</span>");
   }
 
-  @Disabled()
   @Test()
   void search_byNameOrTitle_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search", new SearchCriteria("shou mei")))
+    var actions = mvc.perform(post("/search")
+        .param("query", "shou mei"))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
@@ -130,10 +128,10 @@ class MyTeaCollectionApplicationTests {
     );
   }
 
-  @Disabled
   @Test
   void search_byLocation_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search", new SearchCriteria("yunnan")))
+    var actions = mvc.perform(post("/search")
+      .param("query", "yunnan"))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
