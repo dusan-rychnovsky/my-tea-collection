@@ -130,6 +130,37 @@ class MyTeaCollectionApplicationTests {
     );
   }
 
+  @Disabled
+  @Test
+  void search_byLocation_listsRelevantTeas() throws Exception {
+    var actions = mvc.perform(post("/search", new SearchCriteria("yunnan")))
+      .andExpect(status().isOk());
+
+    verifyHeader(actions);
+    verifyDropdowns(actions);
+
+    verifyTea(
+      actions,
+      "Doubleshot",
+      "Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022",
+      "Meetea",
+      "Dark Tea, Shu Puerh"
+    );
+    verifyTea(
+      actions,
+      "Luminary Misfit",
+      "Lancang Gushu Sheng PuErh Spring 2022",
+      "Mei Leaf",
+      "Dark Tea, Sheng Puerh"
+    );
+
+    doesNotContainStrings(
+      actions,
+      "Simple Dreams 2",
+      "Shou Mei 2017"
+    );
+  }
+
   private void verifyHeader(ResultActions actions) throws Exception {
     containsStrings(actions,"<h1 class=\"jumbotron-heading\">My Tea Collection</h1>");
   }
