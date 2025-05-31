@@ -36,25 +36,31 @@ class TeaRecordTests {
   void loadAllFrom_loadsAllTeasFromGivenRootDirectory() {
     var teas = loadAllFrom(toFile("teas"));
 
-    assertEquals(2, teas.size());
+    assertEquals(4, teas.size());
     assertEquals(1, teas.get(0).getId());
     assertEquals(2, teas.get(1).getId());
+    assertEquals(3, teas.get(2).getId());
+    assertEquals(4, teas.get(3).getId());
   }
 
   @Test
   void loadAllFrom_tagsAreOptional() {
     var teas = loadAllFrom(toFile("teas"));
 
-    assertEquals(2, teas.size());
+    assertEquals(4, teas.size());
     assertEquals(2, teas.get(0).getTags().size());
     assertEquals(0, teas.get(1).getTags().size());
+    assertEquals(0, teas.get(2).getTags().size());
+    assertEquals(0, teas.get(3).getTags().size());
   }
 
   @Test
   void loadNewFrom_loadsAllTeasFromGivenRootDirectoryWithIdHigherOrEqualsGivenId() {
     var teas = loadNewFrom(toFile("teas"), 2);
 
-    assertEquals(1, teas.size());
+    assertEquals(3, teas.size());
     assertEquals(2, teas.get(0).getId());
+    assertEquals(3, teas.get(1).getId());
+    assertEquals(4, teas.get(2).getId());
   }
 }

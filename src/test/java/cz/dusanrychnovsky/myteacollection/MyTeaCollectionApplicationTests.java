@@ -64,6 +64,20 @@ class MyTeaCollectionApplicationTests {
       "Mei Leaf",
       "Dark Tea, Sheng Puerh"
     );
+    verifyTea(
+      actions,
+      "Simple Dreams 2",
+      "2021 Zhenghe Shou Mei Blend",
+      "Mei Leaf",
+      "Blend, White Tea"
+    );
+    verifyTea(
+      actions,
+      "Shou Mei 2017",
+      "Fujian Shoumei Bingcha 2017",
+      "Meetea",
+      "White Tea"
+    );
   }
 
   @Test
@@ -87,8 +101,8 @@ class MyTeaCollectionApplicationTests {
 
   @Disabled()
   @Test()
-  void search_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search", new SearchCriteria("shot")))
+  void search_byNameOrTitle_listsRelevantTeas() throws Exception {
+    var actions = mvc.perform(post("/search", new SearchCriteria("shou mei")))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
@@ -96,18 +110,23 @@ class MyTeaCollectionApplicationTests {
 
     verifyTea(
       actions,
-      "Doubleshot",
-      "Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022",
+      "Simple Dreams 2",
+      "2021 Zhenghe Shou Mei Blend",
+      "Mei Leaf",
+      "Blend, White Tea"
+    );
+    verifyTea(
+      actions,
+      "Shou Mei 2017",
+      "Fujian Shoumei Bingcha 2017",
       "Meetea",
-      "Dark Tea, Shu Puerh"
+      "White Tea"
     );
 
-    actions.andExpect(
-      content().string(
-        not(
-          containsString("Luminary Misfit")
-        )
-      )
+    doesNotContainStrings(
+      actions,
+      "Douleshot",
+      "Luminary Misfit"
     );
   }
 
@@ -151,6 +170,14 @@ class MyTeaCollectionApplicationTests {
     for (var str : strings) {
       actions.andExpect(content().string(
         containsString(str)
+      ));
+    }
+  }
+
+  private void doesNotContainStrings(ResultActions actions, String... strings) throws Exception {
+    for (var str : strings) {
+      actions.andExpect(content().string(
+        not(containsString(str))
       ));
     }
   }

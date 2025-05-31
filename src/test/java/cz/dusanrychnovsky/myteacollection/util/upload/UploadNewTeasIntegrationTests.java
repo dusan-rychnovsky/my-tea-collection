@@ -33,7 +33,7 @@ class UploadNewTeasIntegrationTests {
   void noTeasInDb_uploadsAllTeas() throws IOException {
     uploadNewTeas.run(toFile("teas"));
     var teas = teaRepository.findAll();
-    assertEquals(2, teas.size());
+    assertEquals(4, teas.size());
     var first = teas.get(0);
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
     assertEquals(Set.of("Dark Tea", "Shu Puerh"), getNames(first.getTypes()));
@@ -44,6 +44,12 @@ class UploadNewTeasIntegrationTests {
     assertEquals("https://meileaf.com/tea/luminary-misfit/", second.getUrl());
     assertEquals(3, second.getImages().size());
     assertTrue(second.getTags().isEmpty());
+    var third = teas.get(2);
+    assertEquals("2021 Zhenghe Shou Mei Blend", third.getName());
+    assertEquals(3, third.getImages().size());
+    var fourth = teas.get(3);
+    assertEquals("Shou Mei 2017", fourth.getTitle());
+    assertEquals(2, fourth.getImages().size());
   }
 
   private Set<String> getLabels(Set<TagEntity> tags) {
