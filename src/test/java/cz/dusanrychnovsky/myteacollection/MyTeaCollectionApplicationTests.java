@@ -161,6 +161,33 @@ class MyTeaCollectionApplicationTests {
     );
   }
 
+  @Test
+  void filter_byType_listsRelevantTeas() throws Exception {
+    var actions = mvc.perform(post("/filter")
+      .param("teaTypeId", "2")
+      .param("vendorId", "2")
+      .param("availabilityId", "0"))
+      .andExpect(status().isOk());
+
+    verifyHeader(actions);
+    verifyDropdowns(actions);
+
+    verifyTea(
+      actions,
+      "Shou Mei 2017",
+      "Fujian Shoumei Bingcha 2017",
+      "Meetea",
+      "White Tea"
+    );
+
+    doesNotContainStrings(
+      actions,
+      "Douleshot",
+      "Luminary Misfit",
+      "Simple Dreams 2"
+    );
+  }
+
   private void verifyHeader(ResultActions actions) throws Exception {
     containsStrings(actions,"<h1 class=\"jumbotron-heading\">My Tea Collection</h1>");
   }
@@ -169,14 +196,14 @@ class MyTeaCollectionApplicationTests {
     containsStrings(actions,
       // verify tea type dropdown
       "<option value=\"1\">Blend</option>",
-      "<option value=\"2\">White Tea</option>",
+      "<option value=\"3\">Yellow Tea</option>",
       "<option value=\"5\">Oolong</option>",
       "<option value=\"8\">Sheng Puerh</option>",
       "<option value=\"11\">Yabao</option>",
       "<option value=\"12\">Fu Zhuan</option>",
       // verify vendor dropdown
       "<option value=\"1\">Mei Leaf</option>",
-      "<option value=\"2\">Meetea</option>",
+      "<option value=\"4\">Lao Tea</option>",
       "<option value=\"5\">Klasek Tea</option>",
       "<option value=\"6\">Banna House</option>",
       // verify availability dropdown
