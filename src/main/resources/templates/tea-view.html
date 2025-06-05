@@ -35,8 +35,22 @@
         </div>
       </div>
       <div id="tea-images" class="float-end">
-        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="img-thumbnail mb-2" width="470" height="304" />
-        <img th:each="img : ${tea.additionalImages}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${img.id})}" class="img-thumbnail mb-2" width="156" height="101" />
+        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="img-thumbnail mb-2" width="470" height="304" data-toggle="modal" data-target="#imgModal" />
+        <img th:each="img : ${tea.additionalImages}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${img.id})}" class="img-thumbnail mb-2" width="156" height="101" data-toggle="modal" data-target="#imgModal" />
+      </div>
+      <div class="modal fade fullscreen-modal" id="imgModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close close-lg text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <img id="modal-image" src="" alt="" class="img-fullsize" />
+            </div>
+          </div>
+        </div>
       </div>
       <h1 class="jumbotron-heading mb-3">
         <span th:text="${tea.title}"></span>
@@ -91,5 +105,15 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../js/bootstrap.min.js"></script>
+    <script>
+      $(function () {
+        $('#tea-images img').on('click', function () {
+          var $img = $(this);
+          $('#modal-image')
+            .attr('src', $img.attr('src'))
+            .attr('alt', $img.attr('alt'));
+        });
+      });
+    </script>
   </body>
 </html>
