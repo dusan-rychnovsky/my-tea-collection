@@ -75,8 +75,8 @@
                 <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="card-img-top" width="348" height="225">
                 <div class="tea-card card-body">
                   <h2>
-                    <span th:text="${tea.title}"></span><br />
-                    <span th:text="${tea.name}"></span>
+                    <span th:text="${tea.title}">Tea Title</span><br />
+                    <span th:text="${tea.name}">Tea Name</span>
                   </h2>
                   <p class="basic-info">
                     <span th:text="${tea.vendor.name}"></span>
