@@ -51,7 +51,7 @@ java `
 ```
 
 3) **Insert bootstrapping data.**  
-Execute statements from file `src\backend\src\test\resources\data.sql`.
+Execute statements from file `src\test\resources\data.sql`.
 
 4) **(Optional) Populate the database with teas from my collection.**  
 Run `UpladNewTeas` java class.
