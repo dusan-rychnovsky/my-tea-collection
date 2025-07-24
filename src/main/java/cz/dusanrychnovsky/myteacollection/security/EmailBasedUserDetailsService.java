@@ -16,9 +16,7 @@ public class EmailBasedUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    var user = userRepository.findAll().stream()
-      .filter(u -> u.getEmail().equalsIgnoreCase(email))
-      .findFirst()
+    var user = userRepository.findByEmailIgnoreCase(email)
       .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     return User.withUsername(user.getEmail())
       .password(user.getPassword())
