@@ -53,3 +53,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (14, 'gift-filip', 'Dárek od Filipa');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (15, 'meetea-2025-jun', 'Čajové předplatné Meetea, červen 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (16, 'meetea-2025-jul', 'Čajové předplatné Meetea, červenec 2025');
