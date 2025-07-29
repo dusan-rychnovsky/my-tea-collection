@@ -10,25 +10,31 @@ public class UserEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String username;
+  private String firstName;
+
+  private String lastName;
 
   private String password;
 
   private String email;
 
-  public UserEntity(Long id, String username, String password, String email) {
-    this.id = id;
-    this.username = username;
-    this.password = password;
+  public UserEntity(String email, String password, String firstName, String lastName) {
     this.email = email;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
   }
 
   public Long getId() {
     return id;
   }
 
-  public String getUsername() {
-    return username;
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
   }
 
   public String getPassword() {
