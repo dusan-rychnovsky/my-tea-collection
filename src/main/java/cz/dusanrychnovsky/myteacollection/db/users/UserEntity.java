@@ -26,6 +26,9 @@ public class UserEntity {
     this.lastName = lastName;
   }
 
+  public UserEntity() {
+  }
+
   public Long getId() {
     return id;
   }
