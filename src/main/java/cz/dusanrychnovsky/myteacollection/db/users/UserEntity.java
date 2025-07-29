@@ -10,13 +10,14 @@ public class UserEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String firstName;
-
-  private String lastName;
+  @Column(nullable = false, unique = true)
+  private String email;
 
   private String password;
 
-  private String email;
+  private String firstName;
+
+  private String lastName;
 
   public UserEntity(String email, String password, String firstName, String lastName) {
     this.email = email;
