@@ -14,11 +14,14 @@ public class CreateUser {
 
   private static final Logger logger = LoggerFactory.getLogger(CreateUser.class);
 
-  @Autowired
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  private PasswordEncoder passwordEncoder;
+  public CreateUser(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   public static void main(String[] args) {
     if (args.length < 2) {
