@@ -121,4 +121,10 @@ public class MyTeaCollectionApplication {
       })
       .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
+
+  @GetMapping("/teas/add")
+  public String teaAddForm(Model model) {
+    populateDropdowns(model);
+    return "tea-add";
+  }
 }
