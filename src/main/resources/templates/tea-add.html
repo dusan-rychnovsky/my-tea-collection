@@ -32,15 +32,19 @@
       <h1 class="jumbotron-heading mb-3">Add New Tea</h1>
       <form th:action="@{/teas/add}" method="post">
         <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
+          <label for="url" class="form-label">Link:</label>
+          <input type="url" class="form-control" id="url" name="url">
+        </div>
+        <div class="mb-3">
+          <label for="title" class="form-label">Title:</label>
           <input type="text" class="form-control" id="title" name="title" required>
         </div>
         <div class="mb-3">
-          <label for="name" class="form-label">Name</label>
+          <label for="name" class="form-label">Name:</label>
           <input type="text" class="form-control" id="name" name="name">
         </div>
         <div class="mb-3">
-          <label for="description" class="form-label">Description</label>
+          <label for="description" class="form-label">Description:</label>
           <textarea class="form-control" id="description" name="description" rows="3"></textarea>
         </div>
         <div class="mb-3">
@@ -52,7 +56,7 @@
           <input type="text" class="form-control" id="types" name="types">
         </div>
         <div class="mb-3">
-          <label for="vendor" class="form-label">Vendor</label>
+          <label for="vendor" class="form-label">Vendor:</label>
           <select class="form-control" id="vendor" name="vendorId" required>
             <option value="" disabled selected>Select a vendor</option>
             <option th:each="vendor : ${vendors}"
@@ -61,28 +65,24 @@
           </select>
         </div>
         <div class="mb-3">
-          <label for="url" class="form-label">Link</label>
-          <input type="url" class="form-control" id="url" name="url">
-        </div>
-        <div class="mb-3">
-          <label for="season" class="form-label">Season</label>
+          <label for="season" class="form-label">Season:</label>
           <input type="text" class="form-control" id="season" name="season">
         </div>
         <div class="mb-3">
-          <label for="origin" class="form-label">Origin</label>
+          <label for="origin" class="form-label">Origin:</label>
           <input type="text" class="form-control" id="origin" name="origin">
         </div>
         <div class="mb-3">
-          <label for="elevation" class="form-label">Elevation</label>
+          <label for="elevation" class="form-label">Elevation:</label>
           <input type="text" class="form-control" id="elevation" name="elevation">
         </div>
         <div class="mb-3">
-          <label for="cultivar" class="form-label">Cultivar</label>
+          <label for="cultivar" class="form-label">Cultivar:</label>
           <input type="text" class="form-control" id="cultivar" name="cultivar">
         </div>
         <div class="mb-3">
-          <label for="brewingInstructions" class="form-label">Brewing instructions</label>
-          <textarea class="form-control" id="brewingInstructions" name="brewingInstructions" rows="2"></textarea>
+          <label for="brewingInstructions" class="form-label">Brewing Instructions:</label>
+          <input type="text" class="form-control" id="brewingInstructions" name="brewingInstructions">
         </div>
         <button type="submit" class="btn btn-success">Add Tea</button>
       </form>
