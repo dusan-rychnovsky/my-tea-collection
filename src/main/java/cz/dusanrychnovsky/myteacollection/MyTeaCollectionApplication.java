@@ -125,6 +125,8 @@ public class MyTeaCollectionApplication {
   @GetMapping("/teas/add")
   public String teaAddForm(Model model) {
     populateDropdowns(model);
+    // Add vendors to the model for the vendor lookup dropdown
+    model.addAttribute("vendors", vendorRepository.findAll());
     return "tea-add";
   }
 }
