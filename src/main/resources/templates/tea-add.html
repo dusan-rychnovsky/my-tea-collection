@@ -8,6 +8,11 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/layout.css" rel="stylesheet">
     <link href="../css/tea-view.css" rel="stylesheet">
+    <style rel="stylesheet">
+      #add-tea-form select {
+        appearance: auto;
+      }
+    </style>
   </head>
   <body class="bg-light">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -30,7 +35,7 @@
         </div>
       </div>
       <h1 class="jumbotron-heading mb-3">Add New Tea</h1>
-      <form th:action="@{/teas/add}" method="post">
+      <form th:action="@{/teas/add}" id="add-tea-form" method="post">
         <div class="row">
           <!-- Basic Info Section -->
           <div class="col-md-6">
