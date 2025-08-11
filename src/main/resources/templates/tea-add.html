@@ -53,8 +53,13 @@
               <input type="text" class="form-control" id="name" name="name">
             </div>
             <div class="mb-3">
-              <label for="types" class="form-label">Tea type(s) (comma separated)</label>
-              <input type="text" class="form-control" id="types" name="types">
+              <label for="types" class="form-label">Tea type(s)</label>
+              <select class="form-control" id="types" name="types" multiple required>
+                <option th:each="type : ${teaTypes}"
+                        th:value="${type.id}"
+                        th:text="${type.name}"></option>
+              </select>
+              <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple types.</small>
             </div>
             <div class="mb-3">
               <label for="vendor" class="form-label">Vendor</label>
