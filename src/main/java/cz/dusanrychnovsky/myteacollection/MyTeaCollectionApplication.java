@@ -35,6 +35,7 @@ public class MyTeaCollectionApplication {
   private TeaImageRepository teaImageRepository;
   private TeaRepository teaRepository;
   private TeaSearchRepository teaSearchRepository;
+  private TagRepository tagRepository;
 
   @Autowired
   public MyTeaCollectionApplication(
@@ -42,13 +43,15 @@ public class MyTeaCollectionApplication {
     TeaTypeRepository teaTypeRepository,
     TeaImageRepository teaImageRepository,
     TeaRepository teaRepository,
-    TeaSearchRepository teaSearchRepository) {
+    TeaSearchRepository teaSearchRepository,
+    TagRepository tagRepository) {
 
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.teaImageRepository = teaImageRepository;
     this.teaRepository = teaRepository;
     this.teaSearchRepository = teaSearchRepository;
+    this.tagRepository = tagRepository;
   }
 
   @GetMapping({"/", "/index"})
@@ -126,6 +129,7 @@ public class MyTeaCollectionApplication {
   public String teaAddForm(Model model) {
     model.addAttribute("vendors", vendorRepository.findAll());
     model.addAttribute("teaTypes", teaTypeRepository.findAll());
+    model.addAttribute("tags", tagRepository.findAll());
     return "tea-add";
   }
 }

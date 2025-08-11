@@ -107,8 +107,13 @@
               <input type="text" class="form-control" id="brewingInstructions" name="brewingInstructions">
             </div>
             <div class="mb-3">
-              <label for="tags" class="form-label">Tags (comma separated)</label>
-              <input type="text" class="form-control" id="tags" name="tags">
+              <label for="tags" class="form-label">Tag(s)</label>
+              <select class="form-control" id="tags" name="tags" multiple>
+                <option th:each="tag : ${tags}"
+                        th:value="${tag.id}"
+                        th:text="${tag.label}"></option>
+              </select>
+              <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple tags.</small>
             </div>
           </div>
         </div>
