@@ -37,23 +37,22 @@
       <h1 class="jumbotron-heading mb-3">Add New Tea</h1>
       <form th:action="@{/teas/add}" id="add-tea-form" method="post">
         <div class="row">
-          <!-- Basic Info Section -->
           <div class="col-md-6">
             <h5 class="mb-3 mt-2">Basic Info:</h5>
             <div class="mb-3">
-              <label for="url" class="form-label">Link</label>
+              <label for="url" class="form-label">Link:</label>
               <input type="url" class="form-control" id="url" name="url">
             </div>
             <div class="mb-3">
-              <label for="title" class="form-label">Title</label>
+              <label for="title" class="form-label">Title:</label>
               <input type="text" class="form-control" id="title" name="title" required>
             </div>
             <div class="mb-3">
-              <label for="name" class="form-label">Name</label>
+              <label for="name" class="form-label">Name:</label>
               <input type="text" class="form-control" id="name" name="name">
             </div>
             <div class="mb-3">
-              <label for="types" class="form-label">Tea type(s)</label>
+              <label for="types" class="form-label">Tea Type(s):</label>
               <select class="form-control" id="types" name="types" multiple required>
                 <option th:each="type : ${teaTypes}"
                         th:value="${type.id}"
@@ -62,7 +61,7 @@
               <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple types.</small>
             </div>
             <div class="mb-3">
-              <label for="vendor" class="form-label">Vendor</label>
+              <label for="vendor" class="form-label">Vendor:</label>
               <select class="form-control" id="vendor" name="vendorId" required>
                 <option value="" disabled selected>Select a vendor</option>
                 <option th:each="vendor : ${vendors}"
@@ -73,29 +72,28 @@
           </div>
           <div class="col-md-6">
             <div class="mb-3 mt-md-5 pt-md-2">
-              <label for="description" class="form-label">Description</label>
+              <label for="description" class="form-label">Description:</label>
               <textarea class="form-control" id="description" name="description" rows="10"></textarea>
             </div>
           </div>
         </div>
         <div class="row">
-          <!-- Scope Section -->
           <div class="col-md-6">
             <h5 class="mb-3 mt-4">Scope:</h5>
             <div class="mb-3">
-              <label for="season" class="form-label">Season</label>
+              <label for="season" class="form-label">Season:</label>
               <input type="text" class="form-control" id="season" name="season">
             </div>
             <div class="mb-3">
-              <label for="origin" class="form-label">Origin</label>
+              <label for="origin" class="form-label">Origin:</label>
               <input type="text" class="form-control" id="origin" name="origin">
             </div>
             <div class="mb-3">
-              <label for="elevation" class="form-label">Elevation</label>
+              <label for="elevation" class="form-label">Elevation:</label>
               <input type="text" class="form-control" id="elevation" name="elevation">
             </div>
             <div class="mb-3">
-              <label for="cultivar" class="form-label">Cultivar</label>
+              <label for="cultivar" class="form-label">Cultivar:</label>
               <input type="text" class="form-control" id="cultivar" name="cultivar">
             </div>
           </div>
@@ -103,11 +101,11 @@
           <div class="col-md-6">
             <h5 class="mb-3 mt-4">Other:</h5>
             <div class="mb-3">
-              <label for="brewingInstructions" class="form-label">Brewing Instructions</label>
+              <label for="brewingInstructions" class="form-label">Brewing Instructions:</label>
               <input type="text" class="form-control" id="brewingInstructions" name="brewingInstructions">
             </div>
             <div class="mb-3">
-              <label for="tags" class="form-label">Tag(s)</label>
+              <label for="tags" class="form-label">Tag(s):</label>
               <select class="form-control" id="tags" name="tags" multiple>
                 <option th:each="tag : ${tags}"
                         th:value="${tag.id}"
