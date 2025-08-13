@@ -122,7 +122,10 @@
               <label for="images" class="form-label">Tea Images:</label>
               <input type="file" class="form-control" id="images" name="images" multiple accept="image/*" onchange="previewImages(event)">
               <small class="form-text text-muted">You can select multiple images.</small>
-              <div id="image-preview" class="mt-3 d-flex flex-wrap"></div>
+              <div id="image-preview-section" class="mt-3">
+                <label id="image-preview-heading" class="form-label" style="display:none;">Selected Images:</label>
+                <div id="image-preview" class="d-flex flex-wrap"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -138,9 +141,11 @@
     <script>
       function previewImages(event) {
         const preview = document.getElementById('image-preview');
+        const heading = document.getElementById('image-preview-heading');
         preview.innerHTML = '';
         const files = event.target.files;
-        if (files) {
+        if (files && files.length > 0) {
+          heading.style.display = 'block';
           Array.from(files).forEach(file => {
             if (file.type.startsWith('image/')) {
               const reader = new FileReader();
@@ -148,13 +153,15 @@
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.className = 'img-thumbnail m-1';
-                img.style.height = '80px';
+                img.style.height = '120px';
                 img.style.width = 'auto';
                 preview.appendChild(img);
               };
               reader.readAsDataURL(file);
             }
           });
+        } else {
+          heading.style.display = 'none';
         }
       }
     </script>
