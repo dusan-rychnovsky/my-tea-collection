@@ -140,28 +140,26 @@
     <script src="../js/bootstrap.min.js"></script>
     <script>
       function previewImages(event) {
-        const preview = document.getElementById('image-preview');
-        const heading = document.getElementById('image-preview-heading');
-        preview.innerHTML = '';
-        const files = event.target.files;
+        var preview = $('#image-preview');
+        var heading = $('#image-preview-heading');
+        preview.empty();
+        var files = event.target.files;
         if (files && files.length > 0) {
-          heading.style.display = 'block';
-          Array.from(files).forEach(file => {
+          heading.show();
+          $.each(files, function(i, file) {
             if (file.type.startsWith('image/')) {
-              const reader = new FileReader();
+              var reader = new FileReader();
               reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'img-thumbnail m-1';
-                img.style.height = '120px';
-                img.style.width = 'auto';
-                preview.appendChild(img);
+                var img = $('<img>').attr('src', e.target.result)
+                  .addClass('img-thumbnail m-1')
+                  .css({height: '120px', width: 'auto'});
+                preview.append(img);
               };
               reader.readAsDataURL(file);
             }
           });
         } else {
-          heading.style.display = 'none';
+          heading.hide();
         }
       }
     </script>
