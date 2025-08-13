@@ -35,7 +35,7 @@
         </div>
       </div>
       <h1 class="jumbotron-heading mb-3">Add New Tea</h1>
-      <form th:action="@{/teas/add}" id="add-tea-form" method="post">
+      <form th:action="@{/teas/add}" method="post" enctype="multipart/form-data" id="add-tea-form">
         <div class="row">
           <div class="col-md-6">
             <h5 class="mb-3 mt-2">Basic Info:</h5>
@@ -112,6 +112,16 @@
                         th:text="${tag.label}"></option>
               </select>
               <small class="form-text text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple tags.</small>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="mb-3 mt-4">Images:</h5>
+            <div class="mb-3">
+              <label for="images" class="form-label">Tea Images:</label>
+              <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
+              <small class="form-text text-muted">You can select multiple images.</small>
             </div>
           </div>
         </div>
