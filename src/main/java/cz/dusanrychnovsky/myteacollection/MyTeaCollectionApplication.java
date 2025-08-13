@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import static java.util.Comparator.comparing;
+
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
 // https://www.baeldung.com/dockerizing-spring-boot-application
@@ -129,7 +131,11 @@ public class MyTeaCollectionApplication {
   public String teaAddForm(Model model) {
     model.addAttribute("vendors", vendorRepository.findAll());
     model.addAttribute("teaTypes", teaTypeRepository.findAll());
-    model.addAttribute("tags", tagRepository.findAll());
+    model.addAttribute(
+      "tags",
+      tagRepository.findAll().stream()
+        .sorted(comparing(TagEntity::getLabel))
+    );
     return "tea-add";
   }
 }
