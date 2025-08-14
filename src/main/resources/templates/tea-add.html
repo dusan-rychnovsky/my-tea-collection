@@ -53,7 +53,7 @@
             </div>
             <div class="mb-3">
               <label for="types" class="form-label">Tea Type(s):</label>
-              <select class="form-control" id="types" name="types" multiple required>
+              <select class="form-control" id="types" name="teaTypes" multiple required>
                 <option th:each="type : ${teaTypes}"
                         th:value="${type.id}"
                         th:text="${type.name}"></option>

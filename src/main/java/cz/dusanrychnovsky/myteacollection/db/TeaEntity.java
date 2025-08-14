@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.joining;
 public class TeaEntity {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne
@@ -62,7 +63,7 @@ public class TeaEntity {
   private Set<TagEntity> tags;
 
   public TeaEntity(
-    long id,
+    Long id,
     VendorEntity vendor,
     Set<TeaTypeEntity> types,
     String title,
