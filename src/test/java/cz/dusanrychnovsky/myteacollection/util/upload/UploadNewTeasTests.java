@@ -48,7 +48,7 @@ class UploadNewTeasTests {
   void toEntity_translatesTeaToEntityRepresentation() {
     var result = toEntity(TEA, VENDORS, TEA_TYPES, TAGS);
 
-    assertEquals(TEA.getId(), result.getId());
+    assertNull(result.getId());
     assertEquals(TEA.getTitle(), result.getTitle());
     assertEquals(TEA.getName(), result.getName());
     assertEquals(TEA.getDescription(), result.getDescription());
