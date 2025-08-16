@@ -135,7 +135,7 @@ public class MyTeaCollectionApplication {
   }
 
   @GetMapping("/teas/add")
-  public String teaAddForm(Model model) {
+  public String teaAdd(Model model) {
     model.addAttribute("vendors", vendorRepository.findAll());
     model.addAttribute("teaTypes", teaTypeRepository.findAll());
     model.addAttribute(
@@ -163,11 +163,11 @@ public class MyTeaCollectionApplication {
       @RequestParam(value = "tags", required = false) List<Long> tagIds,
       @RequestParam(required = false) List<MultipartFile> images
   ) throws Exception {
+    // TODO: form validation (mandatory fields, URL format, etc.)
 
     var vendorEntity = vendorRepository.findById(vendorId)
       .orElseThrow(() -> new IllegalArgumentException("Invalid vendor ID: " + vendorId));
 
-    // TODO: at least one tea type must be selected
     var teaTypeEntities = new HashSet<>(teaTypeRepository.findAllById(teaTypeIds));
     if (teaTypeEntities.size() != teaTypeIds.size()) {
       throw new IllegalArgumentException("One more more tea type IDs are invalid: " + teaTypeIds);
@@ -200,7 +200,6 @@ public class MyTeaCollectionApplication {
 
     teaEntity = teaRepository.save(teaEntity);
 
-    // TODO: at least one image must be uploaded
     if (images != null) {
       var idx = 0;
       for (var imgFile : images) {
