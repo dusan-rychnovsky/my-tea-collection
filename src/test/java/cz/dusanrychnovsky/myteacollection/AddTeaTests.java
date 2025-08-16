@@ -17,15 +17,20 @@ import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadFrom;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 class AddTeaTests {
+
+  private static final String TEST_USER_EMAIL = "testuser@example.com";
+  private static final String TEST_USER_ROLE = "USER";
 
   @Autowired
   private MockMvc mvc;
@@ -41,7 +46,8 @@ class AddTeaTests {
 
   @Test
   void teaAdd_displaysTeaAddForm() throws Exception {
-    mvc.perform(get("/teas/add"))
+    mvc.perform(get("/teas/add")
+      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE)))
       .andExpect(status().isOk())
       .andExpect(view().name("tea-add"));
   }
@@ -54,6 +60,8 @@ class AddTeaTests {
 
     var tea = loadFrom(toFile("teas/01"));
     mvc.perform(post("/teas/add")
+      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
+      .with(csrf())
       .param("url", tea.getUrl())
       .param("name", tea.getName())
       .param("title", tea.getTitle())
