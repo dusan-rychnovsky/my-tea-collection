@@ -63,7 +63,6 @@ public class TeaEntity {
   private Set<TagEntity> tags;
 
   public TeaEntity(
-    Long id,
     VendorEntity vendor,
     Set<TeaTypeEntity> types,
     String title,
@@ -75,7 +74,6 @@ public class TeaEntity {
     boolean inStock,
     Set<TagEntity> tags) {
 
-    this.id = id;
     this.vendor = vendor;
     this.types = types;
     this.title = title;

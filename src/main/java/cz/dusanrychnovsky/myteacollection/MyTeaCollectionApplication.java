@@ -180,7 +180,6 @@ public class MyTeaCollectionApplication {
     }
 
     var teaEntity = new TeaEntity(
-      null,
       vendorEntity,
       teaTypeEntities,
       title,
