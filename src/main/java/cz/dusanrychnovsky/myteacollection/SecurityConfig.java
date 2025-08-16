@@ -12,8 +12,8 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      .csrf(AbstractHttpConfigurer::disable) // TODO: only temporary, to unblock POST requests for testing
       .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/teas/add").authenticated()
         .anyRequest().permitAll()
       )
       .formLogin(form -> form
