@@ -170,7 +170,7 @@ public class MyTeaCollectionApplication {
 
     var teaTypeEntities = new HashSet<>(teaTypeRepository.findAllById(teaTypeIds));
     if (teaTypeEntities.size() != teaTypeIds.size()) {
-      throw new IllegalArgumentException("One more more tea type IDs are invalid: " + teaTypeIds);
+      throw new IllegalArgumentException("One or more tea type IDs are invalid: " + teaTypeIds);
     }
 
     tagIds = tagIds != null ? tagIds : emptyList();
