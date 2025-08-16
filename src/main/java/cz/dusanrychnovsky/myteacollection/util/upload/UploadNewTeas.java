@@ -144,7 +144,6 @@ public class UploadNewTeas {
     var tagEntities = mapAll(tags, tea.getTags());
 
     return new TeaEntity(
-      tea.getId(),
       vendorEntity,
       typeEntities,
       tea.getTitle(),
