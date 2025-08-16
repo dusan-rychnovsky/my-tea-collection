@@ -1,7 +1,9 @@
 package cz.dusanrychnovsky.myteacollection;
 
+import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
+import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -34,13 +37,20 @@ class MyTeaCollectionApplicationTests {
   @Autowired
   private MockMvc mvc;
 
-  @BeforeAll
+  @Autowired
+  private TeaRepository teaRepository;
+
+  @Autowired
+  private TeaImageRepository teaImageRepository;
+
+  @BeforeEach
   void setup() throws IOException {
     // insert two teas in the DB
     uploadNewTeas.run(toFile("teas"));
   }
 
   @Test
+  @Transactional
   void index_listsAllTeas() throws Exception {
     var actions = mvc.perform(get("/index"))
       .andExpect(status().isOk());
@@ -79,8 +89,10 @@ class MyTeaCollectionApplicationTests {
   }
 
   @Test
+  @Transactional
   void teaView_showsGivenTea() throws Exception {
-    var actions = mvc.perform(get("/teas/2"))
+    var teaId = getTeaIdByTitle("Luminary Misfit");
+    var actions = mvc.perform(get("/teas/" + teaId))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -97,7 +109,16 @@ class MyTeaCollectionApplicationTests {
       "<span>95°C, 5g/100ml, 25+5s</span>");
   }
 
+  private Long getTeaIdByTitle(String title) {
+    return teaRepository.findAll().stream()
+      .filter(tea -> tea.getTitle().equals(title))
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("Tea not found in DB."))
+      .getId();
+  }
+
   @Test()
+  @Transactional
   void search_byNameOrTitle_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/search")
         .param("query", "shou mei"))
@@ -129,6 +150,7 @@ class MyTeaCollectionApplicationTests {
   }
 
   @Test
+  @Transactional
   void search_byLocation_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/search")
       .param("query", "yunnan"))
@@ -160,6 +182,7 @@ class MyTeaCollectionApplicationTests {
   }
 
   @Test
+  @Transactional
   void filter_byType_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/filter")
       .param("teaTypeId", "2")
