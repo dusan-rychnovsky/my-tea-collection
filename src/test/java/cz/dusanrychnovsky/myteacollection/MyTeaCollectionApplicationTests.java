@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -121,7 +122,8 @@ class MyTeaCollectionApplicationTests {
   @Transactional
   void search_byNameOrTitle_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/search")
-        .param("query", "shou mei"))
+      .with(csrf())
+      .param("query", "shou mei"))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
@@ -153,6 +155,7 @@ class MyTeaCollectionApplicationTests {
   @Transactional
   void search_byLocation_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/search")
+        .with(csrf())
       .param("query", "yunnan"))
       .andExpect(status().isOk());
 
@@ -185,6 +188,7 @@ class MyTeaCollectionApplicationTests {
   @Transactional
   void filter_byType_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/filter")
+      .with(csrf())
       .param("teaTypeId", "2")
       .param("vendorId", "2")
       .param("availabilityId", "0"))

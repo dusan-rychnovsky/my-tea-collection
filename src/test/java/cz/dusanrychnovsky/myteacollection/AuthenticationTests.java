@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -74,7 +75,7 @@ class AuthenticationTests {
       .andExpect(content().string(not(containsString("Log In"))));
 
     // log out
-    mvc.perform(post("/logout").session(session))
+    mvc.perform(post("/logout").with(csrf()).session(session))
       .andExpect(status().is3xxRedirection());
 
     // not authenticated
