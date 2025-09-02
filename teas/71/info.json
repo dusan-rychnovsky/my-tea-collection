@@ -10,5 +10,6 @@
   "season": "April 2025",
   "elevation": "N/A",
   "brewingInstructions": "100°C, 4g/100ml, 15s-5s-5s-10s-15s",
-  "inStock": true
+  "inStock": true,
+  "tags": [ "meetea-2025-aug" ]
 }
