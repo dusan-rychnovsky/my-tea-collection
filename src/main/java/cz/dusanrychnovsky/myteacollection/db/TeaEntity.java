@@ -24,7 +24,7 @@ public class TeaEntity {
   @JoinColumn(name = "vendor_id")
   private VendorEntity vendor;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     schema = "myteacollection",
     name = "Teas_TeaTypes",
@@ -39,7 +39,7 @@ public class TeaEntity {
   @Column(columnDefinition = "VARCHAR(1024)")
   private String description;
 
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "tea_id")
   private Set<TeaImageEntity> images = new HashSet<>();
 
@@ -54,7 +54,7 @@ public class TeaEntity {
   @Column(name = "in_stock")
   private Boolean inStock;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     schema = "myteacollection",
     name = "Teas_Tags",
