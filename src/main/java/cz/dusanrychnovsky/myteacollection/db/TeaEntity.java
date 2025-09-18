@@ -36,7 +36,7 @@ public class TeaEntity {
 
   private String name;
 
-  @Column(columnDefinition = "VARCHAR(1024)")
+  @Column(columnDefinition = "VARCHAR(2048)")
   private String description;
 
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
