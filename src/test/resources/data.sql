@@ -12,6 +12,7 @@ INSERT INTO myteacollection.TeaTypes (id, name) VALUES (9, 'Shu Puerh');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (10, 'Liu Bao');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (11, 'Yabao');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (12, 'Fu Zhuan');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (13, 'Liu An');
 
 -- Vendor
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
@@ -22,6 +23,7 @@ INSERT INTO myteacollection.Vendors (id, name, url) VALUES (5, 'Klasek Tea', 'ht
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (6, 'Banna House', 'https://www.bannahouse.cz/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (7, 'TeaGardenia', 'https://www.teagardenia.com/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (8, 'Global Tea Hut', 'https://globalteahut.org/');
+INSERT INTO myteacollection.Vendors (id, name, url) VALUES (9, 'Amana', 'https://www.caj.cz/');
 
 -- Tag
 INSERT INTO myteacollection.Tags (id, label, description)
@@ -58,3 +60,7 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (16, 'meetea-2025-jul', 'Čajové předplatné Meetea, červenec 2025');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (17, 'meetea-2025-aug', 'Čajové předplatné Meetea, srpen 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (18, 'meetea-2025-sep', 'Čajové předplatné Meetea, září 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (19, 'globalteahut-2025-summer', 'Global Tea Hut Subscription, Summer 2025');
