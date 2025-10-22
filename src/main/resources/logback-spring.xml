@@ -1,0 +1,30 @@
+<configuration>
+  <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <timestamp/>
+        <pattern>
+          <pattern>
+            {
+            "level": "%level",
+            "thread": "%thread",
+            "logger": "%logger",
+            "message": "%message",
+            "context": "%mdc"
+            }
+          </pattern>
+        </pattern>
+        <arguments/>
+        <stackTrace/>
+      </providers>
+    </encoder>
+  </appender>
+
+  <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+    <appender-ref ref="JSON"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="JSON"/>
+  </root>
+</configuration>
