@@ -3,7 +3,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)  
-[my-tea-collection.onrender.com](https://my-tea-collection.onrender.com/)
+[mytea.dusanrychnovsky.cz](https://myteacollection.nicebush-23f788df.northeurope.azurecontainerapps.io/)
 
 # My Tea Collection
 
