@@ -25,7 +25,8 @@ class TeaRecordTests {
     assertEquals("Ming Feng Shan, Yunnan, China", tea.getOrigin());
     assertEquals("Da Ye Zhong", tea.getCultivar());
     assertEquals("Spring and Autumn 2022", tea.getSeason());
-    assertEquals("NA", tea.getElevation());
+    assertEquals("N/A", tea.getElevation());
+    assertEquals("4", tea.getPrice());
     assertEquals("100°C, 5g/100ml, 15s-10s-5s-10s-20s", tea.getBrewingInstructions());
     assertTrue(tea.isInStock());
     assertEquals(2, tea.getImages().size());

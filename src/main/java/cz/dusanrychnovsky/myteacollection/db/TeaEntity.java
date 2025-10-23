@@ -16,6 +16,8 @@ import static java.util.stream.Collectors.joining;
 @Table(schema = "myteacollection", name = "Teas")
 public class TeaEntity {
 
+  private static final String NO_PRICE = "N/A";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -48,6 +50,9 @@ public class TeaEntity {
   @Embedded
   private TeaScope scope;
 
+  @Column(name = "price")
+  private Float price;
+
   @Column(name = "brewing_instructions")
   private String brewingInstructions;
 
@@ -70,6 +75,7 @@ public class TeaEntity {
     String description,
     String url,
     TeaScope scope,
+    Float price,
     String brewingInstructions,
     boolean inStock,
     Set<TagEntity> tags) {
@@ -82,6 +88,7 @@ public class TeaEntity {
     this.images = new HashSet<>();
     this.url = url;
     this.scope = scope;
+    this.price = price;
     this.brewingInstructions = brewingInstructions;
     this.inStock = inStock;
     this.tags = tags;
@@ -166,6 +173,22 @@ public class TeaEntity {
 
   public TeaScope getScope() {
     return scope;
+  }
+
+  public Float getPrice() {
+    return price;
+  }
+
+  public TeaEntity setPrice(Float price) {
+    this.price = price;
+    return this;
+  }
+
+  public String printPrice() {
+    if (price == null) {
+      return NO_PRICE;
+    }
+    return String.format("%.0f CZK / 50g", price * 50);
   }
 
   public String getBrewingInstructions() {

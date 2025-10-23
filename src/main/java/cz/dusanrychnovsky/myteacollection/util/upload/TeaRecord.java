@@ -33,6 +33,7 @@ public class TeaRecord {
   private String cultivar;
   private String season;
   private String elevation;
+  private String price;
   private String brewingInstructions;
   private boolean inStock;
   private Set<String> tags;
@@ -52,6 +53,7 @@ public class TeaRecord {
     @JsonProperty(value = "cultivar", required = true) String cultivar,
     @JsonProperty(value = "season", required = true) String season,
     @JsonProperty(value = "elevation", required = true) String elevation,
+    @JsonProperty(value = "price", required = true) String price,
     @JsonProperty(value = "brewingInstructions", required = true) String brewingInstructions,
     @JsonProperty(value = "inStock", required = true) boolean inStock,
     @JsonProperty(value = "tags") Set<String> tags
@@ -66,6 +68,7 @@ public class TeaRecord {
     this.cultivar = cultivar;
     this.season = season;
     this.elevation = elevation;
+    this.price = price;
     this.brewingInstructions = brewingInstructions;
     this.inStock = inStock;
     this.tags = tags != null ? tags : emptySet();
@@ -164,6 +167,10 @@ public class TeaRecord {
 
   public String getElevation() {
     return elevation;
+  }
+
+  public String getPrice() {
+    return price;
   }
 
   public String getBrewingInstructions() {

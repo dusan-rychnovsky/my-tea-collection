@@ -14,6 +14,7 @@ import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadFrom;
+import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.parsePrice;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,6 +73,7 @@ class AddTeaIT {
       .param("cultivar", tea.getCultivar())
       .param("season", tea.getSeason())
       .param("elevation", tea.getElevation())
+      .param("price", tea.getPrice())
       .param("brewingInstructions", tea.getBrewingInstructions()))
       .andExpect(status().is3xxRedirection());
 
@@ -97,6 +99,8 @@ class AddTeaIT {
     assertEquals(tea.getCultivar(), teaEntity.getScope().getCultivar());
     assertEquals(tea.getSeason(), teaEntity.getScope().getSeason());
     assertEquals(tea.getElevation(), teaEntity.getScope().getElevation());
+
+    assertEquals(parsePrice(tea.getPrice()), teaEntity.getPrice());
 
     assertEquals(tea.getBrewingInstructions(), teaEntity.getBrewingInstructions());
     assertTrue(teaEntity.isInStock());

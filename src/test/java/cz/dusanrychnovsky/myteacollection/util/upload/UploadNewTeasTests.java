@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Set;
 
+import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.parsePrice;
 import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,10 +40,26 @@ class UploadNewTeasTests {
     "Da Ye Zhong",
     "April 2022",
     "1740-1970m",
+    "N/A",
     "95°C, 5g/100ml, 25+5s",
     true,
     Set.of("meetea-2025-jan", "meetea-2024-dec"))
     .setId(5);
+
+  @Test
+  void parsePrice_validPrice_parsesPrice() {
+    assertEquals(12.5f, parsePrice("12.5"));
+  }
+
+  @Test
+  void parsePrice_noPrice_returnsNull() {
+    assertNull(parsePrice("N/A"));
+  }
+
+  @Test
+  void parsePrice_invalidPrice_throws() {
+    assertThrows(IllegalArgumentException.class, () -> parsePrice("twelve"));
+  }
 
   @Test
   void toEntity_translatesTeaToEntityRepresentation() {
@@ -57,6 +74,7 @@ class UploadNewTeasTests {
     assertEquals(TEA.getCultivar(), result.getScope().getCultivar());
     assertEquals(TEA.getSeason(), result.getScope().getSeason());
     assertEquals(TEA.getElevation(), result.getScope().getElevation());
+    assertNull(result.getPrice());
     assertEquals(TEA.getBrewingInstructions(), result.getBrewingInstructions());
     assertEquals(TEA.isInStock(), result.isInStock());
 
@@ -67,6 +85,13 @@ class UploadNewTeasTests {
     for (var tag : TEA.getTags()) {
       assertTrue(result.getTags().stream().anyMatch(t -> t.getLabel().equals(tag)));
     }
+  }
+
+  @Test
+  void toEntity_withPrice_parsesPrice() {
+    var tea = withPrice(TEA, "12.5");
+    var result = toEntity(tea, VENDORS, TEA_TYPES, TAGS);
+    assertEquals(parsePrice(tea.getPrice()), result.getPrice());
   }
 
   @Test
@@ -99,6 +124,7 @@ class UploadNewTeasTests {
       tea.getCultivar(),
       tea.getSeason(),
       tea.getElevation(),
+      tea.getPrice(),
       tea.getBrewingInstructions(),
       tea.isInStock(),
       tags
@@ -118,6 +144,7 @@ class UploadNewTeasTests {
       tea.getCultivar(),
       tea.getSeason(),
       tea.getElevation(),
+      tea.getPrice(),
       tea.getBrewingInstructions(),
       tea.isInStock(),
       tea.getTags()
@@ -137,6 +164,27 @@ class UploadNewTeasTests {
       tea.getCultivar(),
       tea.getSeason(),
       tea.getElevation(),
+      tea.getPrice(),
+      tea.getBrewingInstructions(),
+      tea.isInStock(),
+      tea.getTags()
+    )
+      .setId(tea.getId());
+  }
+
+  private static TeaRecord withPrice(TeaRecord tea, String price) {
+    return new TeaRecord(
+      tea.getTitle(),
+      tea.getName(),
+      tea.getDescription(),
+      tea.getTypes(),
+      tea.getVendor(),
+      tea.getUrl(),
+      tea.getOrigin(),
+      tea.getCultivar(),
+      tea.getSeason(),
+      tea.getElevation(),
+      price,
       tea.getBrewingInstructions(),
       tea.isInStock(),
       tea.getTags()

@@ -66,6 +66,17 @@ class TeaViewIT {
       "<span>95°C, 5g/100ml, 25+5s</span>");
   }
 
+  @Test
+  @Transactional
+  void teaView_showsGivenTea_printsPrice() throws Exception {
+    var teaId = getTeaIdByTitle("Doubleshot");
+    var actions = mvc.perform(get("/teas/" + teaId))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "200 CZK / 50g");
+  }
+
   private Long getTeaIdByTitle(String title) {
     return teaRepository.findAll().stream()
       .filter(tea -> tea.getTitle().equals(title))

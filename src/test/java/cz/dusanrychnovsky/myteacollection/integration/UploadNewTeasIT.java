@@ -15,8 +15,7 @@ import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest()
 @AutoConfigureMockMvc
@@ -38,18 +37,22 @@ class UploadNewTeasIT {
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
     assertEquals(Set.of("Dark Tea", "Shu Puerh"), getNames(first.getTypes()));
     assertEquals("Meetea", first.getVendor().getName());
+    assertEquals(4.f, first.getPrice());
     assertEquals(2, first.getImages().size());
     assertEquals(Set.of("meetea-2025-jan", "meetea-2024-dec"), getLabels(first.getTags()));
     var second = teas.get(1);
     assertEquals("https://meileaf.com/tea/luminary-misfit/", second.getUrl());
     assertEquals(3, second.getImages().size());
+    assertNull(second.getPrice());
     assertTrue(second.getTags().isEmpty());
     var third = teas.get(2);
     assertEquals("2021 Zhenghe Shou Mei Blend", third.getName());
     assertEquals(3, third.getImages().size());
+    assertEquals(7.29f, third.getPrice());
     var fourth = teas.get(3);
     assertEquals("Shou Mei 2017", fourth.getTitle());
     assertEquals(2, fourth.getImages().size());
+    assertEquals(4.2f, fourth.getPrice());
   }
 
   private Set<String> getLabels(Set<TagEntity> tags) {

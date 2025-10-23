@@ -73,4 +73,17 @@ class TeaEntityTests {
 
     assertEquals("Blend, Dark Tea, Shu Puerh", tea.printTypes());
   }
+
+  @Test
+  void printPrice_priceAvailable_printsPricePer50gInCzk() {
+    var tea = new TeaEntity()
+      .setPrice(4.f);
+    assertEquals("200 CZK / 50g", tea.printPrice());
+  }
+
+  @Test
+  void printPrice_priceMissing_printsNA() {
+    var tea = new TeaEntity();
+    assertEquals("N/A", tea.printPrice());
+  }
 }

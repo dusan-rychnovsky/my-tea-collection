@@ -31,6 +31,8 @@ public class UploadNewTeas {
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
+  private static final String NO_PRICE = "N/A";
+
   private VendorRepository vendorRepository;
   private TeaTypeRepository teaTypeRepository;
   private TagRepository tagRepository;
@@ -143,6 +145,8 @@ public class UploadNewTeas {
     var typeEntities = mapAll(teaTypes, tea.getTypes());
     var tagEntities = mapAll(tags, tea.getTags());
 
+    var price = parsePrice(tea.getPrice());
+
     return new TeaEntity(
       vendorEntity,
       typeEntities,
@@ -156,10 +160,18 @@ public class UploadNewTeas {
         tea.getOrigin(),
         tea.getElevation()
       ),
+      price,
       tea.getBrewingInstructions(),
       tea.isInStock(),
       tagEntities
     );
+  }
+
+  public static Float parsePrice(String price) {
+    if (price.equals(NO_PRICE)) {
+      return null;
+    }
+    return Float.parseFloat(price);
   }
 
   private static byte[] getBytes(BufferedImage img) throws IOException {

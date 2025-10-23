@@ -160,6 +160,7 @@ public class MyTeaCollectionApplication {
       @RequestParam(required = false) String elevation,
       @RequestParam(required = false) String cultivar,
       @RequestParam(required = false) String brewingInstructions,
+      @RequestParam(required = false) Float price,
       @RequestParam(value = "tags", required = false) List<Long> tagIds,
       @RequestParam(required = false) List<MultipartFile> images
   ) throws Exception {
@@ -192,6 +193,7 @@ public class MyTeaCollectionApplication {
         origin,
         elevation
       ),
+      price,
       brewingInstructions,
       true,
       tagEntities
