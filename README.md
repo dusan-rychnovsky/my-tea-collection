@@ -1,9 +1,13 @@
+Sonar:  
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)  
-[mytea.dusanrychnovsky.cz](https://myteacollection.nicebush-23f788df.northeurope.azurecontainerapps.io/)
+Better Stack:  
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/27t9n.svg)](https://uptime.betterstack.com/?utm_source=status_badge)  
+Hosting:  
+[mytea.dusanrychnovsky.cz](https://mytea.dusanrychnovsky.cz)
 
 # My Tea Collection
 
