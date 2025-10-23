@@ -5,7 +5,7 @@ Sonar:
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dusan-rychnovsky_my-tea-collection&metric=bugs)](https://sonarcloud.io/summary/new_code?id=dusan-rychnovsky_my-tea-collection)  
 Better Stack:  
-[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/27t9n.svg)](https://uptime.betterstack.com/?utm_source=status_badge)  
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v2/monitor/27t9n.svg)](https://uptime.betterstack.com/?utm_source=status_badge)  
 Hosting:  
 [mytea.dusanrychnovsky.cz](https://mytea.dusanrychnovsky.cz)
 
