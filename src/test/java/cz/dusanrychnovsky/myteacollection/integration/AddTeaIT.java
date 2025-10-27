@@ -1,6 +1,9 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
+import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +41,9 @@ class AddTeaIT {
   private MockMvc mvc;
 
   @Autowired
+  private CreateUser createUser;
+
+  @Autowired
   private TeaRepository teaRepository;
 
   @Autowired
@@ -45,7 +52,13 @@ class AddTeaIT {
   @Autowired
   private TeaTypeRepository teaTypeRepository;
 
+  @BeforeEach
+  void setup() throws IOException {
+    createUser.run(TEST_USER_EMAIL, "pwd", "Dušan", "Rychnovský");
+  }
+
   @Test
+  @Transactional
   void teaAdd_displaysTeaAddForm() throws Exception {
     mvc.perform(get("/teas/add")
       .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE)))
