@@ -19,11 +19,20 @@ public class UserEntity {
 
   private String lastName;
 
-  public UserEntity(String email, String password, String firstName, String lastName) {
+  private String nickName;
+
+  private String location;
+
+  private String aboutMe;
+
+  public UserEntity(String email, String password, String firstName, String lastName, String nickName, String location, String aboutMe) {
     this.email = email;
     this.password = password;
     this.firstName = firstName;
     this.lastName = lastName;
+    this.nickName = nickName;
+    this.location = location;
+    this.aboutMe = aboutMe;
   }
 
   public UserEntity() {
@@ -31,6 +40,14 @@ public class UserEntity {
 
   public Long getId() {
     return id;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public String getPassword() {
+    return password;
   }
 
   public String getFirstName() {
@@ -41,11 +58,15 @@ public class UserEntity {
     return lastName;
   }
 
-  public String getPassword() {
-    return password;
+  public String getNickName() {
+    return nickName;
   }
 
-  public String getEmail() {
-    return email;
+  public String getLocation() {
+    return location;
+  }
+
+  public String getAboutMe() {
+    return aboutMe;
   }
 }
