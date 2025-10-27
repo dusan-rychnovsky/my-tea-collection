@@ -38,7 +38,7 @@ public class CreateUser {
   public void run(String email, String password, String firstName, String lastName) {
     logger.info("Going to create user with email: {}", email);
     var encodedPassword = passwordEncoder.encode(password);
-    var user = new UserEntity(email, encodedPassword, firstName, lastName);
+    var user = new UserEntity(email, encodedPassword, firstName, lastName, null, null, null);
     userRepository.save(user);
     logger.info("User successfully created.");
   }

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,14 @@ public class UploadNewTeas {
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
+  public static final String USER_EMAIL = "dusan.rychnovsky@gmail.com";
   private static final String NO_PRICE = "N/A";
 
-  private VendorRepository vendorRepository;
-  private TeaTypeRepository teaTypeRepository;
-  private TagRepository tagRepository;
-  private TeaRepository teaRepository;
-
-  private Map<String, VendorEntity> vendors;
-  private Map<String, TeaTypeEntity> teaTypes;
-  private Map<String, TagEntity> tags;
+  private final UserRepository userRepository;
+  private final VendorRepository vendorRepository;
+  private final TeaTypeRepository teaTypeRepository;
+  private final TagRepository tagRepository;
+  private final TeaRepository teaRepository;
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
@@ -52,11 +52,13 @@ public class UploadNewTeas {
 
   @Autowired
   public UploadNewTeas(
+    UserRepository userRepository,
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
     TagRepository tagRepository,
     TeaRepository teaRepository) {
 
+    this.userRepository = userRepository;
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.tagRepository = tagRepository;
@@ -75,14 +77,15 @@ public class UploadNewTeas {
       return;
     }
 
-    vendors = fetchVendors();
-    teaTypes = fetchTeaTypes();
-    tags = fetchTags();
+    var user = fetchUser();
+    var vendors = fetchVendors();
+    var teaTypes = fetchTeaTypes();
+    var tags = fetchTags();
 
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
 
-      var teaEntity = toEntity(tea, vendors, teaTypes, tags);
+      var teaEntity = toEntity(user, tea, vendors, teaTypes, tags);
 
       var idx = 0;
       // TODO: load tea images in correct order
@@ -117,6 +120,12 @@ public class UploadNewTeas {
     return 0L;
   }
 
+
+  private UserEntity fetchUser() {
+    return userRepository.findByEmailIgnoreCase(USER_EMAIL)
+      .orElseThrow(() -> new IllegalStateException("User not found with email address: " + USER_EMAIL));
+  }
+
   private Map<String, TeaTypeEntity> fetchTeaTypes() {
     logger.info("Going to fetch available tea types.");
     return teaTypeRepository.findAll().stream()
@@ -136,6 +145,7 @@ public class UploadNewTeas {
   }
 
   public static TeaEntity toEntity(
+    UserEntity userEntity,
     TeaRecord tea,
     Map<String, VendorEntity> vendors,
     Map<String, TeaTypeEntity> teaTypes,
@@ -148,6 +158,7 @@ public class UploadNewTeas {
     var price = parsePrice(tea.getPrice());
 
     return new TeaEntity(
+      userEntity,
       vendorEntity,
       typeEntities,
       tea.getTitle(),

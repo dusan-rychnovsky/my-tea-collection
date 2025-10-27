@@ -57,7 +57,10 @@ java `
 3) **Insert bootstrapping data.**  
 Execute statements from file `src\test\resources\data.sql`.
 
-4) **(Optional) Populate the database with teas from my collection.**  
+4) **(Optional) Create a user account.**  
+Run `CreateUser` java class.
+
+5) **(Optional) Populate the database with teas from my collection.**  
 Run `UpladNewTeas` java class.
 
 ### Run the Application

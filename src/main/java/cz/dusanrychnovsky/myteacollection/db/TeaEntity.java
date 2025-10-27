@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.db;
 
+import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import jakarta.persistence.*;
 
 import java.net.MalformedURLException;
@@ -21,6 +22,10 @@ public class TeaEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
   @ManyToOne
   @JoinColumn(name = "vendor_id")
@@ -68,6 +73,7 @@ public class TeaEntity {
   private Set<TagEntity> tags;
 
   public TeaEntity(
+    UserEntity user,
     VendorEntity vendor,
     Set<TeaTypeEntity> types,
     String title,
@@ -80,6 +86,7 @@ public class TeaEntity {
     boolean inStock,
     Set<TagEntity> tags) {
 
+    this.user = user;
     this.vendor = vendor;
     this.types = types;
     this.title = title;
@@ -99,6 +106,10 @@ public class TeaEntity {
 
   public Long getId() {
     return id;
+  }
+
+  public UserEntity getUser() {
+    return user;
   }
 
   public VendorEntity getVendor() {

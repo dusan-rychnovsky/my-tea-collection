@@ -44,7 +44,7 @@ class AuthenticationIT {
   void insertTestUser() {
     userRepository.deleteAll();
     var encodedPassword = new BCryptPasswordEncoder().encode(TEST_PASSWORD);
-    var user = new UserEntity(TEST_EMAIL, encodedPassword, "Test", "User");
+    var user = new UserEntity(TEST_EMAIL, encodedPassword, "Test", "User", "Nick", "Prague", "About me");
     userRepository.save(user);
   }
 

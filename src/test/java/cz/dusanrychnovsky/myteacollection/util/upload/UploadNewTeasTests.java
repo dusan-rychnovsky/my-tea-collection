@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.util.upload;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.db.TagEntity;
+import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -13,6 +14,15 @@ import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEnt
 import static org.junit.jupiter.api.Assertions.*;
 
 class UploadNewTeasTests {
+
+  private static final UserEntity USER = new UserEntity(
+    "dusan.rychnovsky@gmail.com",
+    "pwd",
+    "Dušan",
+    "Rychnovský",
+    null,
+    "Prague, Czech republic",
+    null);
 
   private static final Map<String, VendorEntity> VENDORS = Map.of(
     "Meetea", new VendorEntity(0L, "Meetea", "https://www.meetea.cz"),
@@ -25,8 +35,8 @@ class UploadNewTeasTests {
   );
 
   private static final Map<String, TagEntity> TAGS = Map.of(
-    "meetea-2025-jan", new TagEntity(1L, "meetea-2025-jan", "Čajové předplatné Meetea, leden 2025"),
-    "meetea-2024-dec", new TagEntity(2L, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
+    "meetea-2025-jan", new TagEntity(1L, USER, "meetea-2025-jan", "Čajové předplatné Meetea, leden 2025"),
+    "meetea-2024-dec", new TagEntity(2L, USER, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
   );
 
   private static final TeaRecord TEA = new TeaRecord(
@@ -63,9 +73,10 @@ class UploadNewTeasTests {
 
   @Test
   void toEntity_translatesTeaToEntityRepresentation() {
-    var result = toEntity(TEA, VENDORS, TEA_TYPES, TAGS);
+    var result = toEntity(USER, TEA, VENDORS, TEA_TYPES, TAGS);
 
     assertNull(result.getId());
+    assertEquals(USER.getEmail(), result.getUser().getEmail());
     assertEquals(TEA.getTitle(), result.getTitle());
     assertEquals(TEA.getName(), result.getName());
     assertEquals(TEA.getDescription(), result.getDescription());
@@ -90,26 +101,26 @@ class UploadNewTeasTests {
   @Test
   void toEntity_withPrice_parsesPrice() {
     var tea = withPrice(TEA, "12.5");
-    var result = toEntity(tea, VENDORS, TEA_TYPES, TAGS);
+    var result = toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS);
     assertEquals(parsePrice(tea.getPrice()), result.getPrice());
   }
 
   @Test
   void toEntity_invalidVendor_throws() {
     var tea = withVendor(TEA, "Meileaf");
-    assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
   void toEntity_invalidType_throws() {
     var tea = withTypes(TEA, Set.of("Dark", "Blend"));
-    assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
   void toEntity_invalidTag_throws() {
     var tea = withTags(TEA, Set.of("meetea-2025-jan", "unknown-tag"));
-    assertThrows(IllegalArgumentException.class, () -> toEntity(tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
   }
 
   private static TeaRecord withTags(TeaRecord tea, Set<String> tags) {
