@@ -35,8 +35,8 @@ class UploadNewTeasTests {
   );
 
   private static final Map<String, TagEntity> TAGS = Map.of(
-    "meetea-2025-jan", new TagEntity(1L, "meetea-2025-jan", "Čajové předplatné Meetea, leden 2025"),
-    "meetea-2024-dec", new TagEntity(2L, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
+    "meetea-2025-jan", new TagEntity(1L, USER, "meetea-2025-jan", "Čajové předplatné Meetea, leden 2025"),
+    "meetea-2024-dec", new TagEntity(2L, USER, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
   );
 
   private static final TeaRecord TEA = new TeaRecord(

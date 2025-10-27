@@ -1,13 +1,15 @@
 package cz.dusanrychnovsky.myteacollection.db;
 
+import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "myteacollection", name = "Tags")
 public class TagEntity {
 
-  public TagEntity(long id, String label, String description) {
+  public TagEntity(long id, UserEntity user, String label, String description) {
     this.id = id;
+    this.user = user;
     this.label = label;
     this.description = description;
   }
@@ -18,6 +20,10 @@ public class TagEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private UserEntity user;
 
   private String label;
 
