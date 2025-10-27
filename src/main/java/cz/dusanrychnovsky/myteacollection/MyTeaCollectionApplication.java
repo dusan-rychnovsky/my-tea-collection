@@ -1,6 +1,7 @@
 package cz.dusanrychnovsky.myteacollection;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
+import cz.dusanrychnovsky.myteacollection.db.users.*;
 import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class MyTeaCollectionApplication {
     SpringApplication.run(MyTeaCollectionApplication.class, args);
   }
 
+  private final UserRepository userRepository;
   private final VendorRepository vendorRepository;
   private final TeaTypeRepository teaTypeRepository;
   private final TeaImageRepository teaImageRepository;
@@ -48,6 +50,7 @@ public class MyTeaCollectionApplication {
 
   @Autowired
   public MyTeaCollectionApplication(
+    UserRepository userRepository,
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
     TeaImageRepository teaImageRepository,
@@ -55,6 +58,7 @@ public class MyTeaCollectionApplication {
     TeaSearchRepository teaSearchRepository,
     TagRepository tagRepository) {
 
+    this.userRepository = userRepository;
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.teaImageRepository = teaImageRepository;
@@ -149,22 +153,27 @@ public class MyTeaCollectionApplication {
   @PostMapping("/teas/add")
   @Transactional
   public String addTea(
-      @RequestParam String url,
-      @RequestParam String title,
-      @RequestParam String name,
-      @RequestParam String description,
-      @RequestParam(value = "teaTypes") List<Long> teaTypeIds,
-      @RequestParam Long vendorId,
-      @RequestParam(required = false) String season,
-      @RequestParam(required = false) String origin,
-      @RequestParam(required = false) String elevation,
-      @RequestParam(required = false) String cultivar,
-      @RequestParam(required = false) String brewingInstructions,
-      @RequestParam(required = false) Float price,
-      @RequestParam(value = "tags", required = false) List<Long> tagIds,
-      @RequestParam(required = false) List<MultipartFile> images
+    Authentication authentication,
+    @RequestParam String url,
+    @RequestParam String title,
+    @RequestParam String name,
+    @RequestParam String description,
+    @RequestParam(value = "teaTypes") List<Long> teaTypeIds,
+    @RequestParam Long vendorId,
+    @RequestParam(required = false) String season,
+    @RequestParam(required = false) String origin,
+    @RequestParam(required = false) String elevation,
+    @RequestParam(required = false) String cultivar,
+    @RequestParam(required = false) String brewingInstructions,
+    @RequestParam(required = false) Float price,
+    @RequestParam(value = "tags", required = false) List<Long> tagIds,
+    @RequestParam(required = false) List<MultipartFile> images
   ) throws Exception {
     // TODO: form validation (mandatory fields, URL format, etc.)
+
+    var emailAddress = authentication.getName();
+    var user = userRepository.findByEmailIgnoreCase(emailAddress)
+      .orElseThrow(() -> new IllegalArgumentException("User not found with email address: " + emailAddress));
 
     var vendorEntity = vendorRepository.findById(vendorId)
       .orElseThrow(() -> new IllegalArgumentException("Invalid vendor ID: " + vendorId));
@@ -181,6 +190,7 @@ public class MyTeaCollectionApplication {
     }
 
     var teaEntity = new TeaEntity(
+      user,
       vendorEntity,
       teaTypeEntities,
       title,
