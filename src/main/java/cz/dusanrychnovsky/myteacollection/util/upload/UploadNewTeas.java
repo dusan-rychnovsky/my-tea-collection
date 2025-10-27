@@ -33,8 +33,8 @@ public class UploadNewTeas {
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
+  public static final String USER_EMAIL = "dusan.rychnovsky@gmail.com";
   private static final String NO_PRICE = "N/A";
-  private static final String USER_EMAIL = "dusan.rychnovsky@gmail.com";
 
   private final UserRepository userRepository;
   private final VendorRepository vendorRepository;
