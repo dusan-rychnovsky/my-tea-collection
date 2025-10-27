@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.integration;
 import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,6 +32,9 @@ class TeaViewIT {
   private UploadNewTeas uploadNewTeas;
 
   @Autowired
+  private CreateUser createUser;
+
+  @Autowired
   private MockMvc mvc;
 
   @Autowired
@@ -42,6 +46,7 @@ class TeaViewIT {
   @BeforeEach
   void setup() throws IOException {
     // insert two teas in the DB
+    createUser.run(UploadNewTeas.USER_EMAIL, "pwd", "Dušan", "Rychnovský");
     uploadNewTeas.run(toFile("teas"));
   }
 
