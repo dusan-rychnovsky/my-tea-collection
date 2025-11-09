@@ -12,6 +12,10 @@ public class TeaTypeEntity {
 
   private String name;
 
+  @ManyToOne
+  @JoinColumn(name = "parent_id")
+  private TeaTypeEntity parent;
+
   public TeaTypeEntity(Long id, String name) {
     this.id = id;
     this.name = name;
@@ -26,5 +30,13 @@ public class TeaTypeEntity {
 
   public String getName() {
     return name;
+  }
+
+  public TeaTypeEntity getParent() {
+    return parent;
+  }
+
+  public boolean hasParent() {
+    return parent != null;
   }
 }
