@@ -164,7 +164,7 @@ class TeaCollectionIT {
   void filter_byType_listsRelevantTeas() throws Exception {
     var actions = mvc.perform(post("/filter")
       .with(csrf())
-      .param("teaTypeId", "2")
+      .param("teaTypeId", "4")
       .param("vendorId", "2")
       .param("availabilityId", "0"))
       .andExpect(status().isOk());
@@ -196,11 +196,11 @@ class TeaCollectionIT {
     containsStrings(actions,
       // verify tea type dropdown
       "<option value=\"1\">Blend</option>",
-      "<option value=\"3\">Yellow Tea</option>",
-      "<option value=\"5\">Oolong</option>",
-      "<option value=\"8\">Sheng Puerh</option>",
-      "<option value=\"11\">Yabao</option>",
-      "<option value=\"12\">Fu Zhuan</option>",
+      "<option value=\"7\">Yellow Tea</option>",
+      "<option value=\"15\">Oolong</option>",
+      "<option value=\"22\">Sheng Puerh</option>",
+      "<option value=\"29\">Yabao</option>",
+      "<option value=\"25\">Fu Zhuan</option>",
       // verify vendor dropdown
       "<option value=\"1\">Mei Leaf</option>",
       "<option value=\"4\">Lao Tea</option>",
