@@ -13,6 +13,22 @@ INSERT INTO myteacollection.TeaTypes (id, name) VALUES (10, 'Liu Bao');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (11, 'Yabao');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (12, 'Fu Zhuan');
 INSERT INTO myteacollection.TeaTypes (id, name) VALUES (13, 'Liu An');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (14, 'Chen Pi');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (15, 'Huang Pian');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (16, 'Yan Cha');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (17, 'Dan Cong');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (18, 'Bai Mu Dan');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (19, 'Shou Mei');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (20, 'Long Jing');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (21, 'Darjeeling');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (22, 'Sencha');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (23, 'Tian Jian');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (24, 'Bao Zhong');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (25, 'Hou Kui');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (26, 'Mao Feng');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (27, 'Bi Luo Chun');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (28, 'Dong Ding');
+INSERT INTO myteacollection.TeaTypes (id, name) VALUES (29, 'Genmaicha');
 
 -- Vendor
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
