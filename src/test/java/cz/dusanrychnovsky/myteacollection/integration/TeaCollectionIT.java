@@ -195,11 +195,11 @@ class TeaCollectionIT {
   private void verifyDropdowns(ResultActions actions) throws Exception {
     containsStrings(actions,
       // verify tea type dropdown
-      "<option value=\"1\">Blend</option>",
-      "<option value=\"7\">Yellow Tea</option>",
-      "<option value=\"15\">Oolong</option>",
+      "<option value=\"1\" class=\"parent-tea-type\">Blend</option>",
+      "<option value=\"7\" class=\"parent-tea-type\">Yellow Tea</option>",
+      "<option value=\"15\" class=\"parent-tea-type\">Oolong</option>",
       "<option value=\"22\">Sheng Puerh</option>",
-      "<option value=\"29\">Yabao</option>",
+      "<option value=\"29\" class=\"parent-tea-type\">Yabao</option>",
       "<option value=\"25\">Fu Zhuan</option>",
       // verify vendor dropdown
       "<option value=\"1\">Mei Leaf</option>",

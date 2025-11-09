@@ -50,7 +50,7 @@
               <div class="form-group col-md-3">
                 <label for="select-tea-type">Tea type:</label>
                 <select th:field="*{teaTypeId}" class="form-control" id="select-tea-type" onchange="submitFilterForm()">
-                  <option th:each="type : ${teaTypes}" th:value="${type.id}" th:text="${type.name}"></option>
+                  <option th:each="type : ${teaTypes}" th:value="${type.id}" th:text="${type.name}" th:classappend="${type.id != 0 && !type.hasParent} ? 'parent-tea-type' : ''"></option>
                 </select>
               </div>
               <div class="form-group col-md-3">

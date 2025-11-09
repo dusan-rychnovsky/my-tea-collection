@@ -23,6 +23,10 @@
   appearance: auto;
 }
 
+.parent-tea-type {
+  font-weight: bold;
+}
+
 .tea-card h2 {
   font-size: 1rem;
 }
