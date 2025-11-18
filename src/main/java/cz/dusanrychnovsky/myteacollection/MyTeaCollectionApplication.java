@@ -101,7 +101,7 @@ public class MyTeaCollectionApplication {
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
 
-    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria);
+    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria).stream().limit(9);
     model.addAttribute("teas", teas);
 
     return "index";
