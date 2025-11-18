@@ -4,6 +4,7 @@ import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.db.users.*;
 import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
+import cz.dusanrychnovsky.myteacollection.model.PageInfo;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import cz.dusanrychnovsky.myteacollection.util.upload.JpgCompression;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import static java.util.Comparator.comparing;
 public class MyTeaCollectionApplication {
 
   private static final Logger logger = LoggerFactory.getLogger(MyTeaCollectionApplication.class);
+  private static final int PAGE_SIZE = 9;
 
   public static void main(String[] args) {
     SpringApplication.run(MyTeaCollectionApplication.class, args);
@@ -68,41 +70,67 @@ public class MyTeaCollectionApplication {
   }
 
   @GetMapping({"/", "/index"})
-  public String index(Model model) {
+  public String index(
+    @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    Model model) {
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
-      SearchCriteria.EMPTY
+      SearchCriteria.EMPTY,
+      pageNo
     );
   }
 
   @PostMapping("/filter")
-  public String filter(@ModelAttribute FilterCriteria criteria, Model model) {
+  public String filter(
+    @ModelAttribute FilterCriteria criteria,
+    @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    Model model) {
     return handleIndexView(
       model,
       criteria,
-      SearchCriteria.EMPTY
+      SearchCriteria.EMPTY,
+      pageNo
     );
   }
 
   @PostMapping("/search")
-  public String search(@ModelAttribute SearchCriteria criteria, Model model) {
+  public String search(
+    @ModelAttribute SearchCriteria criteria,
+    @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    Model model) {
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
-      criteria
+      criteria,
+      pageNo
     );
   }
 
   private String handleIndexView(
-    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria) {
+    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo) {
+
+    if (pageNo < 0) {
+      pageNo = 0;
+    }
 
     populateDropdowns(model);
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
 
-    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria).stream().limit(9);
-    model.addAttribute("teas", teas);
+    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria);
+    var totalTeasCount = teas.size();
+
+    var pageInfo = new PageInfo(
+      pageNo,
+      (totalTeasCount + PAGE_SIZE - 1) / PAGE_SIZE
+    );
+    model.addAttribute("pageInfo", pageInfo);
+
+    var page = teas.stream()
+      .skip((long) pageNo * PAGE_SIZE)
+      .limit(PAGE_SIZE);
+    model.addAttribute("teas", page);
 
     return "index";
   }
