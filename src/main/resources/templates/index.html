@@ -21,7 +21,7 @@
             <a class="nav-link" href="/teas/add">Add Tea</a>
           </li>
         </ul>
-        <form th:object="${search}" th:action="@{/search}" class="form-inline my-2 my-lg-0" method="post">
+        <form th:object="${search}" th:action="@{/search}" class="form-inline my-2 my-lg-0" method="get">
           <input th:field="*{query}" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
@@ -45,7 +45,7 @@
             Use below filters to simplify searching for a tea from a certain vendor, etc.
             Press View to see all details about particular tea.
           </p>
-          <form th:object="${filter}" th:action="@{/filter}" id="tea-filter-form" method="post">
+          <form th:object="${filter}" th:action="@{/filter}" id="tea-filter-form" method="get">
             <div class="form-row justify-content-center">
               <div class="form-group col-md-3">
                 <label for="select-tea-type">Tea type:</label>

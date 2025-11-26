@@ -81,7 +81,7 @@ public class MyTeaCollectionApplication {
     );
   }
 
-  @PostMapping("/filter")
+  @GetMapping("/filter")
   public String filter(
     @ModelAttribute FilterCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
@@ -94,7 +94,7 @@ public class MyTeaCollectionApplication {
     );
   }
 
-  @PostMapping("/search")
+  @GetMapping("/search")
   public String search(
     @ModelAttribute SearchCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,

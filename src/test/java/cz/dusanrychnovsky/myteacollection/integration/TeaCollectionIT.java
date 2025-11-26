@@ -22,7 +22,6 @@ import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotCont
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -96,7 +95,7 @@ class TeaCollectionIT {
   @Test()
   @Transactional
   void search_byNameOrTitle_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search")
+    var actions = mvc.perform(get("/search")
       .with(csrf())
       .param("query", "shou mei"))
       .andExpect(status().isOk());
@@ -129,7 +128,7 @@ class TeaCollectionIT {
   @Test
   @Transactional
   void search_byLocation_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search")
+    var actions = mvc.perform(get("/search")
         .with(csrf())
       .param("query", "yunnan"))
       .andExpect(status().isOk());
@@ -162,7 +161,7 @@ class TeaCollectionIT {
   @Test
   @Transactional
   void filter_byType_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/filter")
+    var actions = mvc.perform(get("/filter")
       .with(csrf())
       .param("teaTypeId", "4")
       .param("vendorId", "2")
