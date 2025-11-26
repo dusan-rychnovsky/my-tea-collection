@@ -108,14 +108,14 @@
           <nav th:if="${pageInfo.totalPages > 1}" aria-label="Tea list pagination menu.">
             <ul class="pagination justify-content-center">
               <li class="page-item" th:classappend="${pageInfo.currentPageNo == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{/(pageNo=${pageInfo.currentPageNo - 1})}" tabindex="-1">Previous</a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${pageInfo.currentPageNo - 1})}" tabindex="-1">Previous</a>
               </li>
               <li class="page-item" th:each="i : ${#numbers.sequence(0, pageInfo.totalPages - 1)}"
                   th:classappend="${i} == ${pageInfo.currentPageNo} ? 'active'">
-                <a class="page-link" th:href="@{/(pageNo=${i})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${i})}" th:text="${i + 1}"></a>
               </li>
               <li class="page-item" th:classappend="${pageInfo.currentPageNo >= pageInfo.totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{/(pageNo=${pageInfo.currentPageNo + 1})}">Next</a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${pageInfo.currentPageNo + 1})}">Next</a>
               </li>
             </ul>
           </nav>

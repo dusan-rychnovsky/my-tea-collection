@@ -36,6 +36,8 @@ import static java.util.Comparator.comparing;
 public class MyTeaCollectionApplication {
 
   private static final Logger logger = LoggerFactory.getLogger(MyTeaCollectionApplication.class);
+
+  private static final String REQUEST_PATH_PARAM = "requestPath";
   private static final int PAGE_SIZE = 9;
 
   public static void main(String[] args) {
@@ -73,6 +75,7 @@ public class MyTeaCollectionApplication {
   public String index(
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     Model model) {
+    model.addAttribute(REQUEST_PATH_PARAM, "/");
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
@@ -86,6 +89,7 @@ public class MyTeaCollectionApplication {
     @ModelAttribute FilterCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     Model model) {
+    model.addAttribute(REQUEST_PATH_PARAM, "/filter");
     return handleIndexView(
       model,
       criteria,
@@ -99,6 +103,7 @@ public class MyTeaCollectionApplication {
     @ModelAttribute SearchCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     Model model) {
+    model.addAttribute(REQUEST_PATH_PARAM, "/search");
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
