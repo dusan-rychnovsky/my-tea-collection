@@ -123,19 +123,15 @@ public class MyTeaCollectionApplication {
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
 
-    var teas = teaSearchRepository.filter(filterCriteria, searchCriteria);
-    var totalTeasCount = teas.size();
+    var teas = teaSearchRepository.getPage(filterCriteria, searchCriteria, pageNo, PAGE_SIZE);
+    model.addAttribute("teas", teas);
 
+    var totalCount = (int) teaSearchRepository.count(filterCriteria, searchCriteria);
     var pageInfo = new PageInfo(
       pageNo,
-      (totalTeasCount + PAGE_SIZE - 1) / PAGE_SIZE
+      (totalCount + PAGE_SIZE - 1) / PAGE_SIZE
     );
     model.addAttribute("pageInfo", pageInfo);
-
-    var page = teas.stream()
-      .skip((long) pageNo * PAGE_SIZE)
-      .limit(PAGE_SIZE);
-    model.addAttribute("teas", page);
 
     return "index";
   }
