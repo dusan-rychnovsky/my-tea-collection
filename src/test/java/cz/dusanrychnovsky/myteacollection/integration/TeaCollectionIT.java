@@ -22,7 +22,6 @@ import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotCont
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -56,8 +55,9 @@ class TeaCollectionIT {
 
   @Test
   @Transactional
-  void index_listsAllTeas() throws Exception {
-    var actions = mvc.perform(get("/index"))
+  void index_listsFirstPageOfTeas() throws Exception {
+    var actions = mvc.perform(get("/index?pageSize=2")
+      .param("pageSize", "2"))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
@@ -77,6 +77,21 @@ class TeaCollectionIT {
       "Mei Leaf",
       "Dark Tea, Sheng Puerh"
     );
+
+    verifyPagingMenu(actions, 3);
+  }
+
+  @Test
+  @Transactional
+  void index_listsSecondPageOfTeas() throws Exception {
+    var actions = mvc.perform(get("/index")
+      .param("pageNo", "1")
+      .param("pageSize", "2"))
+      .andExpect(status().isOk());
+
+    verifyHeader(actions);
+    verifyDropdowns(actions);
+
     verifyTea(
       actions,
       "Simple Dreams 2",
@@ -91,14 +106,17 @@ class TeaCollectionIT {
       "Meetea",
       "White Tea"
     );
+
+    verifyPagingMenu(actions, 3);
   }
 
   @Test()
   @Transactional
   void search_byNameOrTitle_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search")
+    var actions = mvc.perform(get("/search")
       .with(csrf())
-      .param("query", "shou mei"))
+      .param("query", "shou mei")
+      .param("pageSize", "2"))
       .andExpect(status().isOk());
 
     verifyHeader(actions);
@@ -124,12 +142,14 @@ class TeaCollectionIT {
       "Douleshot",
       "Luminary Misfit"
     );
+
+    verifyPagingMenu(actions, 2);
   }
 
   @Test
   @Transactional
   void search_byLocation_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/search")
+    var actions = mvc.perform(get("/search")
         .with(csrf())
       .param("query", "yunnan"))
       .andExpect(status().isOk());
@@ -162,7 +182,7 @@ class TeaCollectionIT {
   @Test
   @Transactional
   void filter_byType_listsRelevantTeas() throws Exception {
-    var actions = mvc.perform(post("/filter")
+    var actions = mvc.perform(get("/filter")
       .with(csrf())
       .param("teaTypeId", "4")
       .param("vendorId", "2")
@@ -188,6 +208,45 @@ class TeaCollectionIT {
     );
   }
 
+  @Test
+  @Transactional
+  void filter_byVendor_listsRelevantTeas() throws Exception {
+    var actions = mvc.perform(get("/filter")
+        .with(csrf())
+        .param("teaTypeId", "0")
+        .param("vendorId", "1")
+        .param("availabilityId", "0")
+        .param("pageSize", "2"))
+      .andExpect(status().isOk());
+
+    verifyHeader(actions);
+    verifyDropdowns(actions);
+
+    verifyTea(
+      actions,
+      "Luminary Misfit",
+      "Lancang Gushu Sheng PuErh Spring 2022",
+      "Mei Leaf",
+      "Dark Tea, Sheng Puerh"
+    );
+    verifyTea(
+      actions,
+      "Simple Dreams 2",
+      "2021 Zhenghe Shou Mei Blend",
+      "Mei Leaf",
+      "Blend, White Tea"
+    );
+
+    doesNotContainStrings(
+      actions,
+      "Douleshot",
+      "Fujian Shoumei Bingcha 2017",
+      "Jade Star 8"
+    );
+
+    verifyPagingMenu(actions, 2);
+  }
+
   private void verifyHeader(ResultActions actions) throws Exception {
     containsStrings(actions,"<h1 class=\"jumbotron-heading\">My Tea Collection</h1>");
   }
@@ -202,7 +261,6 @@ class TeaCollectionIT {
       "<option value=\"29\" class=\"parent-tea-type\">Yabao</option>",
       "<option value=\"25\">Fu Zhuan</option>",
       // verify vendor dropdown
-      "<option value=\"1\">Mei Leaf</option>",
       "<option value=\"4\">Lao Tea</option>",
       "<option value=\"5\">Klasek Tea</option>",
       "<option value=\"6\">Banna House</option>",
@@ -210,6 +268,15 @@ class TeaCollectionIT {
       "<option value=\"1\">In stock</option>",
       "<option value=\"2\">Out of stock</option>"
     );
+  }
+
+
+  private void verifyPagingMenu(ResultActions actions, int numPages) throws Exception {
+    for (int i = 1; i <= numPages; i++) {
+      containsStrings(actions,
+        "pageNo=" + (i - 1) + "\">" + i + "</a>"
+      );
+    }
   }
 
   private void verifyTea(

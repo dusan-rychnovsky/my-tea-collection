@@ -39,7 +39,7 @@ class UploadNewTeasIT {
     createUser.run(UploadNewTeas.USER_EMAIL, "pwd", "Dušan", "Rychnovský");
     uploadNewTeas.run(toFile("teas"));
     var teas = teaRepository.findAll();
-    assertEquals(4, teas.size());
+    assertEquals(5, teas.size());
     var first = teas.get(0);
     assertEquals(UploadNewTeas.USER_EMAIL, first.getUser().getEmail());
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
@@ -64,6 +64,9 @@ class UploadNewTeasIT {
     assertEquals("Shou Mei 2017", fourth.getTitle());
     assertEquals(2, fourth.getImages().size());
     assertEquals(4.2f, fourth.getPrice());
+    var fifth = teas.get(4);
+    assertEquals(UploadNewTeas.USER_EMAIL, fifth.getUser().getEmail());
+    assertEquals("Jade Star 8", fifth.getTitle());
   }
 
   private Set<String> getLabels(Set<TagEntity> tags) {

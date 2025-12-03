@@ -38,3 +38,19 @@
 .tea-card p.basic-info span {
   display: block;
 }
+
+.pagination .page-item.active .page-link {
+  background-color: #212529;
+  border-color: #212529;
+  color: #fff;
+}
+
+.pagination .page-link:focus, .pagination .page-link:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+.pagination .page-link {
+  color: #212529;
+}
