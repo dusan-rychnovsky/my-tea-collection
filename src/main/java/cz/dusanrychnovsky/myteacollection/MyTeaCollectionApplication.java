@@ -38,7 +38,7 @@ public class MyTeaCollectionApplication {
   private static final Logger logger = LoggerFactory.getLogger(MyTeaCollectionApplication.class);
 
   private static final String REQUEST_PATH_PARAM = "requestPath";
-  private static final int PAGE_SIZE = 9;
+  private static final String PAGE_SIZE ="9";
 
   public static void main(String[] args) {
     SpringApplication.run(MyTeaCollectionApplication.class, args);
@@ -74,13 +74,15 @@ public class MyTeaCollectionApplication {
   @GetMapping({"/", "/index"})
   public String index(
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
     model.addAttribute(REQUEST_PATH_PARAM, "/");
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
       SearchCriteria.EMPTY,
-      pageNo
+      pageNo,
+      pageSize
     );
   }
 
@@ -88,13 +90,15 @@ public class MyTeaCollectionApplication {
   public String filter(
     @ModelAttribute FilterCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
     model.addAttribute(REQUEST_PATH_PARAM, "/filter");
     return handleIndexView(
       model,
       criteria,
       SearchCriteria.EMPTY,
-      pageNo
+      pageNo,
+      pageSize
     );
   }
 
@@ -102,18 +106,20 @@ public class MyTeaCollectionApplication {
   public String search(
     @ModelAttribute SearchCriteria criteria,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+    @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
     model.addAttribute(REQUEST_PATH_PARAM, "/search");
     return handleIndexView(
       model,
       FilterCriteria.EMPTY,
       criteria,
-      pageNo
+      pageNo,
+      pageSize
     );
   }
 
   private String handleIndexView(
-    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo) {
+    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo, int pageSize) {
 
     if (pageNo < 0) {
       pageNo = 0;
@@ -123,13 +129,13 @@ public class MyTeaCollectionApplication {
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
 
-    var teas = teaSearchRepository.getPage(filterCriteria, searchCriteria, pageNo, PAGE_SIZE);
+    var teas = teaSearchRepository.getPage(filterCriteria, searchCriteria, pageNo, pageSize);
     model.addAttribute("teas", teas);
 
     var totalCount = (int) teaSearchRepository.count(filterCriteria, searchCriteria);
     var pageInfo = new PageInfo(
       pageNo,
-      (totalCount + PAGE_SIZE - 1) / PAGE_SIZE
+      (totalCount + pageSize - 1) / pageSize
     );
     model.addAttribute("pageInfo", pageInfo);
 
