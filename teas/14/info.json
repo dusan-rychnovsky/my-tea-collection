@@ -11,5 +11,5 @@
   "elevation": "N/A",
   "price": "N/A",
   "brewingInstructions": "100°C, 4g/100ml, 10s-10s-5s-10s-15s-25s",
-  "inStock": true
+  "inStock": false
 }

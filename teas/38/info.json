@@ -11,6 +11,6 @@
   "elevation": "N/A",
   "price": "13.45",
   "brewingInstructions": "100°C, 5g/100ml, 15s-10s-5s-10s-20s",
-  "inStock": true,
+  "inStock": false,
   "tags": [ "meetea-2025-feb" ]
 }

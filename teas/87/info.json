@@ -11,6 +11,6 @@
   "elevation": "N/A",
   "price": "4.4",
   "brewingInstructions": "N/A",
-  "inStock": true,
+  "inStock": false,
   "tags": [ "meetea-2025-oct" ]
 }
