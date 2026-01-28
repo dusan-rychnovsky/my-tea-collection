@@ -97,3 +97,6 @@
 97 Crane Stance https://globalteahut.org/products/crane-stance
 98 Threshold https://globalteahut.org/products/threshold
 99 Shortcut https://globalteahut.org/products/shortcut
+100 Duoteli 1999 https://store.meetea.cz/caj/duoteli-liubao-1999/
+101 Artisan Wuyi https://store.meetea.cz/caj/taiwan-artisan-wuyi-2025/
+102 Artisan Qing Xin https://store.meetea.cz/caj/taiwan-artisan-qing-xin-2025/
