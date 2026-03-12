@@ -92,3 +92,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (23, 'globalteahut-2026-winter', 'Global Tea Hut Subscription, Winter 2026');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (24, 'gift-tomas', 'Dárek od Tomáše Čapka');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (25, 'meetea-2025-dec', 'Čajové předplatné Meetea, prosinec 2025');
