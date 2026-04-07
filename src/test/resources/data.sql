@@ -42,6 +42,7 @@ INSERT INTO myteacollection.Vendors (id, name, url) VALUES (6, 'Banna House', 'h
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (7, 'TeaGardenia', 'https://www.teagardenia.com/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (8, 'Global Tea Hut', 'https://globalteahut.org/');
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (9, 'Amana', 'https://www.caj.cz/');
+INSERT INTO myteacollection.Vendors (id, name, url) VALUES (10, 'Orijin Tea', 'https://www.orijintea.com/');
 
 -- Tag
 INSERT INTO myteacollection.Tags (id, label, description)
