@@ -31,6 +31,7 @@ INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (28, 'Tian Jia
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (29, 'Huang Pian',22);
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (30, 'Yabao', NULL);
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (31, 'Darjeeling', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (32, 'Purple Tea', NULL);
 
 -- Vendor
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');
@@ -95,3 +96,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (24, 'gift-tomas', 'Dárek od Tomáše Čapka');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (25, 'meetea-2025-dec', 'Čajové předplatné Meetea, prosinec 2025');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (26, 'globalteahut-2026-spring', 'Global Tea Hut Subscription, Spring 2026');
