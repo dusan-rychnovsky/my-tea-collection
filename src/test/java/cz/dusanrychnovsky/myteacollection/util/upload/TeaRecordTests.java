@@ -29,8 +29,14 @@ class TeaRecordTests {
     assertEquals("4", tea.getPrice());
     assertEquals("100°C, 5g/100ml, 15s-10s-5s-10s-20s", tea.getBrewingInstructions());
     assertTrue(tea.isInStock());
-    assertEquals(2, tea.getImages().size());
     assertEquals(Set.of("meetea-2025-jan", "meetea-2024-dec"), tea.getTags());
+  }
+
+  @Test
+  void loadImages_loadsImagesFromGivenDirectory() {
+    var tea = loadFrom(toFile("teas/01"));
+
+    assertEquals(2, tea.loadImages().size());
   }
 
   @Test
