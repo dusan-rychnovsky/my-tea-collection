@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,30 +51,28 @@ public class UpdateTeasAvailability {
 
     var updates = computeUpdates(records, teasById);
 
-    for (var update : updates) {
-      logger.info("Going to update tea: #{} -> inStock={}", update.id(), update.newInStock());
-      teaRepository.updateInStock(update.id(), update.newInStock());
+    for (var update : updates.entrySet()) {
+      logger.info("Going to update tea: #{} -> inStock={}", update.getKey(), update.getValue());
+      teaRepository.updateInStock(update.getKey(), update.getValue());
     }
 
     logger.info("Update finished. Checked {} teas, updated {}.", records.size(), updates.size());
   }
 
-  static List<AvailabilityUpdate> computeUpdates(
+  static Map<Long, Boolean> computeUpdates(
     List<TeaRecord> records,
     Map<Long, TeaEntity> teasById) {
 
-    var updates = new ArrayList<AvailabilityUpdate>();
+    var updates = new LinkedHashMap<Long, Boolean>();
     for (var record : records) {
       var entity = teasById.get(record.getId());
       if (entity == null) {
         throw new IllegalStateException("No tea in db for id: " + record.getId());
       }
       if (record.isInStock() != entity.isInStock()) {
-        updates.add(new AvailabilityUpdate(record.getId(), record.isInStock()));
+        updates.put(record.getId(), record.isInStock());
       }
     }
     return updates;
   }
-
-  public record AvailabilityUpdate(long id, boolean newInStock) {}
 }

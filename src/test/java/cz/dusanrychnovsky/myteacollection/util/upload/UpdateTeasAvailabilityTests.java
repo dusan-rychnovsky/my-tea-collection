@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static cz.dusanrychnovsky.myteacollection.util.upload.UpdateTeasAvailability.AvailabilityUpdate;
 import static cz.dusanrychnovsky.myteacollection.util.upload.UpdateTeasAvailability.computeUpdates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,13 +30,13 @@ class UpdateTeasAvailabilityTests {
   void computeUpdates_someDiffer_returnsOnlyDiffering() {
     var records = List.of(record(1L, true), record(2L, false), record(3L, true));
     var teasById = Map.of(
-      1L, entity(1L, true),    // matches
-      2L, entity(2L, true),    // differs - JSON says false
-      3L, entity(3L, true));   // matches
+      1L, entity(1L, true),
+      2L, entity(2L, true),
+      3L, entity(3L, true));
 
     var result = computeUpdates(records, teasById);
 
-    assertEquals(List.of(new AvailabilityUpdate(2L, false)), result);
+    assertEquals(Map.of(2L, false), result);
   }
 
   @Test
@@ -47,7 +46,7 @@ class UpdateTeasAvailabilityTests {
 
     var result = computeUpdates(records, teasById);
 
-    assertEquals(List.of(new AvailabilityUpdate(1L, true)), result);
+    assertEquals(Map.of(1L, true), result);
   }
 
   @Test
@@ -57,7 +56,7 @@ class UpdateTeasAvailabilityTests {
 
     var result = computeUpdates(records, teasById);
 
-    assertEquals(List.of(new AvailabilityUpdate(1L, false)), result);
+    assertEquals(Map.of(1L, false), result);
   }
 
   @Test
