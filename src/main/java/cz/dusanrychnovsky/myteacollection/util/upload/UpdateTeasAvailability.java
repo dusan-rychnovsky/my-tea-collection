@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.db.TeaRepository.TeaAvailability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadAllFrom;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @SpringBootApplication(scanBasePackages = "cz.dusanrychnovsky.myteacollection")
@@ -46,10 +45,10 @@ public class UpdateTeasAvailability {
     logger.info("Loaded {} tea records from disk.", records.size());
 
     logger.info("Going to fetch teas from db.");
-    var teasById = teaRepository.findAll().stream()
-      .collect(toMap(TeaEntity::getId, identity()));
+    var dbInStockById = teaRepository.findAllAvailability().stream()
+      .collect(toMap(TeaAvailability::getId, TeaAvailability::isInStock));
 
-    var updates = computeUpdates(records, teasById);
+    var updates = computeUpdates(records, dbInStockById);
 
     for (var update : updates.entrySet()) {
       logger.info("Going to update tea: #{} -> inStock={}", update.getKey(), update.getValue());
@@ -61,15 +60,15 @@ public class UpdateTeasAvailability {
 
   static Map<Long, Boolean> computeUpdates(
     List<TeaRecord> records,
-    Map<Long, TeaEntity> teasById) {
+    Map<Long, Boolean> dbInStockById) {
 
     var updates = new LinkedHashMap<Long, Boolean>();
     for (var record : records) {
-      var entity = teasById.get(record.getId());
-      if (entity == null) {
+      var dbInStock = dbInStockById.get(record.getId());
+      if (dbInStock == null) {
         throw new IllegalStateException("No tea in db for id: " + record.getId());
       }
-      if (record.isInStock() != entity.isInStock()) {
+      if (record.isInStock() != dbInStock) {
         updates.put(record.getId(), record.isInStock());
       }
     }

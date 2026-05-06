@@ -1,6 +1,5 @@
 package cz.dusanrychnovsky.myteacollection.util.upload;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,11 +16,9 @@ class UpdateTeasAvailabilityTests {
   @Test
   void computeUpdates_allMatch_returnsEmpty() {
     var records = List.of(record(1L, true), record(2L, false));
-    var teasById = Map.of(
-      1L, entity(1L, true),
-      2L, entity(2L, false));
+    var dbInStockById = Map.of(1L, true, 2L, false);
 
-    var result = computeUpdates(records, teasById);
+    var result = computeUpdates(records, dbInStockById);
 
     assertTrue(result.isEmpty());
   }
@@ -29,12 +26,12 @@ class UpdateTeasAvailabilityTests {
   @Test
   void computeUpdates_someDiffer_returnsOnlyDiffering() {
     var records = List.of(record(1L, true), record(2L, false), record(3L, true));
-    var teasById = Map.of(
-      1L, entity(1L, true),
-      2L, entity(2L, true),
-      3L, entity(3L, true));
+    var dbInStockById = Map.of(
+      1L, true,
+      2L, true,
+      3L, true);
 
-    var result = computeUpdates(records, teasById);
+    var result = computeUpdates(records, dbInStockById);
 
     assertEquals(Map.of(2L, false), result);
   }
@@ -42,9 +39,9 @@ class UpdateTeasAvailabilityTests {
   @Test
   void computeUpdates_jsonTrueDbFalse_emitsTrue() {
     var records = List.of(record(1L, true));
-    var teasById = Map.of(1L, entity(1L, false));
+    var dbInStockById = Map.of(1L, false);
 
-    var result = computeUpdates(records, teasById);
+    var result = computeUpdates(records, dbInStockById);
 
     assertEquals(Map.of(1L, true), result);
   }
@@ -52,9 +49,9 @@ class UpdateTeasAvailabilityTests {
   @Test
   void computeUpdates_jsonFalseDbTrue_emitsFalse() {
     var records = List.of(record(1L, false));
-    var teasById = Map.of(1L, entity(1L, true));
+    var dbInStockById = Map.of(1L, true);
 
-    var result = computeUpdates(records, teasById);
+    var result = computeUpdates(records, dbInStockById);
 
     assertEquals(Map.of(1L, false), result);
   }
@@ -62,9 +59,9 @@ class UpdateTeasAvailabilityTests {
   @Test
   void computeUpdates_recordWithNoMatchingEntity_throws() {
     var records = List.of(record(42L, true));
-    var teasById = Map.<Long, TeaEntity>of();
+    var dbInStockById = Map.<Long, Boolean>of();
 
-    var ex = assertThrows(IllegalStateException.class, () -> computeUpdates(records, teasById));
+    var ex = assertThrows(IllegalStateException.class, () -> computeUpdates(records, dbInStockById));
     assertTrue(ex.getMessage().contains("42"));
   }
 
@@ -73,41 +70,17 @@ class UpdateTeasAvailabilityTests {
       "title",
       "name",
       "description",
-      Set.of("Dark"),
-      "Vendor",
-      "https://example.com",
+      Set.of("tea type"),
+      "vendor",
+      "url",
       "origin",
       "cultivar",
       "season",
       "elevation",
-      "N/A",
+      "price",
       "instructions",
       inStock,
       Set.of()
     ).setId(id);
-  }
-
-  private static TeaEntity entity(long id, boolean inStock) {
-    return new StubTeaEntity(id, inStock);
-  }
-
-  private static class StubTeaEntity extends TeaEntity {
-    private final long id;
-    private final boolean inStock;
-
-    StubTeaEntity(long id, boolean inStock) {
-      this.id = id;
-      this.inStock = inStock;
-    }
-
-    @Override
-    public Long getId() {
-      return id;
-    }
-
-    @Override
-    public boolean isInStock() {
-      return inStock;
-    }
   }
 }
