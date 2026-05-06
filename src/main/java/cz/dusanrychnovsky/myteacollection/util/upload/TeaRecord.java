@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public class TeaRecord {
   private Set<String> tags;
 
   @JsonIgnore
-  private List<BufferedImage> images;
+  private File sourceDir;
 
   @JsonCreator
   public TeaRecord(
@@ -72,8 +71,6 @@ public class TeaRecord {
     this.brewingInstructions = brewingInstructions;
     this.inStock = inStock;
     this.tags = tags != null ? tags : emptySet();
-
-    images = new ArrayList<>();
   }
 
   public static List<TeaRecord> loadNewFrom(File rootDir, long minId) {
@@ -92,13 +89,15 @@ public class TeaRecord {
   public static TeaRecord loadFrom(File dir) {
     var tea = loadInfo(new File(dir, INFO_FILE_NAME));
     tea.setId(parseLong(dir.getName()));
-    for (var file : dir.listFiles()) {
-      if (file.getName().equals(INFO_FILE_NAME)) {
-        continue;
-      }
-      tea.images.add(loadImg(file));
-    }
+    tea.sourceDir = dir;
     return tea;
+  }
+
+  public List<BufferedImage> loadImages() {
+    return stream(sourceDir.listFiles())
+      .filter(file -> !file.getName().equals(INFO_FILE_NAME))
+      .map(TeaRecord::loadImg)
+      .toList();
   }
 
   private static TeaRecord loadInfo(File infoFile) {
@@ -179,10 +178,6 @@ public class TeaRecord {
 
   public boolean isInStock() {
     return inStock;
-  }
-
-  public List<BufferedImage> getImages() {
-    return images;
   }
 
   public Set<String> getTags() {

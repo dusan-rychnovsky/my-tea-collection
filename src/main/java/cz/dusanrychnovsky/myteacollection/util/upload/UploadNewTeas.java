@@ -89,7 +89,7 @@ public class UploadNewTeas {
 
       var idx = 0;
       // TODO: load tea images in correct order
-      for (var image : tea.getImages()) {
+      for (var image : tea.loadImages()) {
         idx++;
         logger.info("Going to upload image: #{}", idx);
 
