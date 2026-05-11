@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
     name := "scraper",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio"          % "2.1.14",
+      "dev.zio" %% "zio-http"     % "3.0.1",
       "dev.zio" %% "zio-test"     % "2.1.14" % Test,
       "dev.zio" %% "zio-test-sbt" % "2.1.14" % Test
     ),
