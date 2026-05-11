@@ -33,6 +33,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     
     - name: Build with Maven
+      working-directory: webapp
       run: mvn clean package -DskipTests
     
     - name: Log in to Azure Container Registry
@@ -43,6 +44,7 @@ jobs:
         password: ${{ secrets.ACR_PASSWORD }}
     
     - name: Build Docker image
+      working-directory: webapp
       run: |
         docker build -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.TAG }} .
         docker tag ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.TAG }} ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
