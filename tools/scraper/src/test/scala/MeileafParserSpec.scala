@@ -46,11 +46,11 @@ object MeileafParserSpec extends ZIOSpecDefault:
       parseMeileafTea(sampleHtml).map { info =>
         assertTrue(
           info == TeaInfo(
-            title     = "Jade Star 9",
-            name      = "2008 Bai Mu Dan and Shou Mei",
-            season    = Some("Spring 2008"),
-            cultivar  = Some("Da Bai"),
-            origin    = Some("Fuding, Fujian, China"),
+            title = "Jade Star 9",
+            name = "2008 Bai Mu Dan and Shou Mei",
+            season = Some("Spring 2008"),
+            cultivar = Some("Da Bai"),
+            origin = Some("Fuding, Fujian, China"),
             elevation = Some("900m approx")
           )
         )

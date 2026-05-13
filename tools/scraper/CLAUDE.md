@@ -39,6 +39,15 @@ Integration tests (those hitting real URLs) live in `src/test/scala/` alongside 
 - `sbt "testOnly -- -ignore-tags integration"` — units only (~1s, offline)
 - `sbt "testOnly -- -tags integration"` — integration only
 
+## Formatting
+
+scalafmt (via `sbt-scalafmt`) is the canonical formatter. Config lives at `.scalafmt.conf`.
+
+- `sbt scalafmtAll scalafmtSbt` — format all sources (incl. `build.sbt`)
+- `sbt scalafmtCheckAll` — verify formatting without modifying files (use in CI)
+
+Format on save in IntelliJ/Metals also reads `.scalafmt.conf`.
+
 ## Conventions
 
 - **Functional style fitting ZIO philosophy**: helpers like `fetch` and the per-vendor parsers are top-level functions, not methods on traits/objects. For testability, `Main.program` takes a `scrape: URL => ZIO[R, Throwable, TeaInfo]` function as a parameter — fake scrapers in tests are plain function values. Prefer ZIO idioms (`ZIO`, `Layer`, `zio-http`) over OOP abstractions.

@@ -28,11 +28,11 @@ object MeeteaParserSpec extends ZIOSpecDefault:
       parseMeeteaTea(sampleHtml).map { info =>
         assertTrue(
           info == TeaInfo(
-            title     = "Heritage Green 2026",
-            name      = "Móc Câu Thái Nguyên 2026",
-            season    = Some("Březen 2026"),
-            cultivar  = Some("Trung Du – vypěstováno ze semínek"),
-            origin    = Some("Thái Nguyên, Vietnam"),
+            title = "Heritage Green 2026",
+            name = "Móc Câu Thái Nguyên 2026",
+            season = Some("Březen 2026"),
+            cultivar = Some("Trung Du – vypěstováno ze semínek"),
+            origin = Some("Thái Nguyên, Vietnam"),
             elevation = None
           )
         )

@@ -14,10 +14,10 @@ object Main extends ZIOAppDefault:
 
   def run =
     for
-      args   <- getArgs
-      raw    <- ZIO
-                  .fromOption(args.headOption)
-                  .orElseFail(IllegalArgumentException("Usage: scraper <url>"))
+      args <- getArgs
+      raw <- ZIO
+        .fromOption(args.headOption)
+        .orElseFail(IllegalArgumentException("Usage: scraper <url>"))
       url    <- ZIO.fromEither(URL.decode(raw))
       vendor <- selectVendor(url)
       _      <- program(url, vendor.scrape).provide(Client.default)

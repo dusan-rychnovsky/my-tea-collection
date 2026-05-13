@@ -5,8 +5,8 @@ final class UnsupportedVendor(host: String)
   extends RuntimeException(s"no vendor registered for host: $host")
 
 case class Vendor(
-  name:   String,
-  host:   String,
+  name: String,
+  host: String,
   scrape: URL => ZIO[Client, Throwable, TeaInfo]
 )
 
