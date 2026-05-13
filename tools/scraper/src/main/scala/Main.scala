@@ -7,7 +7,11 @@ object Main extends ZIOAppDefault:
     url: String,
     download: String => ZIO[R, Throwable, String]
   ): ZIO[R, Throwable, Unit] =
-    download(url).flatMap(Console.printLine(_))
+    for
+      html <- download(url)
+      info <- parseTea(html)
+      _    <- Console.printLine(renderTeaInfo(info))
+    yield ()
 
   def run =
     for
