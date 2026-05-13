@@ -1,7 +1,7 @@
 import zio.*
 import zio.test.*
 
-object ParserSpec extends ZIOSpecDefault:
+object MeileafParserSpec extends ZIOSpecDefault:
 
   private val sampleHtml =
     """
@@ -41,36 +41,43 @@ object ParserSpec extends ZIOSpecDefault:
       |</html>
       |""".stripMargin
 
-  def spec = suite("Parser")(
+  def spec = suite("Meileaf parser")(
     test("extracts tea info from meileaf-shaped HTML") {
-      parseTea(sampleHtml).map { info =>
+      parseMeileafTea(sampleHtml).map { info =>
         assertTrue(
           info == TeaInfo(
-            title    = "Jade Star 9",
-            name     = "2008 Bai Mu Dan and Shou Mei",
-            season   = "Spring 2008",
-            cultivar = "Da Bai",
-            origin   = "Fuding, Fujian, China",
-            elevation = "900m approx"
+            title     = "Jade Star 9",
+            name      = "2008 Bai Mu Dan and Shou Mei",
+            season    = Some("Spring 2008"),
+            cultivar  = Some("Da Bai"),
+            origin    = Some("Fuding, Fujian, China"),
+            elevation = Some("900m approx")
           )
         )
       }
     },
-    test("fails with ParseError when title is missing") {
-      val html = "<html><body><h2 class=\"product-info__subtitle\">x</h2></body></html>"
-      parseTea(html).flip.map { err =>
-        assertTrue(err.getMessage.contains("product-info__title"))
-      }
-    },
-    test("fails with ParseError when a detail is missing") {
+    test("leaves missing details as None") {
       val html =
         """<html><body>
           |  <h1 class="product-info__title">T</h1>
           |  <h2 class="product-info__subtitle">N</h2>
           |  <dl class="product-detail"></dl>
           |</body></html>""".stripMargin
-      parseTea(html).flip.map { err =>
-        assertTrue(err.getMessage.contains("Season"))
+      parseMeileafTea(html).map { info =>
+        assertTrue(
+          info.title == "T",
+          info.name == "N",
+          info.season.isEmpty,
+          info.cultivar.isEmpty,
+          info.origin.isEmpty,
+          info.elevation.isEmpty
+        )
+      }
+    },
+    test("fails with ParseError when title is missing") {
+      val html = "<html><body><h2 class=\"product-info__subtitle\">x</h2></body></html>"
+      parseMeileafTea(html).flip.map { err =>
+        assertTrue(err.getMessage.contains("product-info__title"))
       }
     }
   )
