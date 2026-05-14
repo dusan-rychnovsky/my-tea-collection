@@ -3,22 +3,24 @@ import zio.http.{Client, URL}
 
 object Main extends ZIOAppDefault:
 
-  def program[R](
-    url: URL,
-    scrape: URL => ZIO[R, Throwable, TeaInfo]
-  ): ZIO[R, Throwable, Unit] =
+  def parseUrlArg(args: Chunk[String]): IO[Throwable, URL] =
     for
-      info <- scrape(url)
-      _    <- Console.printLine(renderTeaInfo(info))
+      raw <- ZIO
+        .fromOption(args.headOption)
+        .orElseFail(IllegalArgumentException("Usage: scraper <url>"))
+      url <- ZIO.fromEither(URL.decode(raw))
+    yield url
+
+  def program(args: Chunk[String]): ZIO[Client, Throwable, Unit] =
+    for
+      url    <- parseUrlArg(args)
+      vendor <- selectVendor(url)
+      info   <- vendor.scrape(url)
+      _      <- Console.printLine(renderTeaInfo(info))
     yield ()
 
   def run =
     for
       args <- getArgs
-      raw <- ZIO
-        .fromOption(args.headOption)
-        .orElseFail(IllegalArgumentException("Usage: scraper <url>"))
-      url    <- ZIO.fromEither(URL.decode(raw))
-      vendor <- selectVendor(url)
-      _      <- program(url, vendor.scrape).provide(Client.default)
+      _    <- program(args).provide(Client.default)
     yield ()
