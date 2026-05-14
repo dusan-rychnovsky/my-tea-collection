@@ -5,7 +5,7 @@ import zio.http.*
 
 final class ParseError(message: String) extends RuntimeException(message)
 
-def parseMeileafTea(html: String): IO[ParseError, TeaInfo] =
+def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
   ZIO
     .attempt {
       val doc = Jsoup.parse(html)
@@ -23,19 +23,34 @@ def parseMeileafTea(html: String): IO[ParseError, TeaInfo] =
           yield nameEl.attr("content") -> valueEl.text.trim
         }.toMap
 
+      val breadcrumbNames: List[String] =
+        doc
+          .select("ol[itemtype$=BreadcrumbList] li span[itemprop=name]")
+          .asScala
+          .map(_.text.trim)
+          .toList
+
+      val teaTypeName = breadcrumbNames
+        .lift(1)
+        .getOrElse(throw ParseError("missing tea type in breadcrumbs"))
+      val teaType = TeaType.values
+        .find(_.displayName == teaTypeName)
+        .getOrElse(throw ParseError(s"unknown tea type: $teaTypeName"))
+
       TeaInfo(
         title = text("h1.product-info__title"),
         name = text("h2.product-info__subtitle"),
+        description = "N/A",
+        types = Set(teaType),
+        vendor = Vendor.MeiLeaf,
+        url = url.encode,
         season = details.get("Season"),
         cultivar = details.get("Cultivar"),
         origin = details.get("Origin"),
-        elevation = details.get("Elevation")
+        elevation = details.get("Elevation"),
+        price = "N/A",
+        brewingInstructions = "N/A",
+        inStock = true
       )
     }
     .refineOrDie { case e: ParseError => e }
-
-val meileafVendor: Vendor = Vendor(
-  name = "meileaf",
-  host = "meileaf.com",
-  scrape = url => fetch(url.encode).flatMap(parseMeileafTea)
-)

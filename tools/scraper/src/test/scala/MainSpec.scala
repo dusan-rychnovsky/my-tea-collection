@@ -7,10 +7,17 @@ object MainSpec extends ZIOSpecDefault:
   private val sampleInfo = TeaInfo(
     title = "Jade Star 9",
     name = "2008 Bai Mu Dan and Shou Mei",
+    description = "N/A",
+    types = Set(TeaType.White),
+    vendor = Vendor.MeiLeaf,
+    url = "https://example.com/x",
     season = Some("Spring 2008"),
     cultivar = Some("Da Bai"),
     origin = Some("Fuding, Fujian, China"),
-    elevation = Some("900m approx")
+    elevation = Some("900m approx"),
+    price = "N/A",
+    brewingInstructions = "N/A",
+    inStock = true
   )
 
   private val sampleUrl: URL = URL.decode("https://example.com/x").toOption.get
@@ -26,10 +33,17 @@ object MainSpec extends ZIOSpecDefault:
       val expected =
         """title: Jade Star 9
           |name: 2008 Bai Mu Dan and Shou Mei
-          |season: Spring 2008
-          |cultivar: Da Bai
+          |description: N/A
+          |types: White Tea
+          |vendor: Mei Leaf
+          |url: https://example.com/x
           |origin: Fuding, Fujian, China
+          |cultivar: Da Bai
+          |season: Spring 2008
           |elevation: 900m approx
+          |price: N/A
+          |brewingInstructions: N/A
+          |inStock: true
           |""".stripMargin
       for
         _      <- Main.program(sampleUrl, scrapeReturning(sampleInfo))
@@ -45,6 +59,13 @@ object MainSpec extends ZIOSpecDefault:
         output.headOption.exists(_.contains("origin: Fuding, Fujian, China")),
         !output.headOption.exists(_.contains("elevation"))
       )
+    },
+    test("renders multiple types comma-separated, sorted") {
+      val info = sampleInfo.copy(types = Set(TeaType.Green, TeaType.White))
+      for
+        _      <- Main.program(sampleUrl, scrapeReturning(info))
+        output <- TestConsole.output
+      yield assertTrue(output.headOption.exists(_.contains("types: Green Tea, White Tea")))
     },
     test("propagates scrape errors") {
       val err = RuntimeException("boom")

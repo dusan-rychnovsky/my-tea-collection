@@ -4,15 +4,15 @@ import zio.http.*
 final class UnsupportedVendor(host: String)
   extends RuntimeException(s"no vendor registered for host: $host")
 
-case class Vendor(
-  name: String,
-  host: String,
-  scrape: URL => ZIO[Client, Throwable, TeaInfo]
-)
+enum Vendor(val displayName: String, val host: String):
+  case MeiLeaf extends Vendor("Mei Leaf", "meileaf.com")
+  case Meetea  extends Vendor("Meetea", "store.meetea.cz")
 
-val vendors: List[Vendor] = List(meileafVendor, meeteaVendor)
+  def scrape(url: URL): ZIO[Client, Throwable, TeaInfo] = this match
+    case Vendor.MeiLeaf => fetch(url.encode).flatMap(parseMeileafTea(_, url))
+    case Vendor.Meetea  => fetch(url.encode).flatMap(parseMeeteaTea(_, url))
 
 def selectVendor(url: URL): IO[UnsupportedVendor, Vendor] =
   ZIO
-    .fromOption(vendors.find(v => url.host.contains(v.host)))
+    .fromOption(Vendor.values.find(v => url.host.contains(v.host)))
     .orElseFail(UnsupportedVendor(url.host.getOrElse("<unknown>")))

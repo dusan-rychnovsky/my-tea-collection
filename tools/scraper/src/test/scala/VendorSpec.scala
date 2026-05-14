@@ -8,14 +8,14 @@ object VendorSpec extends ZIOSpecDefault:
     URL.decode(s).toOption.get
 
   def spec = suite("Vendor")(
-    test("selectVendor returns meileaf for meileaf.com URL") {
+    test("selectVendor returns MeiLeaf for meileaf.com URL") {
       selectVendor(decode("https://meileaf.com/tea/tea-jtic/")).map { v =>
-        assertTrue(v.name == "meileaf")
+        assertTrue(v == Vendor.MeiLeaf)
       }
     },
-    test("selectVendor returns meetea for store.meetea.cz URL") {
+    test("selectVendor returns Meetea for store.meetea.cz URL") {
       selectVendor(decode("https://store.meetea.cz/zeleny-caj/heritage-green-2026/")).map { v =>
-        assertTrue(v.name == "meetea")
+        assertTrue(v == Vendor.Meetea)
       }
     },
     test("selectVendor fails with UnsupportedVendor for unknown host") {
