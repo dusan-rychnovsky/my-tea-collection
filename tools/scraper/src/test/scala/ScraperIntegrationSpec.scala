@@ -21,7 +21,7 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
             title = "Jade Star 9",
             name = "2008 Bai Mu Dan and Shou Mei",
             description = "N/A",
-            types = Set(TeaType.White),
+            types = Set(TeaType.WhiteTea),
             vendor = Vendor.MeiLeaf,
             url = raw,
             season = Some("Spring 2008"),
@@ -44,7 +44,7 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
             name = "Móc Câu Thái Nguyên 2026",
             description =
               "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí.",
-            types = Set(TeaType.Green),
+            types = Set(TeaType.GreenTea),
             vendor = Vendor.Meetea,
             url = raw,
             season = Some("Březen 2026"),

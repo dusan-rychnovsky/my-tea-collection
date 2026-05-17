@@ -36,7 +36,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
             name = "Móc Câu Thái Nguyên 2026",
             description =
               "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí.",
-            types = Set(TeaType.Green),
+            types = Set(TeaType.GreenTea),
             vendor = Vendor.Meetea,
             url = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/",
             season = Some("Březen 2026"),

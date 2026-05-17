@@ -6,7 +6,7 @@ object TeaInfoSpec extends ZIOSpecDefault:
     title = "Jade Star 9",
     name = "2008 Bai Mu Dan and Shou Mei",
     description = "N/A",
-    types = Set(TeaType.White),
+    types = Set(TeaType.WhiteTea),
     vendor = Vendor.MeiLeaf,
     url = "https://example.com/x",
     season = Some("Spring 2008"),
@@ -44,7 +44,7 @@ object TeaInfoSpec extends ZIOSpecDefault:
       )
     },
     test("renders multiple types comma-separated, sorted") {
-      val rendered = renderTeaInfo(sampleInfo.copy(types = Set(TeaType.Green, TeaType.White)))
+      val rendered = renderTeaInfo(sampleInfo.copy(types = Set(TeaType.GreenTea, TeaType.WhiteTea)))
       assertTrue(rendered.contains("types: Green Tea, White Tea"))
     }
   )

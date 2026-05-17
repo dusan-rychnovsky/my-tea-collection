@@ -67,7 +67,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
             title = "Jade Star 9",
             name = "2008 Bai Mu Dan and Shou Mei",
             description = "N/A",
-            types = Set(TeaType.White),
+            types = Set(TeaType.WhiteTea),
             vendor = Vendor.MeiLeaf,
             url = "https://meileaf.com/tea/tea-jtic/",
             season = Some("Spring 2008"),
@@ -97,7 +97,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
         assertTrue(
           info.title == "T",
           info.name == "N",
-          info.types == Set(TeaType.White),
+          info.types == Set(TeaType.WhiteTea),
           info.season.isEmpty,
           info.cultivar.isEmpty,
           info.origin.isEmpty,

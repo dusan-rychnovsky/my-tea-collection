@@ -5,7 +5,7 @@ import zio.*
 import zio.http.*
 
 private val meeteaTeaTypes: Map[String, TeaType] = Map(
-  "Zelený čaj" -> TeaType.Green
+  "Zelený čaj" -> TeaType.GreenTea
 )
 
 private def cleanText(s: String): String =
