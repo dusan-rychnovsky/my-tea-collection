@@ -33,8 +33,7 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
       val teaTypeName = breadcrumbNames
         .lift(1)
         .getOrElse(throw ParseError("missing tea type in breadcrumbs"))
-      val teaType = TeaType.values
-        .find(_.displayName == teaTypeName)
+      val teaType = lookupTeaType(teaTypeName)
         .getOrElse(throw ParseError(s"unknown tea type: $teaTypeName"))
 
       TeaInfo(

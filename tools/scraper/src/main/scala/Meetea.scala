@@ -4,10 +4,6 @@ import scala.jdk.CollectionConverters.*
 import zio.*
 import zio.http.*
 
-private val meeteaTeaTypes: Map[String, TeaType] = Map(
-  "Zelený čaj" -> TeaType.GreenTea
-)
-
 private def cleanText(s: String): String =
   s.replace(' ', ' ').trim
 
@@ -47,8 +43,8 @@ def parseMeeteaTea(html: String, url: URL): IO[ParseError, TeaInfo] =
         "Druh podle zpracování",
         throw ParseError("missing tea type label (Druh podle zpracování)")
       )
-      val teaType = meeteaTeaTypes
-        .getOrElse(teaTypeName, throw ParseError(s"unknown tea type: $teaTypeName"))
+      val teaType = lookupTeaType(teaTypeName)
+        .getOrElse(throw ParseError(s"unknown tea type: $teaTypeName"))
 
       TeaInfo(
         title = title,
