@@ -9,7 +9,8 @@ object FetcherIntegrationSpec extends ZIOSpecDefault:
   def spec = suite("Fetcher integration")(
     test("downloads Google's homepage") {
       for
-        html <- fetch("http://www.google.com")
+        url  <- ZIO.fromEither(URL.decode("http://www.google.com")).orDie
+        html <- fetch(url)
       yield assertTrue(html.contains("Google"))
     }
   ).provide(Client.default) @@ withLiveClock @@ tag("integration")

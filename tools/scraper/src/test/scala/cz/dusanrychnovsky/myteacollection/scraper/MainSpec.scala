@@ -1,6 +1,5 @@
 package cz.dusanrychnovsky.myteacollection.scraper
 
-import cz.dusanrychnovsky.myteacollection.scraper.domain.*
 import cz.dusanrychnovsky.myteacollection.scraper.parser.*
 
 import zio.*
@@ -16,34 +15,37 @@ object MainSpec extends ZIOSpecDefault:
           assertTrue(url.host.contains("meileaf.com"))
         }
       },
-      test("fails when args is empty") {
+      test("fails with MissingArg when args is empty") {
         Main.parseUrlArg(Chunk.empty).flip.map { err =>
-          assertTrue(err.getMessage.contains("Usage"))
+          assertTrue(err == ArgError.MissingArg("Usage: scraper <url>"))
         }
       },
-      test("fails when the arg isn't a valid URL") {
+      test("fails with BadUrl when the arg isn't a valid URL") {
         Main.parseUrlArg(Chunk("not a url")).flip.map { err =>
-          assertTrue(err != null)
+          assertTrue(err match
+            case ArgError.BadUrl("not a url", _) => true
+            case _                               => false
+          )
         }
       }
     ),
     suite("program")(
-      test("fails with UnsupportedVendor for an unknown host") {
+      test("fails with UnsupportedVendorError for an unknown host") {
         Main
           .program(Chunk("https://example.com/foo"))
-          .provide(Client.default)
+          .provide(Client.default.orDie)
           .flip
           .map { err =>
-            assertTrue(err.isInstanceOf[UnsupportedVendor], err.getMessage.contains("example.com"))
+            assertTrue(err == UnsupportedVendorError("example.com"))
           }
       },
-      test("propagates the Usage error for empty args") {
+      test("propagates MissingArg for empty args") {
         Main
           .program(Chunk.empty)
-          .provide(Client.default)
+          .provide(Client.default.orDie)
           .flip
           .map { err =>
-            assertTrue(err.getMessage.contains("Usage"))
+            assertTrue(err == ArgError.MissingArg("Usage: scraper <url>"))
           }
       }
     )

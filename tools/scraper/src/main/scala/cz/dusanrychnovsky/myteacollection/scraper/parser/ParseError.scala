@@ -1,3 +1,3 @@
 package cz.dusanrychnovsky.myteacollection.scraper.parser
 
-final class ParseError(message: String) extends RuntimeException(message)
+final case class ParseError(message: String) extends RuntimeException(message)

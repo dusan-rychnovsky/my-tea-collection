@@ -3,9 +3,10 @@ package cz.dusanrychnovsky.myteacollection.scraper.parser
 import zio.*
 import zio.http.*
 
-def fetch(url: String): ZIO[Client, Throwable, String] =
+final case class HttpError(cause: Throwable)
+
+def fetch(url: URL): ZIO[Client, HttpError, String] =
   for
-    parsed   <- ZIO.fromEither(URL.decode(url))
-    response <- ZClient.batched(Request.get(parsed))
-    body     <- response.body.asString
+    response <- ZClient.batched(Request.get(url)).mapError(HttpError(_))
+    body     <- response.body.asString.mapError(HttpError(_))
   yield body

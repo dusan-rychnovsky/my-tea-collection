@@ -66,4 +66,4 @@ def parseMeeteaTea(html: String, url: URL): IO[ParseError, TeaInfo] =
         inStock = true
       )
     }
-    .refineOrDie { case e: ParseError => e }
+    .refineToOrDie[ParseError]

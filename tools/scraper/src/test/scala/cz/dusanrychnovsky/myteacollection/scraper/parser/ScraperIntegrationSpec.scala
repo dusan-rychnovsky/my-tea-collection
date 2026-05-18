@@ -9,9 +9,10 @@ import zio.test.TestAspect.*
 
 object ScraperIntegrationSpec extends ZIOSpecDefault:
 
-  private def scrapeUrl(raw: String): ZIO[Client, Throwable, TeaInfo] =
+  private def scrapeUrl(raw: String)
+    : ZIO[Client, HttpError | ParseError | UnsupportedVendorError, TeaInfo] =
     for
-      url  <- ZIO.fromEither(URL.decode(raw))
+      url  <- ZIO.fromEither(URL.decode(raw)).orDie
       info <- scrape(url)
     yield info
 

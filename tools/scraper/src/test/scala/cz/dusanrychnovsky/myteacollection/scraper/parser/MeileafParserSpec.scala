@@ -120,7 +120,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
           |  <h2 class="product-info__subtitle">x</h2>
           |</body></html>""".stripMargin
       parseMeileafTea(html, sampleUrl).flip.map { err =>
-        assertTrue(err.getMessage.contains("product-info__title"))
+        assertTrue(err.message.contains("product-info__title"))
       }
     },
     test("fails with ParseError when tea type breadcrumb is unknown") {
@@ -136,7 +136,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
           |  <dl class="product-detail"></dl>
           |</body></html>""".stripMargin
       parseMeileafTea(html, sampleUrl).flip.map { err =>
-        assertTrue(err.getMessage.contains("Mystery Tea"))
+        assertTrue(err.message.contains("Mystery Tea"))
       }
     }
   )

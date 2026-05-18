@@ -74,7 +74,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
           |  </div>
           |</body></html>""".stripMargin
       parseMeeteaTea(html, sampleUrl).flip.map { err =>
-        assertTrue(err.getMessage.contains("itemprop=name"))
+        assertTrue(err.message.contains("itemprop=name"))
       }
     },
     test("fails with ParseError when tea type label is unknown") {
@@ -92,7 +92,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
           |</body></html>
           |""".stripMargin
       parseMeeteaTea(html, sampleUrl).flip.map { err =>
-        assertTrue(err.getMessage.contains("Mystery"))
+        assertTrue(err.message.contains("Mystery"))
       }
     }
   )
