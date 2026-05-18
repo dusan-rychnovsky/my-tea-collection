@@ -1,9 +1,11 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+
 import org.jsoup.Jsoup
 import scala.jdk.CollectionConverters.*
 import zio.*
 import zio.http.*
-
-final class ParseError(message: String) extends RuntimeException(message)
 
 def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
   ZIO

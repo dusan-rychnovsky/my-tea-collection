@@ -11,6 +11,5 @@ lazy val root = (project in file("."))
       "dev.zio"  %% "zio-test"     % "2.1.14" % Test,
       "dev.zio"  %% "zio-test-sbt" % "2.1.14" % Test
     ),
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-    Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )

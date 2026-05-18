@@ -1,3 +1,7 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+
 import zio.test.*
 
 object TeaTypeVocabularySpec extends ZIOSpecDefault:

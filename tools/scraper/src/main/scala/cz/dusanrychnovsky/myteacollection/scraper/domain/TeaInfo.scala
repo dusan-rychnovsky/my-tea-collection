@@ -1,3 +1,5 @@
+package cz.dusanrychnovsky.myteacollection.scraper.domain
+
 case class TeaInfo(
   title: String,
   name: String,
@@ -13,6 +15,10 @@ case class TeaInfo(
   brewingInstructions: String,
   inStock: Boolean
 )
+
+def renderVendor(v: Vendor): String = v match
+  case Vendor.MeiLeaf => "Mei Leaf"
+  case Vendor.Meetea  => "Meetea"
 
 def renderTeaType(t: TeaType): String = t match
   case TeaType.Blend       => "Blend"
@@ -58,7 +64,7 @@ def renderTeaInfo(info: TeaInfo): String =
       "name"                -> Some(info.name),
       "description"         -> Some(info.description),
       "types"               -> typesValue,
-      "vendor"              -> Some(info.vendor.displayName),
+      "vendor"              -> Some(renderVendor(info.vendor)),
       "url"                 -> Some(info.url),
       "origin"              -> info.origin,
       "cultivar"            -> info.cultivar,

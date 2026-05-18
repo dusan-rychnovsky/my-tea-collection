@@ -1,3 +1,5 @@
+package cz.dusanrychnovsky.myteacollection.scraper.domain
+
 enum TeaType(val parent: Option[TeaType] = None):
   case Blend extends TeaType()
   case ChenPi extends TeaType(Some(Blend))

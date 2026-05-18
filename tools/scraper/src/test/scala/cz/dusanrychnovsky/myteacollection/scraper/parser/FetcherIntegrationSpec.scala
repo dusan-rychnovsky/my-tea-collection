@@ -1,3 +1,5 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
 import zio.*
 import zio.http.*
 import zio.test.*

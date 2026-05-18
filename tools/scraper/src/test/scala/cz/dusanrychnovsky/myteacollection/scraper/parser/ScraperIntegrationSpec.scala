@@ -1,3 +1,7 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+
 import zio.*
 import zio.http.*
 import zio.test.*
@@ -7,9 +11,8 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
 
   private def scrapeUrl(raw: String): ZIO[Client, Throwable, TeaInfo] =
     for
-      url    <- ZIO.fromEither(URL.decode(raw))
-      vendor <- selectVendor(url)
-      info   <- vendor.scrape(url)
+      url  <- ZIO.fromEither(URL.decode(raw))
+      info <- scrape(url)
     yield info
 
   def spec = suite("Scraper integration")(

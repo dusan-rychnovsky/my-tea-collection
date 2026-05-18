@@ -1,3 +1,8 @@
+package cz.dusanrychnovsky.myteacollection.scraper
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+import cz.dusanrychnovsky.myteacollection.scraper.parser.*
+
 import zio.*
 import zio.http.{Client, URL}
 
@@ -13,10 +18,9 @@ object Main extends ZIOAppDefault:
 
   def program(args: Chunk[String]): ZIO[Client, Throwable, Unit] =
     for
-      url    <- parseUrlArg(args)
-      vendor <- selectVendor(url)
-      info   <- vendor.scrape(url)
-      _      <- Console.printLine(renderTeaInfo(info))
+      url  <- parseUrlArg(args)
+      info <- scrape(url)
+      _    <- Console.printLine(renderTeaInfo(info))
     yield ()
 
   def run =

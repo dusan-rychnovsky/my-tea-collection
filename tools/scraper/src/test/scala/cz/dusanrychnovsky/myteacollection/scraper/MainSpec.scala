@@ -1,3 +1,8 @@
+package cz.dusanrychnovsky.myteacollection.scraper
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+import cz.dusanrychnovsky.myteacollection.scraper.parser.*
+
 import zio.*
 import zio.http.{Client, URL}
 import zio.test.*

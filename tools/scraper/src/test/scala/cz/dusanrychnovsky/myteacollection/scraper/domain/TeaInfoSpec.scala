@@ -1,3 +1,5 @@
+package cz.dusanrychnovsky.myteacollection.scraper.domain
+
 import zio.test.*
 
 object TeaInfoSpec extends ZIOSpecDefault:

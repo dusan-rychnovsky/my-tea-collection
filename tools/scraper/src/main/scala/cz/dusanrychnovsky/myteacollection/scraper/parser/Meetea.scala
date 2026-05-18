@@ -1,3 +1,7 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.TextNode
 import scala.jdk.CollectionConverters.*

@@ -1,3 +1,7 @@
+package cz.dusanrychnovsky.myteacollection.scraper.parser
+
+import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+
 import java.util.Locale
 
 val teaTypeVocabulary: Map[String, TeaType] = Map(
