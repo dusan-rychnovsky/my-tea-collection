@@ -1,3 +1,5 @@
 package cz.dusanrychnovsky.myteacollection.scraper.parser
 
-final case class ParseError(message: String)
+import cz.dusanrychnovsky.myteacollection.scraper.ScraperError
+
+final case class ParseError(message: String) extends ScraperError

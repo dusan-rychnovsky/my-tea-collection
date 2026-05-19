@@ -1,11 +1,13 @@
 package cz.dusanrychnovsky.myteacollection.scraper.parser
 
+import cz.dusanrychnovsky.myteacollection.scraper.ScraperError
 import cz.dusanrychnovsky.myteacollection.scraper.domain.*
 
 import zio.*
 import zio.http.*
 
-final case class UnsupportedVendorError(host: String)
+final case class UnsupportedVendorError(host: String) extends ScraperError:
+  def message: String = s"no vendor registered for host: $host"
 
 def scrape(url: URL): ZIO[Client, HttpError | ParseError | UnsupportedVendorError, TeaInfo] =
   url.host match

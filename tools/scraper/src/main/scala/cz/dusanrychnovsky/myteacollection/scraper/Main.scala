@@ -6,9 +6,13 @@ import cz.dusanrychnovsky.myteacollection.scraper.parser.*
 import zio.*
 import zio.http.{Client, URL}
 
-enum ArgError:
-  case MissingArg(message: String)
+enum ArgError extends ScraperError:
+  case MissingArg(usage: String)
   case BadUrl(raw: String, reason: String)
+
+  def message: String = this match
+    case ArgError.MissingArg(u)  => u
+    case ArgError.BadUrl(raw, r) => s"invalid URL '$raw': $r"
 
 object Main extends ZIOAppDefault:
 
@@ -33,12 +37,6 @@ object Main extends ZIOAppDefault:
     for
       args <- getArgs
       _ <- program(args).provide(Client.default.orDie).tapError { err =>
-        val msg = err match
-          case ArgError.MissingArg(m)       => m
-          case ArgError.BadUrl(raw, r)      => s"invalid URL '$raw': $r"
-          case HttpError(cause)             => s"http failure: ${cause.getMessage}"
-          case ParseError(m)                => m
-          case UnsupportedVendorError(host) => s"no vendor registered for host: $host"
-        Console.printLineError(msg).orDie
+        Console.printLineError(err.message).orDie
       }
     yield ()
