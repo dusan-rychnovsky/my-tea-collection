@@ -9,13 +9,9 @@ import zio.http.*
 
 def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
   for
-    doc <- ZIO.attempt(Jsoup.parse(html)).orDie
-    title <- ZIO
-      .fromOption(Option(doc.selectFirst("h1.product-info__title")).map(_.text.trim))
-      .orElseFail(ParseError("missing element: h1.product-info__title"))
-    name <- ZIO
-      .fromOption(Option(doc.selectFirst("h2.product-info__subtitle")).map(_.text.trim))
-      .orElseFail(ParseError("missing element: h2.product-info__subtitle"))
+    doc   <- ZIO.attempt(Jsoup.parse(html)).orDie
+    title <- parseElementText(doc, "h1.product-info__title")
+    name  <- parseElementText(doc, "h2.product-info__subtitle")
     details = doc.select("dl.product-detail dd").asScala.flatMap { dd =>
       for
         nameEl  <- Option(dd.selectFirst("meta[itemprop=name]"))
@@ -30,9 +26,7 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
     teaTypeName <- ZIO
       .fromOption(breadcrumbNames.lift(1))
       .orElseFail(ParseError("missing tea type in breadcrumbs"))
-    teaType <- ZIO
-      .fromOption(lookupTeaType(teaTypeName))
-      .orElseFail(ParseError(s"unknown tea type: $teaTypeName"))
+    teaType <- resolveTeaType(teaTypeName)
   yield TeaInfo(
     title = title,
     name = name,

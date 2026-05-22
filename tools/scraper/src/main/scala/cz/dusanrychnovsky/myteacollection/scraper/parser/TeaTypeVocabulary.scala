@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.scraper.parser
 import cz.dusanrychnovsky.myteacollection.scraper.domain.*
 
 import java.util.Locale
+import zio.*
 
 val teaTypeVocabulary: Map[String, TeaType] = Map(
   "blend"       -> TeaType.Blend,
@@ -42,3 +43,8 @@ val teaTypeVocabulary: Map[String, TeaType] = Map(
 
 def lookupTeaType(label: String): Option[TeaType] =
   teaTypeVocabulary.get(label.toLowerCase(Locale.ROOT))
+
+def resolveTeaType(label: String): IO[ParseError, TeaType] =
+  ZIO
+    .fromOption(lookupTeaType(label))
+    .orElseFail(ParseError(s"unknown tea type: $label"))
