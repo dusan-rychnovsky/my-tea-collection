@@ -12,7 +12,7 @@ case class TeaInfo(
   origin: Option[String] = None,
   cultivar: Option[String] = None,
   season: Option[String] = None,
-  elevation: Option[String] = None,
+  elevation: Option[Elevation] = None,
   price: String,
   brewingInstructions: String,
   inStock: Boolean
@@ -71,7 +71,7 @@ def renderTeaInfo(info: TeaInfo): String =
       "origin"              -> info.origin,
       "cultivar"            -> info.cultivar,
       "season"              -> info.season,
-      "elevation"           -> info.elevation,
+      "elevation"           -> info.elevation.map(e => s"${e.value}m"),
       "price"               -> Some(info.price),
       "brewingInstructions" -> Some(info.brewingInstructions),
       "inStock"             -> Some(info.inStock.toString)

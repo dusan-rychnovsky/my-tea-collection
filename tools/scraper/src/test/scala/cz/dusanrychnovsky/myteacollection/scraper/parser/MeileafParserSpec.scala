@@ -77,7 +77,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
             season = Some("Spring 2008"),
             cultivar = Some("Da Bai"),
             origin = Some("Fuding, Fujian, China"),
-            elevation = Some("900m approx"),
+            elevation = Some(Elevation(900)),
             price = "N/A",
             brewingInstructions = "N/A",
             inStock = true
@@ -122,6 +122,37 @@ object MeileafParserSpec extends ZIOSpecDefault:
       parseMeileafTea(html, sampleUrl).flip.map { err =>
         assertTrue(err.message.contains("product-info__title"))
       }
+    },
+    test("parses elevation from common textual shapes") {
+      def htmlWith(elev: String) =
+        s"""<html><body>
+           |  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+           |    <li><span itemprop="name">Tea &amp; Tisanes</span></li>
+           |    <li><span itemprop="name">White Tea</span></li>
+           |    <li><span itemprop="name">X</span></li>
+           |  </ol>
+           |  <h1 class="product-info__title">T</h1>
+           |  <h2 class="product-info__subtitle">N</h2>
+           |  <dl class="product-detail">
+           |    <dd>
+           |      <meta itemprop="name" content="Elevation">
+           |      <span itemprop="value">$elev</span>
+           |    </dd>
+           |  </dl>
+           |</body></html>""".stripMargin
+      for
+        a <- parseMeileafTea(htmlWith("900m approx"), sampleUrl)
+        b <- parseMeileafTea(htmlWith("1200m"), sampleUrl)
+        c <- parseMeileafTea(htmlWith("900"), sampleUrl)
+        d <- parseMeileafTea(htmlWith("approx 1500m"), sampleUrl)
+        e <- parseMeileafTea(htmlWith("no data"), sampleUrl)
+      yield assertTrue(
+        a.elevation.contains(Elevation(900)),
+        b.elevation.contains(Elevation(1200)),
+        c.elevation.contains(Elevation(900)),
+        d.elevation.contains(Elevation(1500)),
+        e.elevation.isEmpty
+      )
     },
     test("fails with ParseError when tea type breadcrumb is unknown") {
       val html =

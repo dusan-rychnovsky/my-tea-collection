@@ -7,6 +7,11 @@ import scala.jdk.CollectionConverters.*
 import zio.*
 import zio.http.*
 
+private val elevationDigits = """\d+""".r
+
+private def parseElevation(raw: String): Option[Elevation] =
+  elevationDigits.findFirstIn(raw).flatMap(_.toIntOption).map(Elevation(_))
+
 def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
   for
     doc   <- ZIO.attempt(Jsoup.parse(html)).orDie
@@ -37,7 +42,7 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
     season = details.get("Season"),
     cultivar = details.get("Cultivar"),
     origin = details.get("Origin"),
-    elevation = details.get("Elevation"),
+    elevation = details.get("Elevation").flatMap(parseElevation),
     price = "N/A",
     brewingInstructions = "N/A",
     inStock = true

@@ -32,7 +32,7 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
             season = Some("Spring 2008"),
             cultivar = Some("Da Bai"),
             origin = Some("Fuding, Fujian, China"),
-            elevation = Some("900m approx"),
+            elevation = Some(Elevation(900)),
             price = "N/A",
             brewingInstructions = "N/A",
             inStock = true

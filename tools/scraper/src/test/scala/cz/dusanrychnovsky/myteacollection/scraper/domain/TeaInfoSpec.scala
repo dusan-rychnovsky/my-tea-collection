@@ -18,7 +18,7 @@ object TeaInfoSpec extends ZIOSpecDefault:
     season = Some("Spring 2008"),
     cultivar = Some("Da Bai"),
     origin = Some("Fuding, Fujian, China"),
-    elevation = Some("900m approx"),
+    elevation = Some(Elevation(900)),
     price = "N/A",
     brewingInstructions = "N/A",
     inStock = true
@@ -36,7 +36,7 @@ object TeaInfoSpec extends ZIOSpecDefault:
           |origin: Fuding, Fujian, China
           |cultivar: Da Bai
           |season: Spring 2008
-          |elevation: 900m approx
+          |elevation: 900m
           |price: N/A
           |brewingInstructions: N/A
           |inStock: true""".stripMargin
