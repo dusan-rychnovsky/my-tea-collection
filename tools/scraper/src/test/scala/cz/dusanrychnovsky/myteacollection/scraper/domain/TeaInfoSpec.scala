@@ -1,16 +1,20 @@
 package cz.dusanrychnovsky.myteacollection.scraper.domain
 
+import zio.http.URL
 import zio.test.*
 
 object TeaInfoSpec extends ZIOSpecDefault:
 
+  private val sampleUrl: URL =
+    URL.decode("https://example.com/x").toOption.get
+
   private val sampleInfo = TeaInfo(
-    title = "Jade Star 9",
-    name = "2008 Bai Mu Dan and Shou Mei",
-    description = "N/A",
+    title = Title("Jade Star 9"),
+    name = Name("2008 Bai Mu Dan and Shou Mei"),
+    description = Description("N/A"),
     types = Set(TeaType.WhiteTea),
     vendor = Vendor.MeiLeaf,
-    url = "https://example.com/x",
+    url = sampleUrl,
     season = Some("Spring 2008"),
     cultivar = Some("Da Bai"),
     origin = Some("Fuding, Fujian, China"),

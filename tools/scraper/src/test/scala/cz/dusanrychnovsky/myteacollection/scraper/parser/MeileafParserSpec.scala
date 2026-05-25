@@ -68,12 +68,12 @@ object MeileafParserSpec extends ZIOSpecDefault:
       parseMeileafTea(sampleHtml, sampleUrl).map { info =>
         assertTrue(
           info == TeaInfo(
-            title = "Jade Star 9",
-            name = "2008 Bai Mu Dan and Shou Mei",
-            description = "N/A",
+            title = Title("Jade Star 9"),
+            name = Name("2008 Bai Mu Dan and Shou Mei"),
+            description = Description("N/A"),
             types = Set(TeaType.WhiteTea),
             vendor = Vendor.MeiLeaf,
-            url = "https://meileaf.com/tea/tea-jtic/",
+            url = sampleUrl,
             season = Some("Spring 2008"),
             cultivar = Some("Da Bai"),
             origin = Some("Fuding, Fujian, China"),
@@ -99,8 +99,8 @@ object MeileafParserSpec extends ZIOSpecDefault:
           |</body></html>""".stripMargin
       parseMeileafTea(html, sampleUrl).map { info =>
         assertTrue(
-          info.title == "T",
-          info.name == "N",
+          info.title == Title("T"),
+          info.name == Name("N"),
           info.types == Set(TeaType.WhiteTea),
           info.season.isEmpty,
           info.cultivar.isEmpty,

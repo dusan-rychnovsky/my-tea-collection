@@ -37,12 +37,12 @@ def parseMeeteaTea(html: String, url: URL): IO[ParseError, TeaInfo] =
     labels = parseLabels(doc)
     teaType <- getTeaType(labels)
   yield TeaInfo(
-    title = title,
-    name = name,
-    description = description,
+    title = Title(title),
+    name = Name(name),
+    description = Description(description),
     types = Set(teaType),
     vendor = Vendor.Meetea,
-    url = url.encode,
+    url = url,
     origin = labels.get("Původ"),
     cultivar = labels.get("Odrůda"),
     season = labels.get("Sklizeň"),

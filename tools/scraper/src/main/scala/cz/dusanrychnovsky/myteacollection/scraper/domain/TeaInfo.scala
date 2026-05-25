@@ -1,12 +1,14 @@
 package cz.dusanrychnovsky.myteacollection.scraper.domain
 
+import zio.http.URL
+
 case class TeaInfo(
-  title: String,
-  name: String,
-  description: String,
+  title: Title,
+  name: Name,
+  description: Description,
   types: Set[TeaType],
   vendor: Vendor,
-  url: String,
+  url: URL,
   origin: Option[String] = None,
   cultivar: Option[String] = None,
   season: Option[String] = None,
@@ -60,12 +62,12 @@ def renderTeaInfo(info: TeaInfo): String =
     else Some(info.types.toList.map(renderTeaType).sorted.mkString(", "))
   val lines =
     List(
-      "title"               -> Some(info.title),
-      "name"                -> Some(info.name),
-      "description"         -> Some(info.description),
+      "title"               -> Some(info.title.value),
+      "name"                -> Some(info.name.value),
+      "description"         -> Some(info.description.value),
       "types"               -> typesValue,
       "vendor"              -> Some(renderVendor(info.vendor)),
-      "url"                 -> Some(info.url),
+      "url"                 -> Some(info.url.encode),
       "origin"              -> info.origin,
       "cultivar"            -> info.cultivar,
       "season"              -> info.season,

@@ -28,12 +28,12 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
       .orElseFail(ParseError("missing tea type in breadcrumbs"))
     teaType <- resolveTeaType(teaTypeName)
   yield TeaInfo(
-    title = title,
-    name = name,
-    description = "N/A",
+    title = Title(title),
+    name = Name(name),
+    description = Description("N/A"),
     types = Set(teaType),
     vendor = Vendor.MeiLeaf,
-    url = url.encode,
+    url = url,
     season = details.get("Season"),
     cultivar = details.get("Cultivar"),
     origin = details.get("Origin"),

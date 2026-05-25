@@ -36,13 +36,14 @@ object MeeteaParserSpec extends ZIOSpecDefault:
       parseMeeteaTea(sampleHtml, sampleUrl).map { info =>
         assertTrue(
           info == TeaInfo(
-            title = "Heritage Green 2026",
-            name = "Móc Câu Thái Nguyên 2026",
-            description =
-              "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí.",
+            title = Title("Heritage Green 2026"),
+            name = Name("Móc Câu Thái Nguyên 2026"),
+            description = Description(
+              "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí."
+            ),
             types = Set(TeaType.GreenTea),
             vendor = Vendor.Meetea,
-            url = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/",
+            url = sampleUrl,
             season = Some("Březen 2026"),
             cultivar = Some("Trung Du – vypěstováno ze semínek"),
             origin = Some("Thái Nguyên, Vietnam"),

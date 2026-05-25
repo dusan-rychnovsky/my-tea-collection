@@ -18,16 +18,17 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
 
   def spec = suite("Scraper integration")(
     test("parses Jade Star 9 from meileaf.com") {
-      val raw = "https://meileaf.com/tea/tea-jtic/"
+      val raw      = "https://meileaf.com/tea/tea-jtic/"
+      val expected = URL.decode(raw).toOption.get
       scrapeUrl(raw).map { info =>
         assertTrue(
           info == TeaInfo(
-            title = "Jade Star 9",
-            name = "2008 Bai Mu Dan and Shou Mei",
-            description = "N/A",
+            title = Title("Jade Star 9"),
+            name = Name("2008 Bai Mu Dan and Shou Mei"),
+            description = Description("N/A"),
             types = Set(TeaType.WhiteTea),
             vendor = Vendor.MeiLeaf,
-            url = raw,
+            url = expected,
             season = Some("Spring 2008"),
             cultivar = Some("Da Bai"),
             origin = Some("Fuding, Fujian, China"),
@@ -40,17 +41,19 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
       }
     },
     test("parses Heritage Green 2026 from store.meetea.cz") {
-      val raw = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/"
+      val raw      = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/"
+      val expected = URL.decode(raw).toOption.get
       scrapeUrl(raw).map { info =>
         assertTrue(
           info == TeaInfo(
-            title = "Heritage Green 2026",
-            name = "Móc Câu Thái Nguyên 2026",
-            description =
-              "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí.",
+            title = Title("Heritage Green 2026"),
+            name = Name("Móc Câu Thái Nguyên 2026"),
+            description = Description(
+              "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí."
+            ),
             types = Set(TeaType.GreenTea),
             vendor = Vendor.Meetea,
-            url = raw,
+            url = expected,
             season = Some("Březen 2026"),
             cultivar = Some("Trung Du – vypěstováno ze semínek"),
             origin = Some("Thái Nguyên, Vietnam"),
