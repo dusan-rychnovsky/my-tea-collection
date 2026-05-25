@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
 
 // https://dev.to/philipathanasopoulos/guide-to-free-hosting-for-your-full-stack-spring-boot-application-4fak
 // https://spring.io/quickstart
@@ -158,7 +160,9 @@ public class MyTeaCollectionApplication {
   @GetMapping("/teas/{id}")
   public String teaView(@PathVariable("id") Long teaId, Model model) {
     var tea = teaRepository.findById(teaId).get();
+    var baseUrl = fromCurrentContextPath().build().toUriString();
     model.addAttribute("tea", tea);
+    model.addAttribute("baseUrl", baseUrl);
     return "tea-view";
   }
 

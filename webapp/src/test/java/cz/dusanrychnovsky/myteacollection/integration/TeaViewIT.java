@@ -82,6 +82,28 @@ class TeaViewIT {
       "200 CZK / 50g");
   }
 
+  @Test
+  @Transactional
+  void teaView_rendersOpenGraphMetaTags() throws Exception {
+    var tea = teaRepository.findAll().stream()
+      .filter(t -> t.getTitle().equals("Luminary Misfit"))
+      .findFirst().orElseThrow();
+    var mainImageId = tea.getMainImage().orElseThrow().getId();
+
+    var actions = mvc.perform(get("/teas/" + tea.getId()))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<meta property=\"og:type\" content=\"website\"",
+      "<meta property=\"og:site_name\" content=\"My Tea Collection\"",
+      "<meta property=\"og:title\" content=\"Luminary Misfit\"",
+      "<meta property=\"og:url\" content=\"http://localhost/teas/" + tea.getId() + "\"",
+      "<meta property=\"og:description\" content=\"Ultra-fruity and fragrant PuErh",
+      "<meta property=\"og:image\" content=\"http://localhost/images/" + mainImageId + "\"",
+      "<meta name=\"twitter:card\" content=\"summary_large_image\"",
+      "<title>Luminary Misfit — My tea collection</title>");
+  }
+
   private Long getTeaIdByTitle(String title) {
     return teaRepository.findAll().stream()
       .filter(tea -> tea.getTitle().equals(title))
