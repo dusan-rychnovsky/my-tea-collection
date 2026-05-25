@@ -17,7 +17,7 @@ object TeaInfoSpec extends ZIOSpecDefault:
     url = sampleUrl,
     season = Some("Spring 2008"),
     cultivar = Some("Da Bai"),
-    origin = Some("Fuding, Fujian, China"),
+    origin = Some(Location("China", "Fujian", "Fuding")),
     elevation = Some(Elevation(900)),
     price = "N/A",
     brewingInstructions = "N/A",

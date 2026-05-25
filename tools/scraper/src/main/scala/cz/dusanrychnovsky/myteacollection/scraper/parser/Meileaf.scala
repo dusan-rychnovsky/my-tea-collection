@@ -33,7 +33,7 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
     doc   <- ZIO.attempt(Jsoup.parse(html)).orDie
     title <- parseElementText(doc, "h1.product-info__title")
     name  <- parseElementText(doc, "h2.product-info__subtitle")
-    details = parseDetails(doc)
+    details         = parseDetails(doc)
     breadcrumbNames = parseBreadcrumbs(doc)
     teaTypeName <- ZIO
       .fromOption(breadcrumbNames.lift(1))
@@ -48,7 +48,7 @@ def parseMeileafTea(html: String, url: URL): IO[ParseError, TeaInfo] =
     url = url,
     season = details.get("Season"),
     cultivar = details.get("Cultivar"),
-    origin = details.get("Origin"),
+    origin = details.get("Origin").flatMap(parseLocation),
     elevation = details.get("Elevation").flatMap(parseElevation),
     price = "N/A",
     brewingInstructions = "N/A",

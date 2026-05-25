@@ -46,7 +46,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
             url = sampleUrl,
             season = Some("Březen 2026"),
             cultivar = Some("Trung Du – vypěstováno ze semínek"),
-            origin = Some("Thái Nguyên, Vietnam"),
+            origin = Some(Location("Vietnam", "Thái Nguyên")),
             elevation = None,
             price = "N/A",
             brewingInstructions = "N/A",
