@@ -74,7 +74,7 @@ object MeileafParserSpec extends ZIOSpecDefault:
             types = Set(TeaType.WhiteTea),
             vendor = Vendor.MeiLeaf,
             url = sampleUrl,
-            season = Some("Spring 2008"),
+            season = Some(Season.SeasonOfYear(SeasonName.Spring, 2008)),
             cultivar = Some("Da Bai"),
             origin = Some(Location("China", "Fujian", "Fuding")),
             elevation = Some(Elevation(900)),

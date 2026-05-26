@@ -44,7 +44,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
             types = Set(TeaType.GreenTea),
             vendor = Vendor.Meetea,
             url = sampleUrl,
-            season = Some("Březen 2026"),
+            season = Some(Season.MonthOfYear(Month.March, 2026)),
             cultivar = Some("Trung Du – vypěstováno ze semínek"),
             origin = Some(Location("Vietnam", "Thái Nguyên")),
             elevation = None,
@@ -58,8 +58,7 @@ object MeeteaParserSpec extends ZIOSpecDefault:
     test("ignores unknown <strong> labels (besides Druh podle zpracování)") {
       parseMeeteaTea(sampleHtml, sampleUrl).map { info =>
         assertTrue(
-          info.season.contains("Březen 2026"),
-          !info.season.exists(_.contains("Zelený"))
+          info.season.contains(Season.MonthOfYear(Month.March, 2026))
         )
       }
     },

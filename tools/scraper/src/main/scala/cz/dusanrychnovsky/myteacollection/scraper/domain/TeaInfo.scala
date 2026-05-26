@@ -11,7 +11,7 @@ case class TeaInfo(
   url: URL,
   origin: Option[Location] = None,
   cultivar: Option[String] = None,
-  season: Option[String] = None,
+  season: Option[Season] = None,
   elevation: Option[Elevation] = None,
   price: String,
   brewingInstructions: String,
@@ -56,6 +56,11 @@ def renderTeaType(t: TeaType): String = t match
   case TeaType.Darjeeling => "Darjeeling"
   case TeaType.PurpleTea  => "Purple Tea"
 
+def renderSeason(s: Season): String = s match
+  case Season.Year(year)               => year.toString
+  case Season.SeasonOfYear(name, year) => s"$name $year"
+  case Season.MonthOfYear(month, year) => s"$month $year"
+
 def renderTeaInfo(info: TeaInfo): String =
   val typesValue =
     if info.types.isEmpty then None
@@ -70,7 +75,7 @@ def renderTeaInfo(info: TeaInfo): String =
       "url"                 -> Some(info.url.encode),
       "origin"              -> info.origin.map(_.value.reverse.mkString(", ")),
       "cultivar"            -> info.cultivar,
-      "season"              -> info.season,
+      "season"              -> info.season.map(renderSeason),
       "elevation"           -> info.elevation.map(e => s"${e.value}m"),
       "price"               -> Some(info.price),
       "brewingInstructions" -> Some(info.brewingInstructions),
