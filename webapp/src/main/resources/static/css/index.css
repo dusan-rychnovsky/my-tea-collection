@@ -31,6 +31,16 @@
   font-size: 1rem;
 }
 
+.tea-details-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tea-details-link:hover {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .tea-card p.basic-info {
   margin-bottom: 8px;
 }

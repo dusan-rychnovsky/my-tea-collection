@@ -247,6 +247,20 @@ class TeaCollectionIT {
     verifyPagingMenu(actions, 2);
   }
 
+  @Test
+  @Transactional
+  void index_rendersDetailsLinksOnTeaImageAndTitle() throws Exception {
+    var teaId = getTeaIdByTitle("Doubleshot");
+    var actions = mvc.perform(get("/index")
+      .param("pageSize", "2"))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "href=\"/teas/" + teaId + "\" class=\"tea-image-link tea-details-link\"",
+      "href=\"/teas/" + teaId + "\" class=\"tea-title-link tea-details-link\""
+    );
+  }
+
   private void verifyHeader(ResultActions actions) throws Exception {
     containsStrings(actions,"<h1 class=\"jumbotron-heading\">My Tea Collection</h1>");
   }
@@ -289,5 +303,13 @@ class TeaCollectionIT {
       "<span>" + vendor + "</span>",
       "<span>" + types + "</span>"
     );
+  }
+
+  private Long getTeaIdByTitle(String title) {
+    return teaRepository.findAll().stream()
+      .filter(tea -> tea.getTitle().equals(title))
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("Tea not found in DB."))
+      .getId();
   }
 }

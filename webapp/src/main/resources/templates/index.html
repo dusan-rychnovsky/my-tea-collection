@@ -80,11 +80,15 @@
           <div class="row">
             <div th:each="tea : ${teas}" class="col-md-4">
               <div class="card mb-4 box-shadow">
-                <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="card-img-top" width="348" height="225">
+                <a th:href="@{/teas/{id}(id=${tea.id})}" class="tea-image-link tea-details-link">
+                  <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="card-img-top" width="348" height="225">
+                </a>
                 <div class="tea-card card-body">
                   <h2>
-                    <span th:text="${tea.title}">Tea Title</span><br />
-                    <span th:text="${tea.name}">Tea Name</span>
+                    <a th:href="@{/teas/{id}(id=${tea.id})}" class="tea-title-link tea-details-link">
+                      <span th:text="${tea.title}">Tea Title</span><br />
+                      <span th:text="${tea.name}">Tea Name</span>
+                    </a>
                   </h2>
                   <p class="basic-info">
                     <span th:text="${tea.vendor.name}"></span>
