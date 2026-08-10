@@ -11,5 +11,6 @@
   "elevation": "N/A",
   "price": "15.8",
   "brewingInstructions": "N/A",
-  "inStock": true
+  "inStock": true,
+  "tags": [ "globalteahut-2026-summer" ]
 }

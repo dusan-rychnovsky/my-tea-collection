@@ -100,3 +100,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (25, 'meetea-2025-dec', 'Čajové předplatné Meetea, prosinec 2025');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (26, 'globalteahut-2026-spring', 'Global Tea Hut Subscription, Spring 2026');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (27, 'globalteahut-2026-summer', 'Global Tea Hut Subscription, Summer 2026');
