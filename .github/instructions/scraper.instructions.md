@@ -1,3 +1,7 @@
+---
+applyTo: "tools/scraper/**"
+---
+
 # Scraper
 
 Scala 3 + ZIO console app. Downloads a tea product page from a supported e-shop, parses it, and prints the key fields (`title`, `name`, `description`, `types`, `vendor`, `url`, `origin`, `cultivar`, `season`, `elevation`, `price`, `brewingInstructions`, `inStock`). Optional fields (`origin`/`cultivar`/`season`/`elevation`) are omitted when missing; other fields are always present (`price`/`brewingInstructions`/`description` may be `"N/A"` while parsing isn't implemented yet).

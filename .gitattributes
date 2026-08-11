@@ -1,0 +1,15 @@
+# Enforce LF line endings for all text files, on every platform.
+# Git auto-detects text vs binary; text files are normalized to LF in the
+# repository and checked out with LF (never CRLF).
+* text=auto eol=lf
+
+# Belt-and-suspenders: never normalize known binary types.
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.gif  binary
+*.ico  binary
+*.jar  binary
+*.zip  binary
+*.gz   binary
+*.pdf  binary
