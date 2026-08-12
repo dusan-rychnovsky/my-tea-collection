@@ -81,7 +81,7 @@
             <div th:each="tea : ${teas}" class="col-md-4">
               <div class="card mb-4 box-shadow">
                 <a th:href="@{/teas/{id}(id=${tea.id})}" class="tea-image-link tea-details-link">
-                  <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImage.get().id})}" class="card-img-top" width="348" height="225">
+                  <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="card-img-top" width="348" height="225">
                 </a>
                 <div class="tea-card card-body">
                   <h2>
@@ -91,8 +91,8 @@
                     </a>
                   </h2>
                   <p class="basic-info">
-                    <span th:text="${tea.vendor.name}"></span>
-                    <span th:text="${tea.printTypes}"></span>
+                    <span th:text="${tea.vendorName}"></span>
+                    <span th:text="${tea.typeLabels}"></span>
                   </p>
                   <p th:text="${tea.description}" class="card-text"></p>
                   <div class="d-flex justify-content-between align-items-center">

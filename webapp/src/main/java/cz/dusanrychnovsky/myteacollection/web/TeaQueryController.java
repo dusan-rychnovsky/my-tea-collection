@@ -1,7 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.web;
 
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaSearchRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
@@ -10,6 +9,7 @@ import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.PageInfo;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.query.TeaQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,19 +29,19 @@ public class TeaQueryController {
   private final VendorRepository vendorRepository;
   private final TeaTypeRepository teaTypeRepository;
   private final TeaRepository teaRepository;
-  private final TeaSearchRepository teaSearchRepository;
+  private final TeaQueryRepository teaQueryRepository;
 
   @Autowired
   public TeaQueryController(
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
     TeaRepository teaRepository,
-    TeaSearchRepository teaSearchRepository) {
+    TeaQueryRepository teaQueryRepository) {
 
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.teaRepository = teaRepository;
-    this.teaSearchRepository = teaSearchRepository;
+    this.teaQueryRepository = teaQueryRepository;
   }
 
   @GetMapping({"/", "/index"})
@@ -102,10 +102,10 @@ public class TeaQueryController {
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
 
-    var teas = teaSearchRepository.getPage(filterCriteria, searchCriteria, pageNo, pageSize);
+    var teas = teaQueryRepository.getPage(filterCriteria, searchCriteria, pageNo, pageSize);
     model.addAttribute("teas", teas);
 
-    var totalCount = (int) teaSearchRepository.count(filterCriteria, searchCriteria);
+    var totalCount = (int) teaQueryRepository.count(filterCriteria, searchCriteria);
     var pageInfo = new PageInfo(
       pageNo,
       (totalCount + pageSize - 1) / pageSize

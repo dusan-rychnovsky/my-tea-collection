@@ -38,8 +38,10 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 
 ## Layout (package `cz.dusanrychnovsky.myteacollection`)
 
-- (root) `MyTeaCollectionApplication` — `@SpringBootApplication` + `@Controller`; the web entry point and, currently, all tea / image / index / filter / search MVC endpoints. Also `AuthController`, `SecurityConfig`.
-- `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScope`, `db/users/UserEntity`) + Spring Data repositories. `TeaSearchRepository` holds the Criteria-API paging / filter / search query.
+- (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
+- `web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}`), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
+- `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScope`, `db/users/UserEntity`) + Spring Data repositories.
+- `query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag`) and `TeaQueryRepository`, the Criteria-API paging / filter / search projection that feeds the index.
 - `model/` — request/view helpers (`FilterCriteria`, `SearchCriteria`, `PageInfo`, `Availability`).
 - `security/` — `EmailBasedUserDetailsService`.
 - `util/` — stateless helpers plus **standalone CLI Spring Boot apps** used as batch tools (not part of the web server): `util/upload/` (`UploadNewTeas`, `UpdateTeasAvailability`, `TeaRecord`, `JpgCompression`) and `util/users/CreateUser`. Each is its own `@SpringBootApplication` `main`.
