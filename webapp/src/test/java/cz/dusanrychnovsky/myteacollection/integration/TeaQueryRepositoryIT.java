@@ -1,6 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -148,7 +150,7 @@ class TeaQueryRepositoryIT {
   }
 
   private Long mainImageIdOf(String title) {
-    return teaByTitle(title).getMainImage().orElseThrow().getId();
+    return teaByTitle(title).getImages().stream().min(comparingInt(TeaImageEntity::getIndex)).orElseThrow().getId();
   }
 
   private TeaEntity teaByTitle(String title) {

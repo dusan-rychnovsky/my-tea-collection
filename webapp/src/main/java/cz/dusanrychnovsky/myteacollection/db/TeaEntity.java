@@ -3,13 +3,8 @@ package cz.dusanrychnovsky.myteacollection.db;
 import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import jakarta.persistence.*;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-
-import static java.util.Comparator.comparingInt;
 
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
@@ -146,18 +141,6 @@ public class TeaEntity {
     return this;
   }
 
-  public Optional<TeaImageEntity> getMainImage() {
-    return images.stream()
-      .min(comparingInt(TeaImageEntity::getIndex));
-  }
-
-  public Set<TeaImageEntity> getAdditionalImages() {
-    var result = new HashSet<TeaImageEntity>(images);
-    var mainImg = getMainImage();
-    mainImg.ifPresent(result::remove);
-    return result;
-  }
-
   public String getUrl() {
     return url;
   }
@@ -165,10 +148,6 @@ public class TeaEntity {
   public TeaEntity setUrl(String url) {
     this.url = url;
     return this;
-  }
-
-  public String getUrlDomain() throws MalformedURLException {
-    return new URL(url).getHost();
   }
 
   public TeaScopeEntity getScope() {

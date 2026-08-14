@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
+import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
@@ -18,6 +19,7 @@ import java.io.IOException;
 
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.containsStrings;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
+import static java.util.Comparator.comparingInt;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -88,7 +90,7 @@ class TeaViewIT {
     var tea = teaRepository.findAll().stream()
       .filter(t -> t.getTitle().equals("Luminary Misfit"))
       .findFirst().orElseThrow();
-    var mainImageId = tea.getMainImage().orElseThrow().getId();
+    var mainImageId = tea.getImages().stream().min(comparingInt(TeaImageEntity::getIndex)).orElseThrow().getId();
 
     var actions = mvc.perform(get("/teas/" + tea.getId()))
       .andExpect(status().isOk());

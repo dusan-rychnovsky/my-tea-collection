@@ -8,6 +8,7 @@ import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
@@ -32,6 +33,10 @@ public record TeaDetail(
 ) {
 
   public static TeaDetail from(TeaEntity tea) {
+    var imageIdsByIndex = tea.getImages().stream()
+      .sorted(comparingInt(TeaImageEntity::getIndex))
+      .map(TeaImageEntity::getId)
+      .toList();
     return new TeaDetail(
       tea.getId(),
       tea.getTitle(),
@@ -51,11 +56,8 @@ public record TeaDetail(
       scope(tea.getScope()),
       priceLabel(tea.getPrice()),
       tea.getBrewingInstructions(),
-      tea.getMainImage().map(TeaImageEntity::getId).orElse(null),
-      tea.getAdditionalImages().stream()
-        .sorted(comparingInt(TeaImageEntity::getIndex))
-        .map(TeaImageEntity::getId)
-        .toList()
+      imageIdsByIndex.stream().findFirst().orElse(null),
+      imageIdsByIndex.stream().skip(1).toList()
     );
   }
 
@@ -74,7 +76,7 @@ public record TeaDetail(
 
   private static String urlDomain(TeaEntity tea) {
     try {
-      return tea.getUrlDomain();
+      return new URL(tea.getUrl()).getHost();
     }
     catch (MalformedURLException ex) {
       throw new IllegalArgumentException("Malformed tea URL: " + tea.getUrl(), ex);
