@@ -40,11 +40,12 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 
 - (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
 - `web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}`), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
+- `ingest/` — JSON/filesystem inbound adapter (sibling of `web/`, not a util): the standalone CLI Spring Boot batch apps `UploadNewTeas` / `UpdateTeasAvailability` (each its own `@SpringBootApplication` `main`), the `TeaRecord` JSON contract, `TeaRecordMapper` (static `TeaRecord` → `TeaEntity` mapping incl. price parsing), and `CannotLoadTea*Exception`.
 - `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `db/users/UserEntity`) + Spring Data repositories.
 - `query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag` for the index; `TeaDetail`, `TeaScope` for the detail page) and `TeaQueryRepository`, the Criteria-API paging / filter / search projection that feeds the index.
 - `model/` — request/view helpers (`FilterCriteria`, `SearchCriteria`, `PageInfo`, `Availability`).
 - `security/` — `EmailBasedUserDetailsService`.
-- `util/` — stateless helpers plus **standalone CLI Spring Boot apps** used as batch tools (not part of the web server): `util/upload/` (`UploadNewTeas`, `UpdateTeasAvailability`, `TeaRecord`, `JpgCompression`) and `util/users/CreateUser`. Each is its own `@SpringBootApplication` `main`.
+- `util/` — stateless shared helpers: `MapUtils`, `ClassLoaderUtils`, and `JpgCompression` (JPG compression used by both `ingest` and `web`), plus the `util/users/CreateUser` CLI `@SpringBootApplication`.
 - `src/main/resources/templates/` — Thymeleaf views (`index`, `tea-view`, `tea-add`, `login`); `static/` holds CSS/JS.
 - Tests mirror this under `src/test/java`; integration tests live in the `integration/` package. H2 config in `src/test/resources/application-test.properties`, seed rows in `data.sql`.
 

@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Set;
 
-import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEntity;
+import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecordMapper.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
-class UploadNewTeasTests {
+class TeaRecordMapperTests {
 
   private static final UserEntity USER = new UserEntity(
     "dusan.rychnovsky@gmail.com",

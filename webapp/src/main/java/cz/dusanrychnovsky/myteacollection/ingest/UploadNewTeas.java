@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +10,7 @@ import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
-import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.imageio.ImageIO;
 
-import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
-import static cz.dusanrychnovsky.myteacollection.util.MapUtils.mapAll;
-import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadNewFrom;
+import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
 
@@ -85,7 +83,7 @@ public class UploadNewTeas {
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
 
-      var teaEntity = toEntity(user, tea, vendors, teaTypes, tags);
+      var teaEntity = TeaRecordMapper.toEntity(user, tea, vendors, teaTypes, tags);
 
       var idx = 0;
       // TODO: load tea images in correct order
@@ -142,40 +140,6 @@ public class UploadNewTeas {
     logger.info("Going to fetch available tags.");
     return tagRepository.findAll().stream()
       .collect(toMap(TagEntity::getLabel, tag -> tag));
-  }
-
-  public static TeaEntity toEntity(
-    UserEntity userEntity,
-    TeaRecord tea,
-    Map<String, VendorEntity> vendors,
-    Map<String, TeaTypeEntity> teaTypes,
-    Map<String, TagEntity> tags) {
-
-    var vendorEntity = getOrThrow(vendors, tea.getVendor());
-    var typeEntities = mapAll(teaTypes, tea.getTypes());
-    var tagEntities = mapAll(tags, tea.getTags());
-
-    var price = Price.parse(tea.getPrice()).map(Price::amountPerGram).orElse(null);
-
-    return new TeaEntity(
-      userEntity,
-      vendorEntity,
-      typeEntities,
-      tea.getTitle(),
-      tea.getName(),
-      tea.getDescription(),
-      tea.getUrl(),
-      new TeaScopeEntity(
-        tea.getSeason(),
-        tea.getCultivar(),
-        tea.getOrigin(),
-        tea.getElevation()
-      ),
-      price,
-      tea.getBrewingInstructions(),
-      tea.isInStock(),
-      tagEntities
-    );
   }
 
   private static byte[] getBytes(BufferedImage img) throws IOException {

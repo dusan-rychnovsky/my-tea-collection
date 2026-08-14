@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import java.io.File;
 

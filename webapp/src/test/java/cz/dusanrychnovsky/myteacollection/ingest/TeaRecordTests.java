@@ -1,11 +1,11 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
-import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.*;
+import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

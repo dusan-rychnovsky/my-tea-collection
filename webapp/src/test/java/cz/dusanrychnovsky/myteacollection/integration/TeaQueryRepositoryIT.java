@@ -8,7 +8,7 @@ import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import cz.dusanrychnovsky.myteacollection.query.TeaQueryRepository;
 import cz.dusanrychnovsky.myteacollection.query.TeaSummary;
 import cz.dusanrychnovsky.myteacollection.query.TeaTag;
-import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

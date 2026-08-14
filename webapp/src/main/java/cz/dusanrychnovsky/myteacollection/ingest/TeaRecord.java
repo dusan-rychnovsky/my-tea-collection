@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

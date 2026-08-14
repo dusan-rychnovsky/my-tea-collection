@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import org.junit.jupiter.api.Test;
 
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static cz.dusanrychnovsky.myteacollection.util.upload.UpdateTeasAvailability.computeUpdates;
+import static cz.dusanrychnovsky.myteacollection.ingest.UpdateTeasAvailability.computeUpdates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

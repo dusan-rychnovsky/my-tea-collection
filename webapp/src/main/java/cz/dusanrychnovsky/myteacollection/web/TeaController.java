@@ -12,7 +12,7 @@ import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
-import cz.dusanrychnovsky.myteacollection.util.upload.JpgCompression;
+import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

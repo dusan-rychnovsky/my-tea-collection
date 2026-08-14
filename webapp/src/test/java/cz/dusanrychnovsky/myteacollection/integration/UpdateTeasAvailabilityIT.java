@@ -2,8 +2,8 @@ package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.util.upload.UpdateTeasAvailability;
-import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.ingest.UpdateTeasAvailability;
+import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

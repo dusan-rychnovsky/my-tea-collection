@@ -3,7 +3,7 @@ package cz.dusanrychnovsky.myteacollection.integration;
 import cz.dusanrychnovsky.myteacollection.db.TagEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

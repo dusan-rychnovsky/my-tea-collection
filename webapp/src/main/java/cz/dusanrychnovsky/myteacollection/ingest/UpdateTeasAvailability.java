@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.util.upload;
+package cz.dusanrychnovsky.myteacollection.ingest;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -14,7 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadAllFrom;
+import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.loadAllFrom;
 import static java.util.stream.Collectors.toMap;
 
 @SpringBootApplication(scanBasePackages = "cz.dusanrychnovsky.myteacollection")
