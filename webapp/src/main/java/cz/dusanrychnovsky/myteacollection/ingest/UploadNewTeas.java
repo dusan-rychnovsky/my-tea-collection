@@ -4,8 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import cz.dusanrychnovsky.myteacollection.application.AddTea;
 import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
@@ -25,7 +28,7 @@ import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.loadNewFrom;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "cz.dusanrychnovsky.myteacollection")
 @EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.db")
 @EntityScan(basePackages = "cz.dusanrychnovsky.myteacollection.db")
 public class UploadNewTeas {
@@ -39,6 +42,7 @@ public class UploadNewTeas {
   private final TeaTypeRepository teaTypeRepository;
   private final TagRepository tagRepository;
   private final TeaRepository teaRepository;
+  private final AddTea addTea;
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
@@ -54,13 +58,15 @@ public class UploadNewTeas {
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
     TagRepository tagRepository,
-    TeaRepository teaRepository) {
+    TeaRepository teaRepository,
+    AddTea addTea) {
 
     this.userRepository = userRepository;
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.tagRepository = tagRepository;
     this.teaRepository = teaRepository;
+    this.addTea = addTea;
   }
 
   public void run(File rootDir) throws IOException {
@@ -75,35 +81,15 @@ public class UploadNewTeas {
       return;
     }
 
-    var user = fetchUser();
+    var userId = fetchUser().getId();
     var vendors = fetchVendors();
     var teaTypes = fetchTeaTypes();
     var tags = fetchTags();
 
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
-
-      var teaEntity = TeaRecordMapper.toEntity(user, tea, vendors, teaTypes, tags);
-
-      var idx = 0;
-      // TODO: load tea images in correct order
-      for (var image : tea.loadImages()) {
-        idx++;
-        logger.info("Going to upload image: #{}", idx);
-
-        var origBytes = getBytes(image);
-        var origLen = origBytes.length;
-        var compressedBytes = new JpgCompression(image).getBytes();
-        var compressedLen = compressedBytes.length;
-        logger.info("JPG compression: original size {}, compressed size {}, ratio {}",
-          origLen, compressedLen, (float) compressedLen / origLen);
-
-        var dataEntity = new TeaImageDataEntity(compressedBytes);
-        var imageEntity = new TeaImageEntity(teaEntity, idx, dataEntity);
-        teaEntity.addImage(imageEntity);
-      }
-
-      teaRepository.save(teaEntity);
+      var command = TeaRecordMapper.toCommand(userId, tea, compress(tea), vendors, teaTypes, tags);
+      addTea.handle(command);
     }
 
     logger.info("Upload finished.");
@@ -140,6 +126,22 @@ public class UploadNewTeas {
     logger.info("Going to fetch available tags.");
     return tagRepository.findAll().stream()
       .collect(toMap(TagEntity::getLabel, tag -> tag));
+  }
+
+  private List<byte[]> compress(TeaRecord tea) throws IOException {
+    var images = new ArrayList<byte[]>();
+    var idx = 0;
+    // TODO: load tea images in correct order
+    for (var image : tea.loadImages()) {
+      idx++;
+      logger.info("Going to upload image: #{}", idx);
+      var origBytes = getBytes(image);
+      var compressedBytes = new JpgCompression(image).getBytes();
+      logger.info("JPG compression: original size {}, compressed size {}, ratio {}",
+        origBytes.length, compressedBytes.length, (float) compressedBytes.length / origBytes.length);
+      images.add(compressedBytes);
+    }
+    return images;
   }
 
   private static byte[] getBytes(BufferedImage img) throws IOException {

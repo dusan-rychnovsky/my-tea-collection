@@ -1,55 +1,57 @@
 package cz.dusanrychnovsky.myteacollection.ingest;
 
+import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
 import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 
+import java.util.List;
 import java.util.Map;
 
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.mapAll;
+import static java.util.stream.Collectors.toSet;
 
-public class TeaRecordMapper {
+/**
+ * Ingest anti-corruption layer: translates an external {@link TeaRecord} (which names its
+ * vendor / types / tags) into an {@link AddTeaCommand} (which references them by id), resolving
+ * those names against the prefetched reference-data maps and parsing the price. Throws
+ * {@link IllegalArgumentException} on an unknown vendor / type / tag name.
+ */
+public final class TeaRecordMapper {
 
   private TeaRecordMapper() {
     throw new IllegalStateException("Utility class.");
   }
 
-  public static TeaEntity toEntity(
-    UserEntity userEntity,
+  public static AddTeaCommand toCommand(
+    long userId,
     TeaRecord tea,
+    List<byte[]> images,
     Map<String, VendorEntity> vendors,
     Map<String, TeaTypeEntity> teaTypes,
     Map<String, TagEntity> tags) {
 
-    var vendorEntity = getOrThrow(vendors, tea.getVendor());
-    var typeEntities = mapAll(teaTypes, tea.getTypes());
-    var tagEntities = mapAll(tags, tea.getTags());
+    var vendorId = getOrThrow(vendors, tea.getVendor()).getId();
+    var typeIds = mapAll(teaTypes, tea.getTypes()).stream().map(TeaTypeEntity::getId).collect(toSet());
+    var tagIds = mapAll(tags, tea.getTags()).stream().map(TagEntity::getId).collect(toSet());
+    var price = Price.parse(tea.getPrice()).orElse(null);
 
-    var price = Price.parse(tea.getPrice()).map(Price::amountPerGram).orElse(null);
-
-    return new TeaEntity(
-      userEntity,
-      vendorEntity,
-      typeEntities,
+    return new AddTeaCommand(
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),
       tea.getUrl(),
-      new TeaScopeEntity(
-        tea.getSeason(),
-        tea.getCultivar(),
-        tea.getOrigin(),
-        tea.getElevation()
-      ),
+      new TeaScope(tea.getSeason(), tea.getCultivar(), tea.getOrigin(), tea.getElevation()),
       price,
       tea.getBrewingInstructions(),
       tea.isInStock(),
-      tagEntities
-    );
+      userId,
+      vendorId,
+      typeIds,
+      tagIds,
+      images);
   }
 }

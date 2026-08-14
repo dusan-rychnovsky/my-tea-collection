@@ -1,18 +1,23 @@
 package cz.dusanrychnovsky.myteacollection.ingest;
 
+import cz.dusanrychnovsky.myteacollection.db.TagEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.domain.Price;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecordMapper.toEntity;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TeaRecordMapperTests {
+
+  private static final long USER_ID = 42L;
 
   private static final UserEntity USER = new UserEntity(
     "dusan.rychnovsky@gmail.com",
@@ -38,6 +43,8 @@ class TeaRecordMapperTests {
     "meetea-2024-dec", new TagEntity(2L, USER, "meetea-2024-dec", "Čajové předplatné Meetea, prosinec 2024")
   );
 
+  private static final List<byte[]> IMAGES = List.of(new byte[]{1, 2}, new byte[]{3});
+
   private static final TeaRecord TEA = new TeaRecord(
     "Luminary Misfit",
     "Lancang Gushu Sheng PuErh Spring 2022",
@@ -56,55 +63,53 @@ class TeaRecordMapperTests {
     .setId(5);
 
   @Test
-  void toEntity_translatesTeaToEntityRepresentation() {
-    var result = toEntity(USER, TEA, VENDORS, TEA_TYPES, TAGS);
+  void toCommand_translatesRecordToCommand() {
+    var command = TeaRecordMapper.toCommand(USER_ID, TEA, IMAGES, VENDORS, TEA_TYPES, TAGS);
 
-    assertNull(result.getId());
-    assertEquals(USER.getEmail(), result.getUser().getEmail());
-    assertEquals(TEA.getTitle(), result.getTitle());
-    assertEquals(TEA.getName(), result.getName());
-    assertEquals(TEA.getDescription(), result.getDescription());
-    assertEquals(TEA.getUrl(), result.getUrl());
-    assertEquals(TEA.getOrigin(), result.getScope().getOrigin());
-    assertEquals(TEA.getCultivar(), result.getScope().getCultivar());
-    assertEquals(TEA.getSeason(), result.getScope().getSeason());
-    assertEquals(TEA.getElevation(), result.getScope().getElevation());
-    assertNull(result.getPrice());
-    assertEquals(TEA.getBrewingInstructions(), result.getBrewingInstructions());
-    assertEquals(TEA.isInStock(), result.isInStock());
-
-    assertEquals(TEA.getVendor(), result.getVendor().getName());
-    for (var type : TEA.getTypes()) {
-      assertTrue(result.getTypes().stream().anyMatch(t -> t.getName().equals(type)));
-    }
-    for (var tag : TEA.getTags()) {
-      assertTrue(result.getTags().stream().anyMatch(t -> t.getLabel().equals(tag)));
-    }
+    assertEquals(TEA.getTitle(), command.title());
+    assertEquals(TEA.getName(), command.name());
+    assertEquals(TEA.getDescription(), command.description());
+    assertEquals(TEA.getUrl(), command.url());
+    assertEquals(TEA.getSeason(), command.scope().season());
+    assertEquals(TEA.getCultivar(), command.scope().cultivar());
+    assertEquals(TEA.getOrigin(), command.scope().origin());
+    assertEquals(TEA.getElevation(), command.scope().elevation());
+    assertNull(command.price());
+    assertEquals(TEA.getBrewingInstructions(), command.brewingInstructions());
+    assertEquals(TEA.isInStock(), command.inStock());
+    assertEquals(USER_ID, command.userId());
+    assertEquals(1L, command.vendorId());
+    assertEquals(Set.of(7L, 8L), command.typeIds());
+    assertEquals(Set.of(1L, 2L), command.tagIds());
+    assertEquals(IMAGES, command.images());
   }
 
   @Test
-  void toEntity_withPrice_parsesPrice() {
+  void toCommand_withPrice_parsesPrice() {
     var tea = withPrice(TEA, "12.5");
-    var result = toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS);
-    assertEquals(12.5f, result.getPrice());
+    var command = TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS);
+    assertEquals(new Price(12.5f), command.price());
   }
 
   @Test
-  void toEntity_invalidVendor_throws() {
+  void toCommand_invalidVendor_throws() {
     var tea = withVendor(TEA, "Meileaf");
-    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class,
+      () -> TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
-  void toEntity_invalidType_throws() {
+  void toCommand_invalidType_throws() {
     var tea = withTypes(TEA, Set.of("Dark", "Blend"));
-    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class,
+      () -> TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS));
   }
 
   @Test
-  void toEntity_invalidTag_throws() {
+  void toCommand_invalidTag_throws() {
     var tea = withTags(TEA, Set.of("meetea-2025-jan", "unknown-tag"));
-    assertThrows(IllegalArgumentException.class, () -> toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS));
+    assertThrows(IllegalArgumentException.class,
+      () -> TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS));
   }
 
   private static TeaRecord withTags(TeaRecord tea, Set<String> tags) {

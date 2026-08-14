@@ -40,7 +40,7 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 
 - (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
 - `web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}`), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
-- `ingest/` — JSON/filesystem inbound adapter (sibling of `web/`, not a util): the standalone CLI Spring Boot batch apps `UploadNewTeas` / `UpdateTeasAvailability` (each its own `@SpringBootApplication` `main`), the `TeaRecord` JSON contract, `TeaRecordMapper` (static `TeaRecord` → `TeaEntity` mapping incl. price parsing), and `CannotLoadTea*Exception`.
+- `ingest/` — JSON/filesystem inbound adapter (sibling of `web/`, not a util): the standalone CLI Spring Boot batch apps `UploadNewTeas` / `UpdateTeasAvailability` (each its own `@SpringBootApplication` `main`; `UploadNewTeas` builds an `AddTeaCommand` per tea and delegates to `application.AddTea`), the `TeaRecord` JSON contract, `TeaRecordMapper` (static `TeaRecord` → `AddTeaCommand`: resolves vendor/type/tag names → ids, parses price), and `CannotLoadTea*Exception`.
 - `application/` — write use cases (the shared core the inbound adapters call): `AddTea` (`@Service`; resolves + validates the command's reference ids, then maps and saves, returning the new id), `AddTeaCommand` (its input DTO, reference data by id), and `TeaMapper` (pure static domain `Tea` + resolved reference entities → `TeaEntity`, incl. images).
 - `domain/` — write-side domain model: the `Tea` aggregate (a class — identity, not value, semantics; the seam where write invariants will live) plus the `Price` and `TeaScope` value objects (records).
 - `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `db/users/UserEntity`) + Spring Data repositories.
@@ -58,6 +58,7 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 ## Conventions
 
 - Idiomatic Spring / Java. Constructor injection. Match the existing **2-space indentation**.
+- **Naming.** Infrastructure/adapter classes carry a role suffix — `…Controller`, `…Repository`, `…Entity`, `…Mapper`. Application **use-case** classes are named as bare imperative verb phrases — `AddTea` (handling `AddTeaCommand`), mirroring the CLI apps `CreateUser` / `UploadNewTeas` — **not** `AddTeaService`; a `…Service` suffix is reserved for framework-contract impls (e.g. `EmailBasedUserDetailsService` implements `UserDetailsService`). Value objects / read models / DTOs use plain domain names (`Price`, `TeaDetail`, `AddTeaCommand`).
 - Test naming drives the runner: `*Tests.java` → surefire (unit), `integration/*IT.java` → failsafe (integration). Keep new tests to this pattern so they run in the right phase.
 
 ## Gotchas
