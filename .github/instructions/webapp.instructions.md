@@ -40,13 +40,17 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 
 - (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
 - `web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}`), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
-- `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScope`, `db/users/UserEntity`) + Spring Data repositories.
-- `query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag`) and `TeaQueryRepository`, the Criteria-API paging / filter / search projection that feeds the index.
+- `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `db/users/UserEntity`) + Spring Data repositories.
+- `query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag` for the index; `TeaDetail`, `TeaScope` for the detail page) and `TeaQueryRepository`, the Criteria-API paging / filter / search projection that feeds the index.
 - `model/` — request/view helpers (`FilterCriteria`, `SearchCriteria`, `PageInfo`, `Availability`).
 - `security/` — `EmailBasedUserDetailsService`.
 - `util/` — stateless helpers plus **standalone CLI Spring Boot apps** used as batch tools (not part of the web server): `util/upload/` (`UploadNewTeas`, `UpdateTeasAvailability`, `TeaRecord`, `JpgCompression`) and `util/users/CreateUser`. Each is its own `@SpringBootApplication` `main`.
 - `src/main/resources/templates/` — Thymeleaf views (`index`, `tea-view`, `tea-add`, `login`); `static/` holds CSS/JS.
 - Tests mirror this under `src/test/java`; integration tests live in the `integration/` package. H2 config in `src/test/resources/application-test.properties`, seed rows in `data.sql`.
+
+## Domain terminology
+
+- **SCOPE** is a MeiLeaf terminus technicus for a tea's provenance characteristics: **S**eason, **C**ultivar, **O**rigin, **P**icking, **E**levation. This app uses all but Picking. It's a deliberate, meaningful name — don't "fix" it or reorder its fields (the `TeaScopeEntity` constructor and the `TeaScope` read record follow SCOPE order: season, cultivar, origin, elevation). Persistence type: `db/TeaScopeEntity` (`@Embeddable`); read-side view: `query/TeaScope` (record).
 
 ## Conventions
 

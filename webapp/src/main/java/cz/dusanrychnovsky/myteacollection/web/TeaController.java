@@ -7,7 +7,7 @@ import cz.dusanrychnovsky.myteacollection.db.TeaImageDataEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
 import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaScope;
+import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
@@ -120,7 +120,7 @@ public class TeaController {
       name,
       description,
       url,
-      new TeaScope(
+      new TeaScopeEntity(
         season,
         cultivar,
         origin,

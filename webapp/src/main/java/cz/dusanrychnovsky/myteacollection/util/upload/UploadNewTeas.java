@@ -165,7 +165,7 @@ public class UploadNewTeas {
       tea.getName(),
       tea.getDescription(),
       tea.getUrl(),
-      new TeaScope(
+      new TeaScopeEntity(
         tea.getSeason(),
         tea.getCultivar(),
         tea.getOrigin(),

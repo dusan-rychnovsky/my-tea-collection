@@ -104,6 +104,18 @@ class TeaViewIT {
       "<title>Luminary Misfit — My tea collection</title>");
   }
 
+  @Test
+  @Transactional
+  void teaView_rendersTags() throws Exception {
+    var teaId = getTeaIdByTitle("Doubleshot");
+    var actions = mvc.perform(get("/teas/" + teaId))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<li>meetea-2025-jan</li>",
+      "<li>meetea-2024-dec</li>");
+  }
+
   private Long getTeaIdByTitle(String title) {
     return teaRepository.findAll().stream()
       .filter(tea -> tea.getTitle().equals(title))

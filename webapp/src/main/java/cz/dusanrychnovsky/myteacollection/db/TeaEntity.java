@@ -53,7 +53,7 @@ public class TeaEntity {
   private String url;
 
   @Embedded
-  private TeaScope scope;
+  private TeaScopeEntity scope;
 
   @Column(name = "price")
   private Float price;
@@ -80,7 +80,7 @@ public class TeaEntity {
     String name,
     String description,
     String url,
-    TeaScope scope,
+    TeaScopeEntity scope,
     Float price,
     String brewingInstructions,
     boolean inStock,
@@ -182,7 +182,7 @@ public class TeaEntity {
     return new URL(url).getHost();
   }
 
-  public TeaScope getScope() {
+  public TeaScopeEntity getScope() {
     return scope;
   }
 

@@ -9,6 +9,7 @@ import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.PageInfo;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.query.TeaDetail;
 import cz.dusanrychnovsky.myteacollection.query.TeaQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -130,7 +131,7 @@ public class TeaQueryController {
 
   @GetMapping("/teas/{id}")
   public String teaView(@PathVariable("id") Long teaId, Model model) {
-    var tea = teaRepository.findById(teaId).get();
+    var tea = teaRepository.findById(teaId).map(TeaDetail::from).get();
     var baseUrl = fromCurrentContextPath().build().toUriString();
     model.addAttribute("tea", tea);
     model.addAttribute("baseUrl", baseUrl);
