@@ -11,6 +11,7 @@ import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.util.upload.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,7 @@ public class TeaController {
       throw new IllegalArgumentException("One or more tag IDs are invalid: " + tagIds);
     }
 
+    var validatedPrice = price != null ? new Price(price).amountPerGram() : null;
     var teaEntity = new TeaEntity(
       user,
       vendorEntity,
@@ -126,7 +128,7 @@ public class TeaController {
         origin,
         elevation
       ),
-      price,
+      validatedPrice,
       brewingInstructions,
       true,
       tagEntities

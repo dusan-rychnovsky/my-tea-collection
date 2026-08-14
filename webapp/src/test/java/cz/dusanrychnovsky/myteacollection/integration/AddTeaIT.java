@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadFrom;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -117,6 +120,24 @@ class AddTeaIT {
 
     assertEquals(tea.getBrewingInstructions(), teaEntity.getBrewingInstructions());
     assertTrue(teaEntity.isInStock());
+  }
+
+  @Test
+  @Transactional
+  void addTea_negativePrice_isRejected() {
+    var tea = loadFrom(toFile("teas/01"));
+    var ex = assertThrows(Exception.class, () -> mvc.perform(post("/teas/add")
+      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
+      .with(csrf())
+      .param("url", tea.getUrl())
+      .param("name", tea.getName())
+      .param("title", tea.getTitle())
+      .param("description", tea.getDescription())
+      .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll()))
+      .param("price", "-5")));
+
+    assertInstanceOf(IllegalArgumentException.class, NestedExceptionUtils.getMostSpecificCause(ex));
   }
 
   private String[] toTeaTypeIds(Set<String> teaTypeNames, List<TeaTypeEntity> entities) {
