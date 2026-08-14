@@ -62,13 +62,13 @@ class TeaQueryRepositoryIT {
     assertEquals("Doubleshot", first.title());
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.name());
     assertEquals("Meetea", first.vendorName());
-    assertEquals("Dark Tea, Shu Puerh", first.typeLabels());
+    assertEquals("Dark Tea, Shu Puerh", first.typeNames());
     assertNotNull(first.description());
     assertNotNull(first.tags());
     assertEquals(mainImageIdOf("Doubleshot"), first.mainImageId());
 
     assertEquals("Luminary Misfit", page.get(1).title());
-    assertEquals("Dark Tea, Sheng Puerh", page.get(1).typeLabels());
+    assertEquals("Dark Tea, Sheng Puerh", page.get(1).typeNames());
   }
 
   @Test

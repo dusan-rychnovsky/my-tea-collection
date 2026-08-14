@@ -41,7 +41,7 @@ public class TeaQueryRepository {
 
     var teaIds = page.stream().map(row -> row.get("id", Long.class)).toList();
     var mainImageIds = fetchMainImageIds(teaIds);
-    var typeLabels = fetchTypeLabels(teaIds);
+    var typeNames = fetchTypeNames(teaIds);
     var tags = fetchTags(teaIds);
 
     return page.stream()
@@ -52,7 +52,7 @@ public class TeaQueryRepository {
           row.get("title", String.class),
           row.get("name", String.class),
           row.get("vendorName", String.class),
-          typeLabels.getOrDefault(id, ""),
+          typeNames.getOrDefault(id, ""),
           row.get("description", String.class),
           mainImageIds.get(id),
           tags.getOrDefault(id, List.of())
@@ -123,7 +123,7 @@ public class TeaQueryRepository {
     return mainImageIds;
   }
 
-  private Map<Long, String> fetchTypeLabels(List<Long> teaIds) {
+  private Map<Long, String> fetchTypeNames(List<Long> teaIds) {
     var rows = entityManager.createQuery(
         "SELECT t.id AS teaId, ty.id AS typeId, ty.name AS typeName " +
         "FROM TeaEntity t JOIN t.types ty WHERE t.id IN :ids", Tuple.class)
@@ -132,15 +132,15 @@ public class TeaQueryRepository {
 
     var byTea = rows.stream().collect(groupingBy(row -> row.get("teaId", Long.class)));
 
-    var typeLabels = new LinkedHashMap<Long, String>();
-    byTea.forEach((teaId, typeRows) -> typeLabels.put(
+    var typeNames = new LinkedHashMap<Long, String>();
+    byTea.forEach((teaId, typeRows) -> typeNames.put(
       teaId,
       typeRows.stream()
         .sorted(comparingLong(row -> row.get("typeId", Long.class)))
         .map(row -> row.get("typeName", String.class))
         .collect(joining(", "))
     ));
-    return typeLabels;
+    return typeNames;
   }
 
   private Map<Long, List<TeaTag>> fetchTags(List<Long> teaIds) {

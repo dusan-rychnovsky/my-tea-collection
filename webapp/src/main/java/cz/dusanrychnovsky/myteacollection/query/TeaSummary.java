@@ -7,7 +7,7 @@ public record TeaSummary(
   String title,
   String name,
   String vendorName,
-  String typeLabels,
+  String typeNames,
   String description,
   Long mainImageId,
   List<TeaTag> tags

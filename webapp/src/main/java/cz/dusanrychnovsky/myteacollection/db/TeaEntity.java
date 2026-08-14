@@ -10,8 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Comparator.comparingInt;
-import static java.util.Comparator.comparingLong;
-import static java.util.stream.Collectors.joining;
 
 @Entity
 @Table(schema = "myteacollection", name = "Teas")
@@ -121,13 +119,6 @@ public class TeaEntity {
   public TeaEntity setTypes(Set<TeaTypeEntity> types) {
     this.types = types;
     return this;
-  }
-
-  public String printTypes() {
-    return types.stream()
-      .sorted(comparingLong(TeaTypeEntity::getId))
-      .map(TeaTypeEntity::getName)
-      .collect(joining(", "));
   }
 
   public String getTitle() {
