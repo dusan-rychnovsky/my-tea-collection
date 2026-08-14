@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 import java.util.Set;
 
-import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.parsePrice;
 import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,21 +56,6 @@ class UploadNewTeasTests {
     .setId(5);
 
   @Test
-  void parsePrice_validPrice_parsesPrice() {
-    assertEquals(12.5f, parsePrice("12.5"));
-  }
-
-  @Test
-  void parsePrice_noPrice_returnsNull() {
-    assertNull(parsePrice("N/A"));
-  }
-
-  @Test
-  void parsePrice_invalidPrice_throws() {
-    assertThrows(IllegalArgumentException.class, () -> parsePrice("twelve"));
-  }
-
-  @Test
   void toEntity_translatesTeaToEntityRepresentation() {
     var result = toEntity(USER, TEA, VENDORS, TEA_TYPES, TAGS);
 
@@ -102,7 +86,7 @@ class UploadNewTeasTests {
   void toEntity_withPrice_parsesPrice() {
     var tea = withPrice(TEA, "12.5");
     var result = toEntity(USER, tea, VENDORS, TEA_TYPES, TAGS);
-    assertEquals(parsePrice(tea.getPrice()), result.getPrice());
+    assertEquals(12.5f, result.getPrice());
   }
 
   @Test

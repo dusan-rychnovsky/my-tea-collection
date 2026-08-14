@@ -10,6 +10,7 @@ import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.domain.Price;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,6 @@ public class UploadNewTeas {
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);
 
   public static final String USER_EMAIL = "dusan.rychnovsky@gmail.com";
-  private static final String NO_PRICE = "N/A";
 
   private final UserRepository userRepository;
   private final VendorRepository vendorRepository;
@@ -155,7 +155,7 @@ public class UploadNewTeas {
     var typeEntities = mapAll(teaTypes, tea.getTypes());
     var tagEntities = mapAll(tags, tea.getTags());
 
-    var price = parsePrice(tea.getPrice());
+    var price = Price.parse(tea.getPrice()).map(Price::amountPerGram).orElse(null);
 
     return new TeaEntity(
       userEntity,
@@ -176,13 +176,6 @@ public class UploadNewTeas {
       tea.isInStock(),
       tagEntities
     );
-  }
-
-  public static Float parsePrice(String price) {
-    if (price.equals(NO_PRICE)) {
-      return null;
-    }
-    return Float.parseFloat(price);
   }
 
   private static byte[] getBytes(BufferedImage img) throws IOException {

@@ -1,6 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
+import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,6 @@ import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.util.upload.TeaRecord.loadFrom;
-import static cz.dusanrychnovsky.myteacollection.util.upload.UploadNewTeas.parsePrice;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -113,7 +113,7 @@ class AddTeaIT {
     assertEquals(tea.getSeason(), teaEntity.getScope().getSeason());
     assertEquals(tea.getElevation(), teaEntity.getScope().getElevation());
 
-    assertEquals(parsePrice(tea.getPrice()), teaEntity.getPrice());
+    assertEquals(Price.parse(tea.getPrice()).map(Price::amountPerGram).orElse(null), teaEntity.getPrice());
 
     assertEquals(tea.getBrewingInstructions(), teaEntity.getBrewingInstructions());
     assertTrue(teaEntity.isInStock());

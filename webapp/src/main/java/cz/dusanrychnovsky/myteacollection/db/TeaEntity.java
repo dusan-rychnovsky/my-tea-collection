@@ -17,8 +17,6 @@ import static java.util.stream.Collectors.joining;
 @Table(schema = "myteacollection", name = "Teas")
 public class TeaEntity {
 
-  private static final String NO_PRICE = "N/A";
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -193,13 +191,6 @@ public class TeaEntity {
   public TeaEntity setPrice(Float price) {
     this.price = price;
     return this;
-  }
-
-  public String printPrice() {
-    if (price == null) {
-      return NO_PRICE;
-    }
-    return String.format("%.0f CZK / 50g", price * 50);
   }
 
   public String getBrewingInstructions() {

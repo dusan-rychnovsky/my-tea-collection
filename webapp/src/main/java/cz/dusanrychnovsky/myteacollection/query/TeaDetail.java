@@ -5,6 +5,7 @@ import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.domain.Price;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -48,7 +49,7 @@ public record TeaDetail(
       tea.getUrl(),
       urlDomain(tea),
       scope(tea.getScope()),
-      tea.printPrice(),
+      priceLabel(tea.getPrice()),
       tea.getBrewingInstructions(),
       tea.getMainImage().map(TeaImageEntity::getId).orElse(null),
       tea.getAdditionalImages().stream()
@@ -65,6 +66,10 @@ public record TeaDetail(
       scope.getOrigin(),
       scope.getElevation()
     );
+  }
+
+  private static String priceLabel(Float amountPerGram) {
+    return amountPerGram == null ? "N/A" : new Price(amountPerGram).label();
   }
 
   private static String urlDomain(TeaEntity tea) {
