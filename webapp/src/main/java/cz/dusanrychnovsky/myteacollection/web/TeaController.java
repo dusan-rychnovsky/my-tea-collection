@@ -1,17 +1,14 @@
 package cz.dusanrychnovsky.myteacollection.web;
 
+import cz.dusanrychnovsky.myteacollection.application.AddTea;
+import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
 import cz.dusanrychnovsky.myteacollection.db.TagEntity;
 import cz.dusanrychnovsky.myteacollection.db.TagRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageDataEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +20,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -41,25 +38,22 @@ public class TeaController {
   private final UserRepository userRepository;
   private final VendorRepository vendorRepository;
   private final TeaTypeRepository teaTypeRepository;
-  private final TeaImageRepository teaImageRepository;
-  private final TeaRepository teaRepository;
   private final TagRepository tagRepository;
+  private final AddTea addTea;
 
   @Autowired
   public TeaController(
     UserRepository userRepository,
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
-    TeaImageRepository teaImageRepository,
-    TeaRepository teaRepository,
-    TagRepository tagRepository) {
+    TagRepository tagRepository,
+    AddTea addTea) {
 
     this.userRepository = userRepository;
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
-    this.teaImageRepository = teaImageRepository;
-    this.teaRepository = teaRepository;
     this.tagRepository = tagRepository;
+    this.addTea = addTea;
   }
 
   @GetMapping("/teas/add")
@@ -75,7 +69,6 @@ public class TeaController {
   }
 
   @PostMapping("/teas/add")
-  @Transactional
   public String addTea(
     Authentication authentication,
     @RequestParam String url,
@@ -92,67 +85,42 @@ public class TeaController {
     @RequestParam(required = false) Float price,
     @RequestParam(value = "tags", required = false) List<Long> tagIds,
     @RequestParam(required = false) List<MultipartFile> images
-  ) throws Exception {
+  ) throws IOException {
     // TODO: form validation (mandatory fields, URL format, etc.)
 
     var emailAddress = authentication.getName();
-    var user = userRepository.findByEmailIgnoreCase(emailAddress)
-      .orElseThrow(() -> new IllegalArgumentException("User not found with email address: " + emailAddress));
+    var userId = userRepository.findByEmailIgnoreCase(emailAddress)
+      .orElseThrow(() -> new IllegalArgumentException("User not found with email address: " + emailAddress))
+      .getId();
 
-    var vendorEntity = vendorRepository.findById(vendorId)
-      .orElseThrow(() -> new IllegalArgumentException("Invalid vendor ID: " + vendorId));
-
-    var teaTypeEntities = new HashSet<>(teaTypeRepository.findAllById(teaTypeIds));
-    if (teaTypeEntities.size() != teaTypeIds.size()) {
-      throw new IllegalArgumentException("One or more tea type IDs are invalid: " + teaTypeIds);
-    }
-
-    tagIds = tagIds != null ? tagIds : emptyList();
-    var tagEntities = new HashSet<>(tagRepository.findAllById(tagIds));
-    if (tagEntities.size() != tagIds.size()) {
-      throw new IllegalArgumentException("One or more tag IDs are invalid: " + tagIds);
-    }
-
-    var validatedPrice = price != null ? new Price(price).amountPerGram() : null;
-    var teaEntity = new TeaEntity(
-      user,
-      vendorEntity,
-      teaTypeEntities,
+    var command = new AddTeaCommand(
       title,
       name,
       description,
       url,
-      new TeaScopeEntity(
-        season,
-        cultivar,
-        origin,
-        elevation
-      ),
-      validatedPrice,
+      new TeaScope(season, cultivar, origin, elevation),
+      price != null ? new Price(price) : null,
       brewingInstructions,
       true,
-      tagEntities
-    );
+      userId,
+      vendorId,
+      new HashSet<>(teaTypeIds),
+      new HashSet<>(tagIds != null ? tagIds : emptyList()),
+      compressImages(images));
 
-    teaEntity = teaRepository.save(teaEntity);
+    return "redirect:/teas/" + this.addTea.handle(command);
+  }
 
+  private List<byte[]> compressImages(List<MultipartFile> images) throws IOException {
+    var result = new ArrayList<byte[]>();
     if (images != null) {
-      var idx = 0;
       for (var imgFile : images) {
         if (!imgFile.isEmpty()) {
-          idx++;
-          var bytes = getCompressedBytes(imgFile);
-          var imgEntity = new TeaImageEntity(
-            teaEntity,
-            idx,
-            new TeaImageDataEntity(bytes)
-          );
-          teaImageRepository.save(imgEntity);
+          result.add(getCompressedBytes(imgFile));
         }
       }
     }
-
-    return "redirect:/teas/" + teaEntity.getId();
+    return result;
   }
 
   private byte[] getCompressedBytes(MultipartFile imgFile) throws IOException {

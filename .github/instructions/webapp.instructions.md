@@ -41,6 +41,8 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 - (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
 - `web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}`), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
 - `ingest/` — JSON/filesystem inbound adapter (sibling of `web/`, not a util): the standalone CLI Spring Boot batch apps `UploadNewTeas` / `UpdateTeasAvailability` (each its own `@SpringBootApplication` `main`), the `TeaRecord` JSON contract, `TeaRecordMapper` (static `TeaRecord` → `TeaEntity` mapping incl. price parsing), and `CannotLoadTea*Exception`.
+- `application/` — write use cases (the shared core the inbound adapters call): `AddTea` (`@Service`; resolves + validates the command's reference ids, then maps and saves, returning the new id), `AddTeaCommand` (its input DTO, reference data by id), and `TeaMapper` (pure static domain `Tea` + resolved reference entities → `TeaEntity`, incl. images).
+- `domain/` — write-side domain model: the `Tea` aggregate (a class — identity, not value, semantics; the seam where write invariants will live) plus the `Price` and `TeaScope` value objects (records).
 - `db/` — JPA entities (`TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `db/users/UserEntity`) + Spring Data repositories.
 - `query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag` for the index; `TeaDetail`, `TeaScope` for the detail page) and `TeaQueryRepository`, the Criteria-API paging / filter / search projection that feeds the index.
 - `model/` — request/view helpers (`FilterCriteria`, `SearchCriteria`, `PageInfo`, `Availability`).
@@ -51,7 +53,7 @@ Verified green baseline on `main` (2026-08-11, `./mvnw clean verify`): **48 unit
 
 ## Domain terminology
 
-- **SCOPE** is a MeiLeaf terminus technicus for a tea's provenance characteristics: **S**eason, **C**ultivar, **O**rigin, **P**icking, **E**levation. This app uses all but Picking. It's a deliberate, meaningful name — don't "fix" it or reorder its fields (the `TeaScopeEntity` constructor and the `TeaScope` read record follow SCOPE order: season, cultivar, origin, elevation). Persistence type: `db/TeaScopeEntity` (`@Embeddable`); read-side view: `query/TeaScope` (record).
+- **SCOPE** is a MeiLeaf terminus technicus for a tea's provenance characteristics: **S**eason, **C**ultivar, **O**rigin, **P**icking, **E**levation. This app uses all but Picking. It's a deliberate, meaningful name — don't "fix" it or reorder its fields (the `TeaScopeEntity` constructor and the `TeaScope` records follow SCOPE order: season, cultivar, origin, elevation). Persistence type: `db/TeaScopeEntity` (`@Embeddable`); read-side view: `query/TeaScope` (record); write-side value object: `domain/TeaScope` (record).
 
 ## Conventions
 
