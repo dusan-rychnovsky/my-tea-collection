@@ -2,11 +2,11 @@ package cz.dusanrychnovsky.myteacollection.web;
 
 import cz.dusanrychnovsky.myteacollection.application.AddTea;
 import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TagRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
-import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.util.JpgCompression;

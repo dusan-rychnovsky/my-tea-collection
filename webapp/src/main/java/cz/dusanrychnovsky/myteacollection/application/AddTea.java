@@ -1,10 +1,10 @@
 package cz.dusanrychnovsky.myteacollection.application;
 
-import cz.dusanrychnovsky.myteacollection.db.TagRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
-import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TagRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

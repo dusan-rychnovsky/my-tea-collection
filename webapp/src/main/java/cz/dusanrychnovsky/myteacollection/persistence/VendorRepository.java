@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.db;
+package cz.dusanrychnovsky.myteacollection.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

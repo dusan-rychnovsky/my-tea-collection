@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.db.users;
+package cz.dusanrychnovsky.myteacollection.persistence.users;
 
 import jakarta.persistence.*;
 

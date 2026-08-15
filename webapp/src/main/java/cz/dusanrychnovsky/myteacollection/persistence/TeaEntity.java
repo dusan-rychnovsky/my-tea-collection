@@ -1,6 +1,6 @@
-package cz.dusanrychnovsky.myteacollection.db;
+package cz.dusanrychnovsky.myteacollection.persistence;
 
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

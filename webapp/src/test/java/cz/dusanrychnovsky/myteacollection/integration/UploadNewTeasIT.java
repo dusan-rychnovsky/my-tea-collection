@@ -1,8 +1,8 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.ingest.TeaRecord;
 import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;

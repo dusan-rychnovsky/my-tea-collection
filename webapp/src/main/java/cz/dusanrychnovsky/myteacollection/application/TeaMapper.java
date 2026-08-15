@@ -1,13 +1,13 @@
 package cz.dusanrychnovsky.myteacollection.application;
 
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageDataEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageDataEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaScopeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
 
 import java.util.Set;

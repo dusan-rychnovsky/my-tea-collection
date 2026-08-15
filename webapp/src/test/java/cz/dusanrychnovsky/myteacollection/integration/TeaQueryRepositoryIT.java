@@ -1,8 +1,8 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
 import cz.dusanrychnovsky.myteacollection.query.TeaQueryRepository;

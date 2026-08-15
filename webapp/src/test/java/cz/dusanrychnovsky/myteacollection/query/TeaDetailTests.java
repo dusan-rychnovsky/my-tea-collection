@@ -1,11 +1,11 @@
 package cz.dusanrychnovsky.myteacollection.query;
 
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaScopeEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaScopeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 

@@ -1,6 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.db.*;
+import cz.dusanrychnovsky.myteacollection.persistence.*;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;

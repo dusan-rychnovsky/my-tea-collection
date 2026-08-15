@@ -1,6 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.security;
 
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

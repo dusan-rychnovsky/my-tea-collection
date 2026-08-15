@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.util.users;
 
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

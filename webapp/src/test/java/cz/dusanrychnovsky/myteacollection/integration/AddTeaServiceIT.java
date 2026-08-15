@@ -2,10 +2,10 @@ package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.application.AddTea;
 import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;

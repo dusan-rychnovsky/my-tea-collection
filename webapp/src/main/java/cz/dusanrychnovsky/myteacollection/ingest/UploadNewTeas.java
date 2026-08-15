@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import cz.dusanrychnovsky.myteacollection.application.AddTea;
-import cz.dusanrychnovsky.myteacollection.db.*;
-import cz.dusanrychnovsky.myteacollection.db.TeaEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.*;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +29,8 @@ import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toMap;
 
 @SpringBootApplication(scanBasePackages = "cz.dusanrychnovsky.myteacollection")
-@EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.db")
-@EntityScan(basePackages = "cz.dusanrychnovsky.myteacollection.db")
+@EnableJpaRepositories(basePackages = "cz.dusanrychnovsky.myteacollection.persistence")
+@EntityScan(basePackages = "cz.dusanrychnovsky.myteacollection.persistence")
 public class UploadNewTeas {
 
   private static final Logger logger = LoggerFactory.getLogger(UploadNewTeas.class);

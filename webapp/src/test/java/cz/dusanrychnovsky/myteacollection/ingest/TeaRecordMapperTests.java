@@ -1,9 +1,9 @@
 package cz.dusanrychnovsky.myteacollection.ingest;
 
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
-import cz.dusanrychnovsky.myteacollection.db.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import org.junit.jupiter.api.Test;
 

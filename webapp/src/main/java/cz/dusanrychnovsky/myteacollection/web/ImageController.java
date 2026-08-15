@@ -1,6 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.web;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

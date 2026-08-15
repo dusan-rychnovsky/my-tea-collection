@@ -1,10 +1,10 @@
 package cz.dusanrychnovsky.myteacollection.web;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeRepository;
-import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
-import cz.dusanrychnovsky.myteacollection.db.VendorRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.PageInfo;

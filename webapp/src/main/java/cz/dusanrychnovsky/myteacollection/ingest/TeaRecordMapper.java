@@ -1,9 +1,9 @@
 package cz.dusanrychnovsky.myteacollection.ingest;
 
 import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
-import cz.dusanrychnovsky.myteacollection.db.TagEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaTypeEntity;
-import cz.dusanrychnovsky.myteacollection.db.VendorEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 

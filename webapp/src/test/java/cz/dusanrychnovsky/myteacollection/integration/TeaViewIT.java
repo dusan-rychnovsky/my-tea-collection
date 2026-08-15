@@ -1,8 +1,8 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.db.TeaImageEntity;
-import cz.dusanrychnovsky.myteacollection.db.TeaImageRepository;
-import cz.dusanrychnovsky.myteacollection.db.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaImageRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
