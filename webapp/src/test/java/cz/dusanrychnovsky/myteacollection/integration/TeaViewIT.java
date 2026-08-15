@@ -71,16 +71,18 @@ class TeaViewIT {
       "<span>1740-1970m</span>",
       "<span>Da Ye Zhong</span>",
       "<span>95°C, 5g/100ml, 25+5s</span>",
-      "<h2 class=\"reviews-title\">Reviews</h2>",
-      "<span class=\"reviews-count\">4 reviews</span>",
-      "<div class=\"reviews-average-score\">4.4</div>",
-      "<span class=\"review-author\">Ada K.</span>",
-      "<span class=\"review-rating\">5.0</span>",
-      "<span class=\"review-author\">Marek D.</span>",
-      "<span class=\"review-rating\">4.5</span>",
-      "<span class=\"review-author\">Lena V.</span>",
-      "<span class=\"review-author\">Tomáš R.</span>",
-      "<span class=\"review-rating\">4.0</span>");
+      "<h2 class=\"tasting-notes-title\">Tasting notes</h2>",
+      "<span class=\"tasting-notes-count\">4 tasting notes</span>",
+      "<div class=\"tasting-notes-average-score\">4.4</div>",
+      "<div class=\"tasting-notes-average-caption\">out of 5 · based on 4 tasting notes</div>",
+      "<span class=\"dist-label\">0 <span class=\"dist-star\" aria-hidden=\"true\">★</span></span>",
+      "<span class=\"tasting-note-author\">Ada K.</span>",
+      "<span class=\"tasting-note-rating\">5.0</span>",
+      "<span class=\"tasting-note-author\">Marek D.</span>",
+      "<span class=\"tasting-note-rating\">4.5</span>",
+      "<span class=\"tasting-note-author\">Lena V.</span>",
+      "<span class=\"tasting-note-author\">Tomáš R.</span>",
+      "<span class=\"tasting-note-rating\">4.0</span>");
   }
 
   @Test
