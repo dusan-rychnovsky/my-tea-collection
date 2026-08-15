@@ -23,6 +23,38 @@ You can share links to your tea collection with friends, which makes it easy to 
 
 The application is built using Java, Spring, Thymleaf and PostgreSQL, and is Dockerized for efficient deployments.
 
+### Architecture
+
+The web application uses a layered, adapter-based design with a CQRS-style split between reads and writes and a small domain core, as illustrated in below diagram:
+
+```mermaid
+flowchart TB
+    subgraph inbound["<strong>INBOUND ADAPTERS (Driving)</strong>"]
+        web["<strong>Web</strong> (HTTP + Thymeleaf)<br/>TeaQueryController · reads<br/>TeaController · writes<br/>ImageController · reads"]
+        ingest["<strong>Ingest</strong> (CLI)<br/>UploadNewTeas · add<br/>UpdateTeasAvailability"]
+    end
+
+    subgraph writeside["<strong>WRITE SIDE</strong>"]
+        application["<strong>Application</strong><br/>AddTea · use case"]
+        domain["<strong>Domain</strong><br/>Tea · aggregate<br/>Price, TeaScope · value objects"]
+    end
+
+    subgraph readside["<strong>READ SIDE</strong>"]
+        query["<strong>Query</strong><br/>TeaQueryRepository<br/>TeaSummary, TeaDetail · views"]
+    end
+
+    persistence["<strong>Persistence</strong> (JPA + Spring)"]
+    db[("<strong>PostgreSQL</strong><br/><strong>H2</strong> in tests")]
+
+    web -->|"Writes<br/>(AddTeaCommand)"| application
+    web -->|Reads| query
+    ingest -->|"Add Tea<br/>(AddTeaCommand)"| application
+    application --> domain
+    application --> persistence
+    query ---> persistence
+    persistence --> db
+```
+
 ## How To
 
 ### Build the Application
