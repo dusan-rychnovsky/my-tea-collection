@@ -14,14 +14,14 @@ padding: 0px 15px 3rem;
   display: block;
 }
 
-#tea-reviews {
+#tea-tasting-notes {
   clear: both;
   margin-top: 3.5rem;
 }
 
 /* section heading */
 
-.reviews-header {
+.tasting-notes-header {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
@@ -30,13 +30,13 @@ padding: 0px 15px 3rem;
   border-bottom: 2px solid #e9ecef;
 }
 
-.reviews-title {
+.tasting-notes-title {
   font-weight: 300;
   font-size: 1.75rem;
   margin: 0;
 }
 
-.reviews-count {
+.tasting-notes-count {
   color: #6c757d;
   font-size: 0.95rem;
 }
@@ -79,7 +79,7 @@ padding: 0px 15px 3rem;
 
 /* summary panel */
 
-.reviews-summary {
+.tasting-notes-summary {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -92,31 +92,31 @@ padding: 0px 15px 3rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.reviews-average {
+.tasting-notes-average {
   text-align: center;
   padding-right: 2.5rem;
   border-right: 1px solid #e9ecef;
   min-width: 9.5rem;
 }
 
-.reviews-average-score {
+.tasting-notes-average-score {
   font-size: 3.25rem;
   font-weight: 300;
   line-height: 1;
   color: #212529;
 }
 
-.reviews-average .stars {
+.tasting-notes-average .stars {
   margin-top: 0.5rem;
 }
 
-.reviews-average-caption {
+.tasting-notes-average-caption {
   margin-top: 0.5rem;
   color: #6c757d;
   font-size: 0.85rem;
 }
 
-.reviews-distribution {
+.tasting-notes-distribution {
   flex: 1 1 16rem;
   display: flex;
   flex-direction: column;
@@ -166,27 +166,27 @@ padding: 0px 15px 3rem;
   font-variant-numeric: tabular-nums;
 }
 
-/* individual reviews */
+/* individual tasting notes */
 
-.review-list {
+.tasting-note-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.review {
+.tasting-note {
   display: flex;
   gap: 1rem;
   padding: 1.5rem 0;
   border-bottom: 1px solid #edeff2;
 }
 
-.review:last-child {
+.tasting-note:last-child {
   border-bottom: 0;
   padding-bottom: 0;
 }
 
-.review-avatar {
+.tasting-note-avatar {
   flex: 0 0 auto;
   width: 2.75rem;
   height: 2.75rem;
@@ -206,12 +206,12 @@ padding: 0px 15px 3rem;
 .avatar-teal { background: #6f9a9b; }
 .avatar-tan  { background: #b3946f; }
 
-.review-body {
+.tasting-note-body {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.review-head {
+.tasting-note-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -220,30 +220,30 @@ padding: 0px 15px 3rem;
   margin-bottom: 0.6rem;
 }
 
-.review-meta {
+.tasting-note-meta {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.review-author {
+.tasting-note-author {
   font-weight: 600;
   color: #212529;
 }
 
-.review-date {
+.tasting-note-date {
   color: #adb5bd;
   font-size: 0.85rem;
 }
 
-.review-score {
+.tasting-note-score {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.review-rating {
+.tasting-note-rating {
   font-size: 0.85rem;
   font-weight: 600;
   color: #8a6d1f;
@@ -253,29 +253,29 @@ padding: 0px 15px 3rem;
   font-variant-numeric: tabular-nums;
 }
 
-.review-body p {
+.tasting-note-body p {
   margin-bottom: 0.5rem;
   color: #343a40;
   line-height: 1.6;
 }
 
-.review-body p:last-child {
+.tasting-note-body p:last-child {
   margin-bottom: 0;
 }
 
 @media (max-width: 575.98px) {
-  .reviews-summary {
+  .tasting-notes-summary {
     gap: 1.5rem;
     padding: 1.5rem;
   }
 
-  .reviews-average {
+  .tasting-notes-average {
     padding-right: 0;
     border-right: 0;
     width: 100%;
   }
 
-  .review-head {
+  .tasting-note-head {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.35rem;
