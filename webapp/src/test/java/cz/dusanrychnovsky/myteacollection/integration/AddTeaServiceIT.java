@@ -88,7 +88,7 @@ class AddTeaServiceIT {
   @Transactional
   void handle_invalidUserId_throws() {
     var ex = assertThrows(IllegalArgumentException.class,
-      () -> addTea.handle(command(999_999L, 1L, Set.of(25L), Set.of(), null, List.of())));
+      () -> addTea.handle(command(999_999L, 1L, Set.of(25L), Set.of(), null, List.of(new byte[]{1}))));
     assertTrue(ex.getMessage().contains("user"));
   }
 
@@ -96,7 +96,7 @@ class AddTeaServiceIT {
   @Transactional
   void handle_invalidVendorId_throws() {
     var ex = assertThrows(IllegalArgumentException.class,
-      () -> addTea.handle(command(userId, 999L, Set.of(25L), Set.of(), null, List.of())));
+      () -> addTea.handle(command(userId, 999L, Set.of(25L), Set.of(), null, List.of(new byte[]{1}))));
     assertTrue(ex.getMessage().contains("vendor"));
   }
 
@@ -104,7 +104,7 @@ class AddTeaServiceIT {
   @Transactional
   void handle_invalidTypeId_throws() {
     var ex = assertThrows(IllegalArgumentException.class,
-      () -> addTea.handle(command(userId, 1L, Set.of(999L), Set.of(), null, List.of())));
+      () -> addTea.handle(command(userId, 1L, Set.of(999L), Set.of(), null, List.of(new byte[]{1}))));
     assertTrue(ex.getMessage().contains("type"));
   }
 
@@ -112,7 +112,23 @@ class AddTeaServiceIT {
   @Transactional
   void handle_invalidTagId_throws() {
     var ex = assertThrows(IllegalArgumentException.class,
-      () -> addTea.handle(command(userId, 1L, Set.of(25L), Set.of(999L), null, List.of())));
+      () -> addTea.handle(command(userId, 1L, Set.of(25L), Set.of(999L), null, List.of(new byte[]{1}))));
     assertTrue(ex.getMessage().contains("tag"));
+  }
+
+  @Test
+  @Transactional
+  void handle_noImages_throws() {
+    var ex = assertThrows(IllegalArgumentException.class,
+      () -> addTea.handle(command(userId, 1L, Set.of(25L), Set.of(), new Price(5f), List.of())));
+    assertTrue(ex.getMessage().contains("image"));
+  }
+
+  @Test
+  @Transactional
+  void handle_noTypes_throws() {
+    var ex = assertThrows(IllegalArgumentException.class,
+      () -> addTea.handle(command(userId, 1L, Set.of(), Set.of(), new Price(5f), List.of(new byte[]{1}))));
+    assertTrue(ex.getMessage().contains("type"));
   }
 }

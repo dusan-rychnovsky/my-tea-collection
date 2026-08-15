@@ -37,7 +37,6 @@ class TeaMapperTests {
       price,
       "95°C, 5g/100ml, 25+5s",
       true,
-      0L,
       1L,
       Set.of(25L),
       Set.of(1L),
@@ -46,7 +45,7 @@ class TeaMapperTests {
 
   @Test
   void toEntity_mapsDescriptiveFieldsAndReferences() {
-    var entity = TeaMapper.toEntity(tea(new Price(7.29f), List.of()), USER, VENDOR, TYPES, TAGS);
+    var entity = TeaMapper.toEntity(tea(new Price(7.29f), List.of(new byte[]{1})), USER, VENDOR, TYPES, TAGS);
 
     assertNull(entity.getId());
     assertEquals(USER, entity.getUser());
@@ -68,7 +67,7 @@ class TeaMapperTests {
 
   @Test
   void toEntity_nullPrice_mapsToNullEntityPrice() {
-    assertNull(TeaMapper.toEntity(tea(null, List.of()), USER, VENDOR, TYPES, TAGS).getPrice());
+    assertNull(TeaMapper.toEntity(tea(null, List.of(new byte[]{1})), USER, VENDOR, TYPES, TAGS).getPrice());
   }
 
   @Test

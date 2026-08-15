@@ -2,14 +2,12 @@ package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.db.*;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
-import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.NestedExceptionUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +22,6 @@ import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.loadFrom;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -79,7 +75,14 @@ class AddTeaIT {
     var teaTypes = teaTypeRepository.findAll();
 
     var tea = loadFrom(toFile("teas/01"));
-    mvc.perform(post("/teas/add")
+    var firstImage = new MockMultipartFile(
+      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
+    var secondImage = new MockMultipartFile(
+      "images", "02.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/02.jpg").toPath()));
+
+    mvc.perform(multipart("/teas/add")
+      .file(firstImage)
+      .file(secondImage)
       .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
       .with(csrf())
       .param("url", tea.getUrl())
@@ -123,46 +126,63 @@ class AddTeaIT {
 
     assertEquals(tea.getBrewingInstructions(), teaEntity.getBrewingInstructions());
     assertTrue(teaEntity.isInStock());
+    assertEquals(2, teaEntity.getImages().size());
   }
 
   @Test
   @Transactional
-  void addTea_withImages_persistsImages() throws Exception {
-    var vendors = vendorRepository.findAll();
-    var teaTypes = teaTypeRepository.findAll();
+  void addTea_blankTitle_showsFormError() throws Exception {
+    var tea = loadFrom(toFile("teas/01"));
+    var image = new MockMultipartFile(
+      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
+
+    var result = mvc.perform(multipart("/teas/add")
+      .file(image)
+      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
+      .with(csrf())
+      .param("url", tea.getUrl())
+      .param("name", tea.getName())
+      .param("title", "")
+      .param("description", tea.getDescription())
+      .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll())))
+      .andExpect(status().isOk())
+      .andExpect(view().name("tea-add"));
+
+    ITUtils.containsStrings(result, "title must not be blank");
+    assertEquals(0, teaRepository.count());
+  }
+
+  @Test
+  @Transactional
+  void addTea_noImages_showsFormError() throws Exception {
     var tea = loadFrom(toFile("teas/01"));
 
-    var firstImage = new MockMultipartFile(
-      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
-    var secondImage = new MockMultipartFile(
-      "images", "02.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/02.jpg").toPath()));
-
-    mvc.perform(multipart("/teas/add")
-      .file(firstImage)
-      .file(secondImage)
+    var result = mvc.perform(post("/teas/add")
       .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
       .with(csrf())
       .param("url", tea.getUrl())
       .param("name", tea.getName())
       .param("title", tea.getTitle())
       .param("description", tea.getDescription())
-      .param("vendorId", toVendorId(tea.getVendor(), vendors))
-      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypes)))
-      .andExpect(status().is3xxRedirection());
+      .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll())))
+      .andExpect(status().isOk())
+      .andExpect(view().name("tea-add"));
 
-    var teaEntity = teaRepository.findAll().stream()
-      .filter(entity -> tea.getName().equals(entity.getName()))
-      .findFirst()
-      .orElseThrow(() -> new IllegalStateException("Tea not found in DB"));
-
-    assertEquals(2, teaEntity.getImages().size());
+    ITUtils.containsStrings(result, "at least one image");
+    assertEquals(0, teaRepository.count());
   }
 
   @Test
   @Transactional
-  void addTea_negativePrice_isRejected() {
+  void addTea_negativePrice_showsFormError() throws Exception {
     var tea = loadFrom(toFile("teas/01"));
-    var ex = assertThrows(Exception.class, () -> mvc.perform(post("/teas/add")
+    var image = new MockMultipartFile(
+      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
+
+    var result = mvc.perform(multipart("/teas/add")
+      .file(image)
       .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
       .with(csrf())
       .param("url", tea.getUrl())
@@ -171,9 +191,12 @@ class AddTeaIT {
       .param("description", tea.getDescription())
       .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
       .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll()))
-      .param("price", "-5")));
+      .param("price", "-5"))
+      .andExpect(status().isOk())
+      .andExpect(view().name("tea-add"));
 
-    assertInstanceOf(IllegalArgumentException.class, NestedExceptionUtils.getMostSpecificCause(ex));
+    ITUtils.containsStrings(result, "must be non-negative");
+    assertEquals(0, teaRepository.count());
   }
 
   private String[] toTeaTypeIds(Set<String> teaTypeNames, List<TeaTypeEntity> entities) {

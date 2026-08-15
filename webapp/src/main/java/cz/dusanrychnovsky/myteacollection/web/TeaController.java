@@ -58,14 +58,18 @@ public class TeaController {
 
   @GetMapping("/teas/add")
   public String teaAdd(Model model) {
+    addReferenceData(model);
+    return "tea-add";
+  }
+
+  private void addReferenceData(Model model) {
     model.addAttribute("vendors", vendorRepository.findAll());
     model.addAttribute("teaTypes", teaTypeRepository.findAll());
     model.addAttribute(
       "tags",
       tagRepository.findAll().stream()
         .sorted(comparing(TagEntity::getLabel))
-    );
-    return "tea-add";
+        .toList());
   }
 
   @PostMapping("/teas/add")
@@ -84,31 +88,37 @@ public class TeaController {
     @RequestParam(required = false) String brewingInstructions,
     @RequestParam(required = false) Float price,
     @RequestParam(value = "tags", required = false) List<Long> tagIds,
-    @RequestParam(required = false) List<MultipartFile> images
+    @RequestParam(required = false) List<MultipartFile> images,
+    Model model
   ) throws IOException {
-    // TODO: form validation (mandatory fields, URL format, etc.)
+    try {
+      var emailAddress = authentication.getName();
+      var userId = userRepository.findByEmailIgnoreCase(emailAddress)
+        .orElseThrow(() -> new IllegalArgumentException("User not found with email address: " + emailAddress))
+        .getId();
 
-    var emailAddress = authentication.getName();
-    var userId = userRepository.findByEmailIgnoreCase(emailAddress)
-      .orElseThrow(() -> new IllegalArgumentException("User not found with email address: " + emailAddress))
-      .getId();
+      var command = new AddTeaCommand(
+        title,
+        name,
+        description,
+        url,
+        new TeaScope(season, cultivar, origin, elevation),
+        price != null ? new Price(price) : null,
+        brewingInstructions,
+        true,
+        userId,
+        vendorId,
+        new HashSet<>(teaTypeIds),
+        new HashSet<>(tagIds != null ? tagIds : emptyList()),
+        compressImages(images));
 
-    var command = new AddTeaCommand(
-      title,
-      name,
-      description,
-      url,
-      new TeaScope(season, cultivar, origin, elevation),
-      price != null ? new Price(price) : null,
-      brewingInstructions,
-      true,
-      userId,
-      vendorId,
-      new HashSet<>(teaTypeIds),
-      new HashSet<>(tagIds != null ? tagIds : emptyList()),
-      compressImages(images));
-
-    return "redirect:/teas/" + this.addTea.handle(command);
+      return "redirect:/teas/" + this.addTea.handle(command);
+    }
+    catch (IllegalArgumentException ex) {
+      addReferenceData(model);
+      model.addAttribute("error", ex.getMessage());
+      return "tea-add";
+    }
   }
 
   private List<byte[]> compressImages(List<MultipartFile> images) throws IOException {

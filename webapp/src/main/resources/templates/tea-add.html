@@ -35,6 +35,7 @@
         </div>
       </div>
       <h1 class="jumbotron-heading mb-3">Add New Tea</h1>
+      <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
       <form th:action="@{/teas/add}" method="post" enctype="multipart/form-data" id="add-tea-form">
         <div class="row">
           <div class="col-md-6">

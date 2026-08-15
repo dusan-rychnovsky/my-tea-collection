@@ -48,8 +48,14 @@ public class UploadNewTeas {
     logger.info("Starting UploadNewTeas.");
     var context = SpringApplication.run(UploadNewTeas.class, args);
     var bean = context.getBean(UploadNewTeas.class);
-    bean.run(new File(args[0]));
-    logger.info("UploadNewTeas successfully finished.");
+    try {
+      bean.run(new File(args[0]));
+      logger.info("UploadNewTeas successfully finished.");
+    }
+    catch (IllegalArgumentException ex) {
+      logger.error("UploadNewTeas aborted; a tea was rejected (see the error above).");
+      System.exit(1);
+    }
   }
 
   @Autowired
@@ -88,8 +94,14 @@ public class UploadNewTeas {
 
     for (var tea : teas) {
       logger.info("Going to upload tea: #{}", tea.getId());
-      var command = TeaRecordMapper.toCommand(userId, tea, compress(tea), vendors, teaTypes, tags);
-      addTea.handle(command);
+      try {
+        var command = TeaRecordMapper.toCommand(userId, tea, compress(tea), vendors, teaTypes, tags);
+        addTea.handle(command);
+      }
+      catch (IllegalArgumentException ex) {
+        logger.error("Failed to upload tea #{}: {}", tea.getId(), ex.getMessage());
+        throw ex;
+      }
     }
 
     logger.info("Upload finished.");

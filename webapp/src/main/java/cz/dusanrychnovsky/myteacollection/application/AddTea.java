@@ -14,8 +14,9 @@ import java.util.HashSet;
 
 /**
  * Application service for the "add a tea" use case, shared by the web and ingest inbound
- * adapters. Resolves and validates the command's reference ids, builds the domain {@link Tea},
- * maps it to a persistence entity and saves it, returning the new tea's id.
+ * adapters. Builds the domain {@link Tea} (which enforces its own invariants), validates that the
+ * referenced vendor / types / tags and the owner exist, maps the tea to a persistence entity and
+ * saves it, returning the new tea's id.
  */
 @Service
 public class AddTea {
@@ -43,22 +44,6 @@ public class AddTea {
 
   @Transactional
   public Long handle(AddTeaCommand command) {
-    var user = userRepository.findById(command.userId())
-      .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + command.userId()));
-
-    var vendor = vendorRepository.findById(command.vendorId())
-      .orElseThrow(() -> new IllegalArgumentException("Invalid vendor ID: " + command.vendorId()));
-
-    var types = new HashSet<>(teaTypeRepository.findAllById(command.typeIds()));
-    if (types.size() != command.typeIds().size()) {
-      throw new IllegalArgumentException("One or more tea type IDs are invalid: " + command.typeIds());
-    }
-
-    var tags = new HashSet<>(tagRepository.findAllById(command.tagIds()));
-    if (tags.size() != command.tagIds().size()) {
-      throw new IllegalArgumentException("One or more tag IDs are invalid: " + command.tagIds());
-    }
-
     var tea = new Tea(
       command.title(),
       command.name(),
@@ -68,11 +53,26 @@ public class AddTea {
       command.price(),
       command.brewingInstructions(),
       command.inStock(),
-      command.userId(),
       command.vendorId(),
       command.typeIds(),
       command.tagIds(),
       command.images());
+
+    var user = userRepository.findById(command.userId())
+      .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + command.userId()));
+
+    var vendor = vendorRepository.findById(tea.getVendorId())
+      .orElseThrow(() -> new IllegalArgumentException("Invalid vendor ID: " + tea.getVendorId()));
+
+    var types = new HashSet<>(teaTypeRepository.findAllById(tea.getTypeIds()));
+    if (types.size() != tea.getTypeIds().size()) {
+      throw new IllegalArgumentException("One or more tea type IDs are invalid: " + tea.getTypeIds());
+    }
+
+    var tags = new HashSet<>(tagRepository.findAllById(tea.getTagIds()));
+    if (tags.size() != tea.getTagIds().size()) {
+      throw new IllegalArgumentException("One or more tag IDs are invalid: " + tea.getTagIds());
+    }
 
     return teaRepository.save(TeaMapper.toEntity(tea, user, vendor, types, tags)).getId();
   }
