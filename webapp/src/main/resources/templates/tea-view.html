@@ -116,149 +116,54 @@
       <section id="tea-tasting-notes">
         <div class="tasting-notes-header">
           <h2 class="tasting-notes-title">Tasting notes</h2>
-          <span class="tasting-notes-count">4 tasting notes</span>
+          <span class="tasting-notes-count" th:if="${ratingSummary.hasNotes}" th:text="${ratingSummary.countLabel}">4 tasting notes</span>
         </div>
 
-        <div class="tasting-notes-summary">
-          <div class="tasting-notes-average">
-            <div class="tasting-notes-average-score">4.4</div>
-            <span class="stars stars-lg" style="--rating: 4.4;" role="img" aria-label="Average rating 4.4 out of 5">
-              <span class="stars-fill"></span>
-            </span>
-            <div class="tasting-notes-average-caption">out of 5 · based on 4 tasting notes</div>
-          </div>
-          <div class="tasting-notes-distribution">
-            <div class="dist-row">
-              <span class="dist-label">5 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 50%;"></span></span>
-              <span class="dist-count">2</span>
+        <div th:if="${ratingSummary.hasNotes}">
+          <div class="tasting-notes-summary">
+            <div class="tasting-notes-average">
+              <div class="tasting-notes-average-score" th:text="${ratingSummary.averageLabel}">4.4</div>
+              <span class="stars stars-lg" th:style="'--rating: ' + ${ratingSummary.averageLabel} + ';'"
+                    role="img" th:aria-label="'Average rating ' + ${ratingSummary.averageLabel} + ' out of 5'">
+                <span class="stars-fill"></span>
+              </span>
+              <div class="tasting-notes-average-caption"
+                   th:text="'out of 5 · based on ' + ${ratingSummary.countLabel}">out of 5 · based on 4 tasting notes</div>
             </div>
-            <div class="dist-row">
-              <span class="dist-label">4 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 50%;"></span></span>
-              <span class="dist-count">2</span>
-            </div>
-            <div class="dist-row">
-              <span class="dist-label">3 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 0%;"></span></span>
-              <span class="dist-count">0</span>
-            </div>
-            <div class="dist-row">
-              <span class="dist-label">2 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 0%;"></span></span>
-              <span class="dist-count">0</span>
-            </div>
-            <div class="dist-row">
-              <span class="dist-label">1 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 0%;"></span></span>
-              <span class="dist-count">0</span>
-            </div>
-            <div class="dist-row">
-              <span class="dist-label">0 <span class="dist-star" aria-hidden="true">★</span></span>
-              <span class="dist-track"><span class="dist-bar" style="--pct: 0%;"></span></span>
-              <span class="dist-count">0</span>
+            <div class="tasting-notes-distribution">
+              <div class="dist-row" th:each="row : ${ratingSummary.distribution}">
+                <span class="dist-label">[[${row.stars}]] <span class="dist-star" aria-hidden="true">★</span></span>
+                <span class="dist-track"><span class="dist-bar" th:style="'--pct: ' + ${row.pct} + '%;'"></span></span>
+                <span class="dist-count" th:text="${row.count}">2</span>
+              </div>
             </div>
           </div>
+
+          <ul class="tasting-note-list">
+            <li class="tasting-note" th:each="note : ${tastingNotes}">
+              <div class="tasting-note-avatar" th:classappend="${note.avatarClass}"
+                   aria-hidden="true" th:text="${note.initials}">AK</div>
+              <div class="tasting-note-body">
+                <div class="tasting-note-head">
+                  <div class="tasting-note-meta">
+                    <span class="tasting-note-author" th:text="${note.authorName}">Ada K.</span>
+                    <span class="tasting-note-date" th:text="${note.dateLabel}">21 Jul 2026</span>
+                  </div>
+                  <div class="tasting-note-score">
+                    <span class="stars" th:style="'--rating: ' + ${note.ratingLabel} + ';'"
+                          role="img" th:aria-label="'Rated ' + ${note.ratingLabel} + ' out of 5'">
+                      <span class="stars-fill"></span>
+                    </span>
+                    <span class="tasting-note-rating" th:text="${note.ratingLabel}">5.0</span>
+                  </div>
+                </div>
+                <p th:each="paragraph : ${note.paragraphs}" th:text="${paragraph}">Paragraph text.</p>
+              </div>
+            </li>
+          </ul>
         </div>
 
-        <ul class="tasting-note-list">
-          <li class="tasting-note">
-            <div class="tasting-note-avatar avatar-sage" aria-hidden="true">AK</div>
-            <div class="tasting-note-body">
-              <div class="tasting-note-head">
-                <div class="tasting-note-meta">
-                  <span class="tasting-note-author">Ada K.</span>
-                  <span class="tasting-note-date">21 Jul 2026</span>
-                </div>
-                <div class="tasting-note-score">
-                  <span class="stars" style="--rating: 5;" role="img" aria-label="Rated 5 out of 5">
-                    <span class="stars-fill"></span>
-                  </span>
-                  <span class="tasting-note-rating">5.0</span>
-                </div>
-              </div>
-              <p>
-                Clean, layered and quietly energizing. Floral top notes drift into a
-                sweet mineral finish that lingers well past the swallow.
-              </p>
-              <p>
-                One of my favourite sessions this year — remarkably consistent from the
-                first steep to the last.
-              </p>
-            </div>
-          </li>
-          <li class="tasting-note">
-            <div class="tasting-note-avatar avatar-chai" aria-hidden="true">MD</div>
-            <div class="tasting-note-body">
-              <div class="tasting-note-head">
-                <div class="tasting-note-meta">
-                  <span class="tasting-note-author">Marek D.</span>
-                  <span class="tasting-note-date">8 Jun 2026</span>
-                </div>
-                <div class="tasting-note-score">
-                  <span class="stars" style="--rating: 4.5;" role="img" aria-label="Rated 4.5 out of 5">
-                    <span class="stars-fill"></span>
-                  </span>
-                  <span class="tasting-note-rating">4.5</span>
-                </div>
-              </div>
-              <p>
-                Thick, almost syrupy texture with ripe stone-fruit notes from the very
-                first steep. The aroma stayed sweet through the whole session.
-              </p>
-              <p>
-                Best balance for me was 5g / 100ml starting around 20 seconds. I would
-                happily reach for this again on a slow afternoon.
-              </p>
-            </div>
-          </li>
-          <li class="tasting-note">
-            <div class="tasting-note-avatar avatar-teal" aria-hidden="true">LV</div>
-            <div class="tasting-note-body">
-              <div class="tasting-note-head">
-                <div class="tasting-note-meta">
-                  <span class="tasting-note-author">Lena V.</span>
-                  <span class="tasting-note-date">19 May 2026</span>
-                </div>
-                <div class="tasting-note-score">
-                  <span class="stars" style="--rating: 4;" role="img" aria-label="Rated 4 out of 5">
-                    <span class="stars-fill"></span>
-                  </span>
-                  <span class="tasting-note-rating">4.0</span>
-                </div>
-              </div>
-              <p>
-                Very fragrant and a lovely first impression, though I found the later
-                steeps a touch lighter than I hoped for.
-              </p>
-              <p>
-                Still thoroughly enjoyable and forgiving to brew. Pairs nicely with a
-                lighter meal.
-              </p>
-            </div>
-          </li>
-          <li class="tasting-note">
-            <div class="tasting-note-avatar avatar-tan" aria-hidden="true">TR</div>
-            <div class="tasting-note-body">
-              <div class="tasting-note-head">
-                <div class="tasting-note-meta">
-                  <span class="tasting-note-author">Tomáš R.</span>
-                  <span class="tasting-note-date">30 Apr 2026</span>
-                </div>
-                <div class="tasting-note-score">
-                  <span class="stars" style="--rating: 4;" role="img" aria-label="Rated 4 out of 5">
-                    <span class="stars-fill"></span>
-                  </span>
-                  <span class="tasting-note-rating">4.0</span>
-                </div>
-              </div>
-              <p>
-                A dependable daily drinker — smooth, comforting and never harsh, even
-                when I pushed the later steeps a little.
-              </p>
-            </div>
-          </li>
-        </ul>
+        <p class="tasting-notes-empty" th:unless="${ratingSummary.hasNotes}">This tea is still waiting for its first tasting note.</p>
       </section>
     </main>
 

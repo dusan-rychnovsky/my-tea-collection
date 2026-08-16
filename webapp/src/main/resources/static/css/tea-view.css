@@ -41,6 +41,10 @@ padding: 0px 15px 3rem;
   font-size: 0.95rem;
 }
 
+.tasting-notes-empty {
+  margin: 0;
+}
+
 /* reusable star meter, driven by --rating (0..5) */
 
 .stars {
