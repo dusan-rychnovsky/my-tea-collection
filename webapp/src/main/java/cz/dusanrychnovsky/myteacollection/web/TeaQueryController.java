@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.web;
 
+import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeRepository;
@@ -9,6 +10,8 @@ import cz.dusanrychnovsky.myteacollection.model.Availability;
 import cz.dusanrychnovsky.myteacollection.model.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.model.PageInfo;
 import cz.dusanrychnovsky.myteacollection.model.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.query.RatingSummary;
+import cz.dusanrychnovsky.myteacollection.query.TastingNoteItem;
 import cz.dusanrychnovsky.myteacollection.query.TeaDetail;
 import cz.dusanrychnovsky.myteacollection.query.TeaQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +34,21 @@ public class TeaQueryController {
   private final TeaTypeRepository teaTypeRepository;
   private final TeaRepository teaRepository;
   private final TeaQueryRepository teaQueryRepository;
+  private final TastingNoteRepository tastingNoteRepository;
 
   @Autowired
   public TeaQueryController(
     VendorRepository vendorRepository,
     TeaTypeRepository teaTypeRepository,
     TeaRepository teaRepository,
-    TeaQueryRepository teaQueryRepository) {
+    TeaQueryRepository teaQueryRepository,
+    TastingNoteRepository tastingNoteRepository) {
 
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.teaRepository = teaRepository;
     this.teaQueryRepository = teaQueryRepository;
+    this.tastingNoteRepository = tastingNoteRepository;
   }
 
   @GetMapping({"/", "/index"})
@@ -132,8 +138,11 @@ public class TeaQueryController {
   @GetMapping("/teas/{id}")
   public String teaView(@PathVariable("id") Long teaId, Model model) {
     var tea = teaRepository.findById(teaId).map(TeaDetail::from).get();
+    var notes = tastingNoteRepository.findByTeaIdNewestFirst(teaId);
     var baseUrl = fromCurrentContextPath().build().toUriString();
     model.addAttribute("tea", tea);
+    model.addAttribute("tastingNotes", notes.stream().map(TastingNoteItem::from).toList());
+    model.addAttribute("ratingSummary", RatingSummary.of(notes));
     model.addAttribute("baseUrl", baseUrl);
     return "tea-view";
   }
