@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import static java.lang.Long.parseLong;
@@ -20,6 +21,8 @@ import static java.util.Collections.emptySet;
 public class TeaRecord {
 
   public static final String INFO_FILE_NAME = "info.json";
+
+  private static final Set<String> IMAGE_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png");
 
   private Long id;
   private String title;
@@ -95,9 +98,14 @@ public class TeaRecord {
 
   public List<BufferedImage> loadImages() {
     return stream(sourceDir.listFiles())
-      .filter(file -> !file.getName().equals(INFO_FILE_NAME))
+      .filter(TeaRecord::isImageFile)
       .map(TeaRecord::loadImg)
       .toList();
+  }
+
+  static boolean isImageFile(File file) {
+    var name = file.getName().toLowerCase(Locale.ROOT);
+    return IMAGE_EXTENSIONS.stream().anyMatch(name::endsWith);
   }
 
   private static TeaRecord loadInfo(File infoFile) {

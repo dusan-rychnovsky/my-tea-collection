@@ -19,4 +19,9 @@ public interface TastingNoteRepository extends JpaRepository<TastingNoteEntity, 
     order by note.tastedOn desc, note.id desc
     """)
   List<TastingNoteEntity> findByTeaIdNewestFirst(@Param("teaId") Long teaId);
+
+  /**
+   * Deletes every tasting note of the given tea, returning how many were removed.
+   */
+  long deleteByTeaId(Long teaId);
 }
