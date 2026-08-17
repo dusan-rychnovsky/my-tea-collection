@@ -31,12 +31,12 @@ The web application uses a layered, adapter-based design with a CQRS-style split
 flowchart TB
     subgraph inbound["<strong>INBOUND ADAPTERS (Driving)</strong>"]
         web["<strong>Web</strong> (HTTP + Thymeleaf)<br/>TeaQueryController · reads<br/>TeaController · writes<br/>ImageController · reads"]
-        ingest["<strong>Ingest</strong> (CLI)<br/>UploadNewTeas · add<br/>UpdateTeasAvailability"]
+        ingest["<strong>Ingest</strong> (CLI)<br/>UploadNewTeas · add<br/>UpdateTeasAvailability<br/>UploadTastingNotes · replace notes"]
     end
 
     subgraph writeside["<strong>WRITE SIDE</strong>"]
-        application["<strong>Application</strong><br/>AddTea · use case"]
-        domain["<strong>Domain</strong><br/>Tea · aggregate<br/>Price, TeaScope · value objects"]
+        application["<strong>Application</strong><br/>AddTea · use case<br/>ReplaceTeaTastingNotes · use case"]
+        domain["<strong>Domain</strong><br/>Tea, TastingNote · aggregates<br/>Price, TeaScope, Rating · value objects"]
     end
 
     subgraph readside["<strong>READ SIDE</strong>"]
@@ -48,6 +48,7 @@ flowchart TB
 
     web -->|"Writes<br/>(AddTeaCommand)"| application
     web -->|Reads| query
+    ingest -->|"Replace Tasting Notes<br/>(ReplaceTeaTastingNotesCommand)"| application
     ingest -->|"Add Tea<br/>(AddTeaCommand)"| application
     application --> domain
     application --> persistence
@@ -94,6 +95,11 @@ Run `CreateUser` java class.
 
 5) **(Optional) Populate the database with teas from my collection.**  
 Run `UpladNewTeas` java class.
+
+6) **(Optional) Populate the database with tasting notes.**  
+Run `UploadTastingNotes` java class (reads each tea folder's `tasting-notes.json` and replaces that
+tea's notes). Requires the `TastingNotes` table — regenerate and apply the DDL (step 2) after adding
+the tasting-notes entity, and load the teas (step 5) first.
 
 ### Run the Application
 

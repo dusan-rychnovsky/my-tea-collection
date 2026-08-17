@@ -2,11 +2,13 @@ package cz.dusanrychnovsky.myteacollection.ingest;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TeaRecordTests {
@@ -37,6 +39,24 @@ class TeaRecordTests {
     var tea = loadFrom(toFile("teas/01"));
 
     assertEquals(2, tea.loadImages().size());
+  }
+
+  @Test
+  void loadImages_ignoresNonImageFilesSuchAsInfoAndTastingNotes() {
+    // teas/01 contains 01.jpg, 02.jpg, info.json and tasting-notes.json
+    var tea = loadFrom(toFile("teas/01"));
+
+    assertEquals(2, tea.loadImages().size());
+  }
+
+  @Test
+  void isImageFile_acceptsImageExtensionsCaseInsensitively_rejectsJson() {
+    assertTrue(TeaRecord.isImageFile(new File("photo.jpg")));
+    assertTrue(TeaRecord.isImageFile(new File("photo.JPG")));
+    assertTrue(TeaRecord.isImageFile(new File("photo.jpeg")));
+    assertTrue(TeaRecord.isImageFile(new File("photo.PNG")));
+    assertFalse(TeaRecord.isImageFile(new File(TeaRecord.INFO_FILE_NAME)));
+    assertFalse(TeaRecord.isImageFile(new File("tasting-notes.json")));
   }
 
   @Test

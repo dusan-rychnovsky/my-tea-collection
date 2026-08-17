@@ -167,14 +167,18 @@ Write layer untouched; notes are seeded in tests via `TastingNoteRepository`.
   as a JPEG and crash `UploadNewTeas`. Fix it to **whitelist image files** (e.g. `.jpg/.jpeg/.png`).
   Regression tests: `TeaRecordTests` + `UploadNewTeasIT` with a `tasting-notes.json` present in a tea
   dir.
-- **domain:** `TastingNote` aggregate + `Rating` VO. Invariants (throw `IllegalArgumentException`):
-  rating a valid half-star in 0.0–5.0 (stored 0–10), `tastedOn` non-null, `body` non-blank (≥1
-  non-blank paragraph after splitting), `teaId` and `userId` non-null. `Rating` owns the
-  0–10 ↔ 0.0–5.0 conversion, `.value()` and `.label()`.
+- **domain:** `TastingNote` aggregate + `Rating` VO. `TastingNote` holds only `rating`, `tastedOn`
+  and `body`; its tea and owner are **context** supplied by the service (mirroring how `Tea` omits
+  its owner), not domain fields. Invariants (throw `IllegalArgumentException`): `rating` and
+  `tastedOn` non-null, `body` non-blank (≥1 non-blank paragraph after splitting). `Rating` owns the
+  0–10 ↔ 0.0–5.0 conversion (range/half-step validated), `.value()`, `.roundedStars()`, `.label()`,
+  and an `ofStars(BigDecimal)` factory for the ingest.
 - **application:** `ReplaceTeaTastingNotes` (`@Service`) + `ReplaceTeaTastingNotesCommand`
-  (`teaId`, `userId` owner, and the list of notes — each rating/date/paragraphs) + `TastingNoteMapper`
-  (pure domain→entity). **Atomic replace per tea:** build & validate *all* notes, resolve owner user
-  + validate tea existence, then **delete existing notes for the tea and `saveAll`** in **one
+  (`teaId`, `userId` owner, and a `List<NoteData>` — each `NoteData` a rating/date/joined-body carrier,
+  paralleling how `AddTeaCommand` carries a tea's fields rather than a built `Tea`) + `TastingNoteMapper`
+  (pure domain→entity). **Atomic replace per tea:** the service builds & validates *all*
+  `TastingNote` aggregates from the command (mirroring `AddTea` building its `Tea`), resolves owner
+  user + validates tea existence, then **deletes existing notes for the tea and `saveAll`s** in **one
   transaction** — a bad note leaves that tea's existing notes intact. (Orchestration lives in the use
   case, not the ingest adapter, mirroring `AddTea`/`TeaMapper`.)
 - **ingest:** `TastingNoteRecord` (Jackson JSON contract — rating/date/body, `required` wrapper types
@@ -196,10 +200,13 @@ Write layer untouched; notes are seeded in tests via `TastingNoteRepository`.
     `TastingNoteMapperTests`.
   - integration `UploadTastingNotesIT` (happy path; **idempotent re-run** — twice yields one set, no
     dupes; invalid note ⇒ abort, tea keeps old notes; **absent file ⇒ skip**; **`[]` ⇒ clear**;
-    malformed JSON / out-of-range rating / bad date rejection), a `ReplaceTeaTastingNotes`
-    application-service IT (not `@Transactional`-wrapped, so the real replace boundary is exercised),
-    the image-loader regression, and switch `TeaViewIT` seeding to the ingest path. Add
-    `tasting-notes.json` fixtures under `src/test/resources/teas/NN/`.
+    malformed JSON / out-of-range rating rejection), a `ReplaceTeaTastingNotesServiceIT`
+    application-service IT (`@Transactional` like the other ITs — a non-transactional variant caused
+    H2 cross-test pollution when deleting an `AddTea`-created tea with images, and adds no coverage
+    since every failure path resolves before the delete), and the image-loader regression. `TeaViewIT`
+    keeps its Increment-1 repository seeding (decoupled precise render assertions; the ingest path is
+    covered by `UploadTastingNotesIT`). Add `tasting-notes.json` fixtures under
+    `src/test/resources/teas/NN/`.
 - **Deploy note:** table already created before Inc 1; here, load data via `UploadTastingNotes`.
 
 *Optional finer split:* 1a note list / 1b summary; 2a bug-fix + domain + application (+unit) / 2b
