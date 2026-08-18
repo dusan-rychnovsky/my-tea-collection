@@ -1,7 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.application.AddTea;
-import cz.dusanrychnovsky.myteacollection.application.AddTeaCommand;
+import cz.dusanrychnovsky.myteacollection.tea.application.AddTea;
+import cz.dusanrychnovsky.myteacollection.tea.application.AddTeaCommand;
 import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;

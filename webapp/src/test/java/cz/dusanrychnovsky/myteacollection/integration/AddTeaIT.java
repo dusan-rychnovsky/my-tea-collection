@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
-import static cz.dusanrychnovsky.myteacollection.ingest.TeaRecord.loadFrom;
+import static cz.dusanrychnovsky.myteacollection.tea.ingest.TeaRecord.loadFrom;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

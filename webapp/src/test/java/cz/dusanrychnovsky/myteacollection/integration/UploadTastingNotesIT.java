@@ -1,9 +1,9 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.ingest.TastingNoteRecord;
-import cz.dusanrychnovsky.myteacollection.ingest.CannotLoadTastingNotesException;
-import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
-import cz.dusanrychnovsky.myteacollection.ingest.UploadTastingNotes;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.ingest.TastingNoteRecord;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.ingest.CannotLoadTastingNotesException;
+import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.ingest.UploadTastingNotes;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
