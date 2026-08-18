@@ -1,10 +1,10 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
-import cz.dusanrychnovsky.myteacollection.application.ReplaceTeaTastingNotes;
-import cz.dusanrychnovsky.myteacollection.application.ReplaceTeaTastingNotesCommand;
-import cz.dusanrychnovsky.myteacollection.application.ReplaceTeaTastingNotesCommand.NoteData;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotes;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand.NoteData;
 import cz.dusanrychnovsky.myteacollection.domain.Rating;
-import cz.dusanrychnovsky.myteacollection.ingest.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
