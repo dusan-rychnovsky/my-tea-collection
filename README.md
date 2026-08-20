@@ -97,9 +97,7 @@ Run `CreateUser` java class.
 Run `UpladNewTeas` java class.
 
 6) **(Optional) Populate the database with tasting notes.**  
-Run `UploadTastingNotes` java class (reads each tea folder's `tasting-notes.json` and replaces that
-tea's notes). Requires the `TastingNotes` table — regenerate and apply the DDL (step 2) after adding
-the tasting-notes entity, and load the teas (step 5) first.
+Run `UploadTastingNotes` java class.
 
 ### Run the Application
 
