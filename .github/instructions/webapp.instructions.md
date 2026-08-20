@@ -22,7 +22,7 @@ Integration tests run against in-memory **H2**, so no Docker/database is needed 
 
 **Always `clean` before trusting a full run** (`./mvnw clean verify`) — see Gotchas.
 
-Verified green baseline (2026-08-18, `./mvnw clean verify`): **116 unit tests (17 classes) + 54 integration tests (11 classes), 0 failures/errors/skipped.**
+Verified green baseline (2026-08-20, `./mvnw clean verify`): **116 unit tests (17 classes) + 55 integration tests (11 classes), 0 failures/errors/skipped.**
 
 ## Green mainline = deployable to PROD (IMPORTANT)
 
