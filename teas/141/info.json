@@ -11,6 +11,6 @@
   "elevation": "N/A",
   "price": "5.3",
   "brewingInstructions": "85-90°C, 5g/500ml, 2-3m",
-  "inStock": true,
+  "inStock": false,
   "tags": [ "gift-honza" ]
 }
