@@ -21,19 +21,20 @@ INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (18, 'Yan Cha'
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (19, 'Dan Cong', 17);
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (20, 'Bao Zhong', 17);
 INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (21, 'Dong Ding', 17);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (22, 'Red Tea', NULL);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (23, 'Dian Hong', 22);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (24, 'Dark Tea', NULL);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (25, 'Sheng Puerh', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (26, 'Shu Puerh', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (27, 'Liu Bao', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (28, 'Fu Zhuan', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (29, 'Liu An', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (30, 'Tian Jian', 24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (31, 'Huang Pian',24);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (32, 'Yabao', NULL);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (33, 'Darjeeling', NULL);
-INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (34, 'Purple Tea', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (22, 'GABA', 17);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (23, 'Red Tea', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (24, 'Dian Hong', 23);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (25, 'Dark Tea', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (26, 'Sheng Puerh', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (27, 'Shu Puerh', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (28, 'Liu Bao', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (29, 'Fu Zhuan', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (30, 'Liu An', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (31, 'Tian Jian', 25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (32, 'Huang Pian',25);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (33, 'Yabao', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (34, 'Darjeeling', NULL);
+INSERT INTO myteacollection.TeaTypes (id, name, parent_id) VALUES (35, 'Purple Tea', NULL);
 
 -- Vendor
 INSERT INTO myteacollection.Vendors (id, name, url) VALUES (1, 'Mei Leaf', 'https://meileaf.com');

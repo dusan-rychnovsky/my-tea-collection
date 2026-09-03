@@ -271,9 +271,10 @@ class TeaCollectionIT {
       "<option value=\"1\" class=\"parent-tea-type\">Blend</option>",
       "<option value=\"7\" class=\"parent-tea-type\">Yellow Tea</option>",
       "<option value=\"17\" class=\"parent-tea-type\">Oolong</option>",
-      "<option value=\"25\">Sheng Puerh</option>",
-      "<option value=\"32\" class=\"parent-tea-type\">Yabao</option>",
-      "<option value=\"28\">Fu Zhuan</option>",
+      "<option value=\"22\">GABA</option>",
+      "<option value=\"26\">Sheng Puerh</option>",
+      "<option value=\"33\" class=\"parent-tea-type\">Yabao</option>",
+      "<option value=\"29\">Fu Zhuan</option>",
       // verify vendor dropdown
       "<option value=\"4\">Lao Tea</option>",
       "<option value=\"5\">Klasek Tea</option>",
