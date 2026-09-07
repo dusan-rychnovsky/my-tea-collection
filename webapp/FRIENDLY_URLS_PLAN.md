@@ -7,7 +7,7 @@ Introduce a persisted, globally unique slug for each tea, generated automaticall
 ### Phase 1: Slug Contract and Write Path
 
 1. Correct the one known source inconsistency in `teas/43/info.json`: change season `Q3 2020` to `Q3 2022`, matching its title, description, and vendor URL. This is required before strict title/season year validation can be enabled.
-2. Add a pure `tea/application/TeaSlug` value/factory and focused `TeaSlugTests` using only the Java standard library. Its contract must be deterministic:
+2. Add a pure `domain/TeaSlug` value/factory and focused `TeaSlugTests` using only the Java standard library. Its public factory is `TeaSlug.from(Tea tea, String vendorName)`: the domain value object extracts the title and season from `Tea`, keeping those parts of the slug recipe hidden from callers, while the resolved vendor name remains explicit because `Tea` holds only its vendor ID. Its contract must be deterministic:
    - Normalize vendor name and mandatory tea title independently in this order: apply Unicode NFKD; lowercase with `Locale.ROOT`; remove characters in the Unicode combining-mark categories `Mn`, `Mc`, and `Me`; remove both ASCII (`'`) and right-curly (`’`) apostrophes; replace each remaining run outside ASCII `a-z0-9` with one hyphen; trim leading/trailing hyphens. Apostrophe removal joins the surrounding text (`Shan's` -> `shans`); it does not introduce a separator.
    - Compose vendor and full title with exactly one hyphen between the normalized components: `{normalized-vendor}-{normalized-title}[-{year}]`. Never fall back to optional tea `name`.
    - Recognize a year only when it is a standalone ASCII token in the range 1900-2099, bounded on both sides by the start/end of input or a character outside `[A-Za-z0-9]`. Thus `2022`, `Q3 2022`, and `2020-2022` contain recognized years, while `8582`, `1990s`, `Spring2022`, and `2022abc` do not.
@@ -51,7 +51,7 @@ Introduce a persisted, globally unique slug for each tea, generated automaticall
 **Relevant files**
 
 - `teas/43/info.json` — correct the sole title/season year mismatch.
-- `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/tea/application/TeaSlug.java` — new deterministic slug and year policy.
+- `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/domain/TeaSlug.java` — new deterministic slug and year policy.
 - `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/tea/application/AddedTea.java` — new AddTea result carrying ID and slug.
 - `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/tea/application/AddTea.java` — generate, check, persist, and return the slug.
 - `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/tea/application/TeaMapper.java` — map slug into persistence.
@@ -65,7 +65,7 @@ Introduce a persisted, globally unique slug for each tea, generated automaticall
 - `webapp/src/main/java/cz/dusanrychnovsky/myteacollection/tea/web/PublicBaseUrl.java` — validate the configured public origin and compose absolute canonical URLs.
 - `webapp/src/main/resources/templates/index.html` — generate friendly detail links.
 - `webapp/src/main/resources/templates/tea-view.html` — friendly Open Graph and canonical URL.
-- `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/tea/application/TeaSlugTests.java` — slug algorithm unit coverage.
+- `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/domain/TeaSlugTests.java` — slug algorithm unit coverage.
 - `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/tea/web/PublicBaseUrlTests.java` — public-origin validation and URL composition coverage.
 - `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/tea/application/TeaMapperTests.java` and `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/tea/query/TeaDetailTests.java` — mapping/read-model unit coverage.
 - `webapp/src/test/java/cz/dusanrychnovsky/myteacollection/integration/AddTeaServiceIT.java`, `AddTeaIT.java`, `UploadNewTeasIT.java`, `TeaQueryRepositoryIT.java`, `TeaCollectionIT.java`, and `TeaViewIT.java` — application, adapter, query, routing, link, redirect, metadata, collision, and 404 coverage.

@@ -22,7 +22,7 @@ Integration tests run against in-memory **H2**, so no Docker/database is needed 
 
 **Always `clean` before trusting a full run** (`./mvnw clean verify`) — see Gotchas.
 
-Verified green baseline (2026-08-20, `./mvnw clean verify`): **116 unit tests (17 classes) + 55 integration tests (11 classes), 0 failures/errors/skipped.**
+Verified green baseline (2026-09-04, `./mvnw clean verify`): **128 unit tests (18 classes) + 54 integration tests (11 classes), 0 failures/errors/skipped.**
 
 ## Green mainline = deployable to PROD (IMPORTANT)
 
@@ -50,7 +50,7 @@ oversight. `tastingnotes` has no `web`/`domain`/`persistence` of its own: notes 
 detail page (`tea/web/TeaQueryController`) and their model lives in the shared `domain`/`persistence`.
 
 - (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
-- `domain/` — write-side domain model (flat, shared): the `Tea` and `TastingNote` aggregates (classes — identity, not value, semantics; the seam where write invariants live; `TastingNote` holds only rating/date/body, its tea+owner supplied as context by `ReplaceTeaTastingNotes`) plus the `Price`, `TeaScope` and `Rating` value objects (records; `Rating` owns the 0–10 half-star ↔ 0.0–5.0 conversion).
+- `domain/` — write-side domain model (flat, shared): the `Tea` and `TastingNote` aggregates (classes — identity, not value, semantics; the seam where write invariants live; `TastingNote` holds only rating/date/body, its tea+owner supplied as context by `ReplaceTeaTastingNotes`) plus the `Price`, `TeaScope`, `Rating`, and `TeaSlug` value objects (records; `Rating` owns the 0–10 half-star ↔ 0.0–5.0 conversion; `TeaSlug` owns deterministic friendly-URL generation and validation).
 - `persistence/` — JPA entities (flat, shared): `TeaEntity`, `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `TastingNoteEntity` (table `TastingNotes`, `body` TEXT, `@ManyToOne` tea+user, deliberately not mapped as a collection on `TeaEntity`), `persistence/users/UserEntity` + Spring Data repositories (`TastingNoteRepository` fetches a tea's notes newest-first with a `join fetch` on the owner).
 - `tea/` — the tea feature's behavior:
   - `tea/web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, `/teas/{id}` — also renders the tea's tasting notes via the `tastingnotes/query` read models), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
