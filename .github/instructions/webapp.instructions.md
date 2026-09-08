@@ -22,7 +22,7 @@ Integration tests run against in-memory **H2**, so no Docker/database is needed 
 
 **Always `clean` before trusting a full run** (`./mvnw clean verify`) — see Gotchas.
 
-Verified green baseline (2026-09-08, `./mvnw clean verify`): **128 unit tests (18 classes) + 65 integration tests (11 classes), 0 failures/errors/skipped.**
+Verified green baseline (2026-09-08, `./mvnw clean verify`): **133 unit tests (19 classes) + 65 integration tests (11 classes), 0 failures/errors/skipped.**
 
 ## Green mainline = deployable to PROD (IMPORTANT)
 
@@ -53,7 +53,7 @@ detail page (`tea/web/TeaQueryController`) and their model lives in the shared `
 - `domain/` — write-side domain model (flat, shared): the `Tea` and `TastingNote` aggregates (classes — identity, not value, semantics; the seam where write invariants live; `TastingNote` holds only rating/date/body, its tea+owner supplied as context by `ReplaceTeaTastingNotes`) plus the `Price`, `TeaScope`, `Rating`, and `TeaSlug` value objects (records; `Rating` owns the 0–10 half-star ↔ 0.0–5.0 conversion; `TeaSlug` owns deterministic friendly-URL generation and validation).
 - `persistence/` — JPA entities (flat, shared): `TeaEntity` (including its non-null, globally unique friendly-URL slug), `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `TastingNoteEntity` (table `TastingNotes`, `body` TEXT, `@ManyToOne` tea+user, deliberately not mapped as a collection on `TeaEntity`), `persistence/users/UserEntity` + Spring Data repositories (`TeaRepository` supports slug lookup/collision checks; `TastingNoteRepository` fetches a tea's notes newest-first with a `join fetch` on the owner).
 - `tea/` — the tea feature's behavior:
-  - `tea/web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, canonical `/teas/{slug}`, plus permanent redirects from legacy numeric `/teas/{id}` URLs — also renders the tea's tasting notes via the `tastingnotes/query` read models), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
+  - `tea/web/` — MVC controllers (inbound HTTP adapter): `TeaQueryController` (reads: `/`, `/index`, `/filter`, `/search`, canonical `/teas/{slug}`, plus permanent redirects from legacy numeric `/teas/{id}` URLs — also renders the tea's tasting notes via the `tastingnotes/query` read models), `PublicBaseUrl` (validates the configured public HTTP(S) origin and composes trusted absolute canonical tea URLs), `TeaController` (writes: `/teas/add`), `ImageController` (`/images/{id}`).
   - `tea/ingest/` — JSON/filesystem inbound adapter: the CLI Spring Boot batch apps `UploadNewTeas` / `UpdateTeasAvailability` (`UploadNewTeas` builds an `AddTeaCommand` per tea and delegates to `tea/application.AddTea`), the `TeaRecord` JSON contract, `TeaRecordMapper`, and `CannotLoadTea*Exception`.
   - `tea/application/` — write use cases: `AddTea` (`@Service`; resolves + validates reference ids, generates and checks the slug, then maps and saves), `AddTeaCommand`, `AddedTea` (new id + slug result), `TeaMapper`.
   - `tea/query/` — read side (CQRS): per-view read models (`TeaSummary`, `TeaTag` for the index; `TeaDetail`, `TeaScope` for the detail page; both tea models expose the persisted slug), `TeaQueryRepository` (Criteria-API paging/filter/search projection), and the query-input/paging types `FilterCriteria`, `SearchCriteria`, `PageInfo`, `Availability` (consumed by `TeaQueryRepository`, bound by the controller — that's why they live with the read side, not under `web`).
@@ -75,6 +75,7 @@ detail page (`tea/web/TeaQueryController`) and their model lives in the shared `
 ## Conventions
 
 - Idiomatic Spring / Java. Constructor injection. Match the existing **2-space indentation**.
+- `app.public-base-url` is required and must be supplied through `APP_PUBLIC_BASE_URL` in production; integration tests set it to `http://localhost`. Canonical and Open Graph URLs must use `PublicBaseUrl`, never request host or forwarded headers.
 - **Naming.** Infrastructure/adapter classes carry a role suffix — `…Controller`, `…Repository`, `…Entity`, `…Mapper`. Application **use-case** classes are named as bare imperative verb phrases — `AddTea` (handling `AddTeaCommand`), mirroring the CLI apps `CreateUser` / `UploadNewTeas` — **not** `AddTeaService`; a `…Service` suffix is reserved for framework-contract impls (e.g. `EmailBasedUserDetailsService` implements `UserDetailsService`). Value objects / read models / DTOs use plain domain names (`Price`, `TeaDetail`, `AddTeaCommand`).
 - Test naming drives the runner: `*Tests.java` → surefire (unit), `integration/*IT.java` → failsafe (integration). Keep new tests to this pattern so they run in the right phase.
 

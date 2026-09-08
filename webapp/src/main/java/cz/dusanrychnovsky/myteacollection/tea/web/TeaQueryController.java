@@ -27,8 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
-
 @Controller
 public class TeaQueryController {
 
@@ -40,6 +38,7 @@ public class TeaQueryController {
   private final TeaRepository teaRepository;
   private final TeaQueryRepository teaQueryRepository;
   private final TastingNoteRepository tastingNoteRepository;
+  private final PublicBaseUrl publicBaseUrl;
 
   @Autowired
   public TeaQueryController(
@@ -47,13 +46,15 @@ public class TeaQueryController {
     TeaTypeRepository teaTypeRepository,
     TeaRepository teaRepository,
     TeaQueryRepository teaQueryRepository,
-    TastingNoteRepository tastingNoteRepository) {
+    TastingNoteRepository tastingNoteRepository,
+    PublicBaseUrl publicBaseUrl) {
 
     this.vendorRepository = vendorRepository;
     this.teaTypeRepository = teaTypeRepository;
     this.teaRepository = teaRepository;
     this.teaQueryRepository = teaQueryRepository;
     this.tastingNoteRepository = tastingNoteRepository;
+    this.publicBaseUrl = publicBaseUrl;
   }
 
   @GetMapping({"/", "/index"})
@@ -146,11 +147,11 @@ public class TeaQueryController {
       .map(TeaDetail::from)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     var notes = tastingNoteRepository.findByTeaIdNewestFirst(tea.id());
-    var baseUrl = fromCurrentContextPath().build().toUriString();
     model.addAttribute("tea", tea);
     model.addAttribute("tastingNotes", notes.stream().map(TastingNoteItem::from).toList());
     model.addAttribute("ratingSummary", RatingSummary.of(notes));
-    model.addAttribute("baseUrl", baseUrl);
+    model.addAttribute("canonicalUrl", publicBaseUrl.teaUrl(tea.slug()));
+    model.addAttribute("baseUrl", publicBaseUrl.value());
     return "tea-view";
   }
 
