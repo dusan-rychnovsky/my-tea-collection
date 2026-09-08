@@ -205,14 +205,16 @@ class TeaViewIT {
       .findFirst().orElseThrow();
     var mainImageId = tea.getImages().stream().min(comparingInt(TeaImageEntity::getIndex)).orElseThrow().getId();
 
-    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
+    var actions = mvc.perform(get("/teas/" + tea.getSlug())
+        .header("Host", "attacker.example"))
       .andExpect(status().isOk());
 
     containsStrings(actions,
+      "<link rel=\"canonical\" href=\"http://localhost/teas/" + tea.getSlug() + "\"",
       "<meta property=\"og:type\" content=\"website\"",
       "<meta property=\"og:site_name\" content=\"My Tea Collection\"",
       "<meta property=\"og:title\" content=\"Luminary Misfit\"",
-      "<meta property=\"og:url\" content=\"http://localhost/teas/" + tea.getId() + "\"",
+      "<meta property=\"og:url\" content=\"http://localhost/teas/" + tea.getSlug() + "\"",
       "<meta property=\"og:description\" content=\"Ultra-fruity and fragrant PuErh",
       "<meta property=\"og:image\" content=\"http://localhost/images/" + mainImageId + "\"",
       "<meta name=\"twitter:card\" content=\"summary_large_image\"",

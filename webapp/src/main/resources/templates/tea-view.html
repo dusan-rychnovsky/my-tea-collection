@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title th:text="|${#strings.isEmpty(tea.title) ? tea.name : tea.title} — My tea collection|">My tea collection</title>
+    <link rel="canonical" th:href="${canonicalUrl}" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="My Tea Collection" />
     <meta property="og:title" th:content="${#strings.isEmpty(tea.title) ? tea.name : tea.title}" />
-    <meta property="og:url" th:content="@{|${baseUrl}/teas/${tea.id}|}" />
+    <meta property="og:url" th:content="${canonicalUrl}" />
     <meta property="og:description" th:if="${!#strings.isEmpty(tea.description)}" th:content="${#strings.abbreviate(tea.description, 300)}" />
     <meta property="og:image" th:if="${tea.mainImageId != null}" th:content="@{|${baseUrl}/images/${tea.mainImageId}|}" />
     <meta name="twitter:card" th:content="${tea.mainImageId != null ? 'summary_large_image' : 'summary'}" />
