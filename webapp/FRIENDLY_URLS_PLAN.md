@@ -9,8 +9,8 @@ Introduce a persisted, globally unique slug for each tea, generated automaticall
 - [x] Step 3: persist slugs and integrate them into the write path.
 - [x] Step 4: cover the write path, adapters, and database constraints.
 - [x] Step 5: carry slugs through the read models.
-- [ ] **Next: Step 6, add canonical slug routing and numeric redirects.**
-- [ ] Step 7: generate canonical links and metadata.
+- [x] Step 6: add canonical slug routing and numeric redirects.
+- [ ] **Next: Step 7, generate canonical links and metadata.**
 - [ ] Step 8: complete read/web integration coverage.
 - [ ] Step 9: document and verify the rebuild workflow.
 - [ ] Step 10: run final verification and independent review.

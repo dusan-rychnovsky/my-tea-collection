@@ -73,6 +73,14 @@ class AddTeaIT {
 
   @Test
   @Transactional
+  void teaAdd_withoutAuthentication_redirectsToLogin() throws Exception {
+    mvc.perform(get("/teas/add"))
+      .andExpect(status().isFound())
+      .andExpect(redirectedUrl("http://localhost/login"));
+  }
+
+  @Test
+  @Transactional
   void addTea_validSubmission_insertsNewTeaAndRedirectsToTeaView() throws Exception {
     var vendors = vendorRepository.findAll();
     var teaTypes = teaTypeRepository.findAll();

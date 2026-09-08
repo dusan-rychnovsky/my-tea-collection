@@ -15,12 +15,17 @@ import cz.dusanrychnovsky.myteacollection.tastingnotes.query.TastingNoteItem;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaDetail;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaQueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.net.URI;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentContextPath;
 
@@ -135,15 +140,27 @@ public class TeaQueryController {
     model.addAttribute("availabilities", availabilities);
   }
 
-  @GetMapping("/teas/{id}")
-  public String teaView(@PathVariable("id") Long teaId, Model model) {
-    var tea = teaRepository.findById(teaId).map(TeaDetail::from).get();
-    var notes = tastingNoteRepository.findByTeaIdNewestFirst(teaId);
+  @GetMapping("/teas/{slug:[a-z0-9]+(?:-[a-z0-9]+)+}")
+  public String viewTeaBySlug(@PathVariable String slug, Model model) {
+    var tea = teaRepository.findBySlug(slug)
+      .map(TeaDetail::from)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    var notes = tastingNoteRepository.findByTeaIdNewestFirst(tea.id());
     var baseUrl = fromCurrentContextPath().build().toUriString();
     model.addAttribute("tea", tea);
     model.addAttribute("tastingNotes", notes.stream().map(TastingNoteItem::from).toList());
     model.addAttribute("ratingSummary", RatingSummary.of(notes));
     model.addAttribute("baseUrl", baseUrl);
     return "tea-view";
+  }
+
+  @GetMapping("/teas/{id:[0-9]+}")
+  public ResponseEntity<Void> viewTeaById(@PathVariable Long id) {
+    var tea = teaRepository.findById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return ResponseEntity
+      .status(HttpStatus.MOVED_PERMANENTLY)
+      .location(URI.create("/teas/" + tea.getSlug()))
+      .build();
   }
 }

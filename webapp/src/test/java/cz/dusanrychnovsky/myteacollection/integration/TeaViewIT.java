@@ -30,6 +30,7 @@ import static java.util.Comparator.comparingInt;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -91,8 +92,7 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_showsGivenTea() throws Exception {
-    var teaId = getTeaIdByTitle("Luminary Misfit");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/mei-leaf-luminary-misfit-2022"))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -112,8 +112,7 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_rendersTastingNotesSummaryAndList() throws Exception {
-    var teaId = getTeaIdByTitle("Luminary Misfit");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Luminary Misfit")))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -152,7 +151,7 @@ class TeaViewIT {
       new TastingNoteEntity(tea, owner, 8, LocalDate.of(2026, 2, 10), "Same date, inserted later.")
     ));
 
-    var body = mvc.perform(get("/teas/" + tea.getId()))
+    var body = mvc.perform(get("/teas/" + tea.getSlug()))
       .andExpect(status().isOk())
       .andReturn().getResponse().getContentAsString();
 
@@ -164,8 +163,7 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_noTastingNotes_showsEmptyState() throws Exception {
-    var teaId = getTeaIdByTitle("Doubleshot");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Doubleshot")))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -179,8 +177,7 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_escapesTastingNoteMarkup() throws Exception {
-    var teaId = getTeaIdByTitle("Shou Mei 2017");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Shou Mei 2017")))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -193,8 +190,7 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_showsGivenTea_printsPrice() throws Exception {
-    var teaId = getTeaIdByTitle("Doubleshot");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Doubleshot")))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -209,7 +205,7 @@ class TeaViewIT {
       .findFirst().orElseThrow();
     var mainImageId = tea.getImages().stream().min(comparingInt(TeaImageEntity::getIndex)).orElseThrow().getId();
 
-    var actions = mvc.perform(get("/teas/" + tea.getId()))
+    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -226,13 +222,47 @@ class TeaViewIT {
   @Test
   @Transactional
   void teaView_rendersTags() throws Exception {
-    var teaId = getTeaIdByTitle("Doubleshot");
-    var actions = mvc.perform(get("/teas/" + teaId))
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Doubleshot")))
       .andExpect(status().isOk());
 
     containsStrings(actions,
       "<li>meetea-2025-jan</li>",
       "<li>meetea-2024-dec</li>");
+  }
+
+  @Test
+  @Transactional
+  void teaView_numericIdRedirectsPermanentlyToCanonicalSlug() throws Exception {
+    var tea = teaByTitle("Luminary Misfit");
+
+    mvc.perform(get("/teas/" + tea.getId()))
+      .andExpect(status().isMovedPermanently())
+      .andExpect(header().string("Location", "/teas/" + tea.getSlug()));
+  }
+
+  @Test
+  @Transactional
+  void teaView_missingSlugReturnsNotFound() throws Exception {
+    mvc.perform(get("/teas/missing-tea"))
+      .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @Transactional
+  void teaView_missingNumericIdReturnsNotFound() throws Exception {
+    mvc.perform(get("/teas/999999"))
+      .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @Transactional
+  void teaView_uppercaseAndMalformedSlugsReturnNotFound() throws Exception {
+    mvc.perform(get("/teas/Mei-Leaf-Luminary-Misfit-2022"))
+      .andExpect(status().isNotFound());
+    mvc.perform(get("/teas/missing"))
+      .andExpect(status().isNotFound());
+    mvc.perform(get("/teas/missing_tea"))
+      .andExpect(status().isNotFound());
   }
 
   private TeaEntity teaByTitle(String title) {
@@ -242,7 +272,7 @@ class TeaViewIT {
       .orElseThrow(() -> new IllegalStateException("Tea not found in DB."));
   }
 
-  private Long getTeaIdByTitle(String title) {
-    return teaByTitle(title).getId();
+  private String getTeaSlugByTitle(String title) {
+    return teaByTitle(title).getSlug();
   }
 }
