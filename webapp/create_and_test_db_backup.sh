@@ -88,7 +88,7 @@ docker exec postgres-backup psql -U postgres -d backup_postgres -c "SELECT title
 
 # 8. Interactive testing
 docker build --tag=my-tea-collection:latest .
-docker run -p8080:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/backup_postgres -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=testpassword my-tea-collection:latest
+docker run -p8080:8080 -e APP_PUBLIC_BASE_URL=http://localhost:8080 -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/backup_postgres -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=testpassword my-tea-collection:latest
 
 echo "=== To connect interactively: ==="
 echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/backup_postgres"

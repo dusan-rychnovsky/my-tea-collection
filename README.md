@@ -69,17 +69,19 @@ mvn clean package
 1) **Create the database schema.**  
    Execute the following SQL statement:
 
-```
+```sql
+DROP SCHEMA IF EXISTS myteacollection CASCADE;
 CREATE SCHEMA myteacollection;
 ```
 
 2) **Generate and apply DDL statements.**  
 Use the commands below to generate a file named `ddl-schema.sql` containing `CREATE TABLE` statements for all entities. Execute all of them:
 
-```
+```powershell
 $env:SPRING_DATASOURCE_URL = "X"
 $env:SPRING_DATASOURCE_USERNAME = "X"
 $env:SPRING_DATASOURCE_PASSWORD = "X"
+$env:APP_PUBLIC_BASE_URL = "http://localhost:8080"
 java `
   "-Dspring.jpa.properties.jakarta.persistence.schema-generation.create-source=metadata" `
   "-Dspring.jpa.properties.jakarta.persistence.schema-generation.scripts.action=create" `
@@ -104,6 +106,7 @@ Run `UploadTastingNotes` java class.
 ```
 docker build --tag=my-tea-collection:latest .
 docker run -p8080:8080 `
+  -e APP_PUBLIC_BASE_URL=http://localhost:8080 `
   -e SPRING_DATASOURCE_URL=X `
   -e SPRING_DATASOURCE_USERNAME=X `
   -e SPRING_DATASOURCE_PASSWORD=X `
