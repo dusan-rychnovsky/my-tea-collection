@@ -3,7 +3,9 @@ package cz.dusanrychnovsky.myteacollection.integration;
 import cz.dusanrychnovsky.myteacollection.tea.application.AddTea;
 import cz.dusanrychnovsky.myteacollection.tea.application.AddTeaCommand;
 import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,12 +55,19 @@ class AddTeaServiceIT {
 
   private AddTeaCommand command(
     Long userId, Long vendorId, Set<Long> typeIds, Set<Long> tagIds, Price price, List<byte[]> images) {
+    return command(
+      "Title", "Spring 2024", userId, vendorId, typeIds, tagIds, price, images);
+  }
+
+  private AddTeaCommand command(
+    String title, String season, Long userId, Long vendorId, Set<Long> typeIds,
+    Set<Long> tagIds, Price price, List<byte[]> images) {
     return new AddTeaCommand(
-      "Title",
+      title,
       "Name",
       "Description",
       "https://example.com/tea",
-      new TeaScope("Spring 2024", "Da Ye Zhong", "Yunnan", "1500m"),
+      new TeaScope(season, "Da Ye Zhong", "Yunnan", "1500m"),
       price,
       "95°C",
       true,
@@ -70,11 +80,14 @@ class AddTeaServiceIT {
 
   @Test
   @Transactional
-  void handle_validCommand_persistsTeaWithImagesAndReturnsId() {
-    var id = addTea.handle(command(
+  void handle_validCommand_persistsTeaWithSlugAndImagesAndReturnsResult() {
+    var result = addTea.handle(command(
       userId, 1L, Set.of(25L), Set.of(1L), new Price(7.29f), List.of(new byte[]{1, 2}, new byte[]{3})));
 
-    var entity = teaRepository.findById(id).orElseThrow();
+    assertEquals("mei-leaf-title-2024", result.slug().value());
+    var entity = teaRepository.findById(result.id()).orElseThrow();
+    assertEquals(entity, teaRepository.findBySlug(result.slug().value()).orElseThrow());
+    assertEquals("mei-leaf-title-2024", entity.getSlug());
     assertEquals("Title", entity.getTitle());
     assertEquals(userId, entity.getUser().getId());
     assertEquals(1L, entity.getVendor().getId());
@@ -82,6 +95,54 @@ class AddTeaServiceIT {
     assertEquals(Set.of(1L), entity.getTags().stream().map(TagEntity::getId).collect(toSet()));
     assertEquals(7.29f, entity.getPrice());
     assertEquals(2, entity.getImages().size());
+  }
+
+  @Test
+  @Transactional
+  void handle_titleAndSeasonYearsDiffer_rejectsTea() {
+    var ex = assertThrows(IllegalArgumentException.class, () -> addTea.handle(command(
+      "Tea 2023", "Spring 2024", userId, 1L, Set.of(25L), Set.of(), null, List.of(new byte[]{1}))));
+
+    assertTrue(ex.getMessage().contains("title year 2023"));
+    assertTrue(ex.getMessage().contains("season year 2024"));
+    assertEquals(0, teaRepository.count());
+  }
+
+  @Test
+  @Transactional
+  void handle_duplicateSlug_rejectsSecondTea() {
+    var command = command(
+      userId, 1L, Set.of(25L), Set.of(), null, List.of(new byte[]{1}));
+    addTea.handle(command);
+
+    var ex = assertThrows(IllegalArgumentException.class, () -> addTea.handle(command));
+
+    assertTrue(ex.getMessage().contains("mei-leaf-title-2024"));
+    assertEquals(1, teaRepository.count());
+  }
+
+  @Test
+  @Transactional
+  void save_duplicateSlug_databaseRejectsSecondTea() {
+    var result = addTea.handle(command(
+      userId, 1L, Set.of(25L), Set.of(), null, List.of(new byte[]{1})));
+    var existing = teaRepository.findById(result.id()).orElseThrow();
+
+    assertThrows(
+      DataIntegrityViolationException.class,
+      () -> teaRepository.saveAndFlush(copyWithSlug(existing, existing.getSlug())));
+  }
+
+  @Test
+  @Transactional
+  void save_nullSlug_databaseRejectsTea() {
+    var result = addTea.handle(command(
+      userId, 1L, Set.of(25L), Set.of(), null, List.of(new byte[]{1})));
+    var existing = teaRepository.findById(result.id()).orElseThrow();
+
+    assertThrows(
+      DataIntegrityViolationException.class,
+      () -> teaRepository.saveAndFlush(copyWithSlug(existing, null)));
   }
 
   @Test
@@ -130,5 +191,23 @@ class AddTeaServiceIT {
     var ex = assertThrows(IllegalArgumentException.class,
       () -> addTea.handle(command(userId, 1L, Set.of(), Set.of(), new Price(5f), List.of(new byte[]{1}))));
     assertTrue(ex.getMessage().contains("type"));
+  }
+
+  private TeaEntity copyWithSlug(TeaEntity source, String slug) {
+    var scope = source.getScope();
+    return new TeaEntity(
+      source.getUser(),
+      source.getVendor(),
+      source.getTypes(),
+      slug,
+      source.getTitle(),
+      source.getName(),
+      source.getDescription(),
+      source.getUrl(),
+      new TeaScopeEntity(scope.getSeason(), scope.getCultivar(), scope.getOrigin(), scope.getElevation()),
+      source.getPrice(),
+      source.getBrewingInstructions(),
+      source.isInStock(),
+      source.getTags());
   }
 }

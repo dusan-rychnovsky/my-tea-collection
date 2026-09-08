@@ -7,7 +7,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(schema = "myteacollection", name = "Teas")
+@Table(
+  schema = "myteacollection",
+  name = "Teas",
+  uniqueConstraints = @UniqueConstraint(name = "uk_teas_slug", columnNames = "slug"))
 public class TeaEntity {
 
   @Id
@@ -29,6 +32,9 @@ public class TeaEntity {
     joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "type_id", referencedColumnName = "id"))
   private Set<TeaTypeEntity> types = new HashSet<>();
+
+  @Column(name = "slug", length = 255, nullable = false)
+  private String slug;
 
   private String title;
 
@@ -67,6 +73,7 @@ public class TeaEntity {
     UserEntity user,
     VendorEntity vendor,
     Set<TeaTypeEntity> types,
+    String slug,
     String title,
     String name,
     String description,
@@ -80,6 +87,7 @@ public class TeaEntity {
     this.user = user;
     this.vendor = vendor;
     this.types = types;
+    this.slug = slug;
     this.title = title;
     this.name = name;
     this.description = description;
@@ -114,6 +122,10 @@ public class TeaEntity {
   public TeaEntity setTypes(Set<TeaTypeEntity> types) {
     this.types = types;
     return this;
+  }
+
+  public String getSlug() {
+    return slug;
   }
 
   public String getTitle() {

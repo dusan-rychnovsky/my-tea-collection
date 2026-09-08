@@ -8,6 +8,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
+import cz.dusanrychnovsky.myteacollection.domain.TeaSlug;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,6 +27,7 @@ class TeaMapperTests {
   private static final VendorEntity VENDOR = new VendorEntity(1L, "Mei Leaf", "https://meileaf.com");
   private static final Set<TeaTypeEntity> TYPES = Set.of(new TeaTypeEntity(25L, "Sheng Puerh"));
   private static final Set<TagEntity> TAGS = Set.of(new TagEntity(1L, USER, "meetea-2025-jan", "desc"));
+  private static final TeaSlug SLUG = new TeaSlug("mei-leaf-luminary-misfit-2022");
 
   private static Tea tea(Price price, List<byte[]> images) {
     return new Tea(
@@ -45,13 +47,15 @@ class TeaMapperTests {
 
   @Test
   void toEntity_mapsDescriptiveFieldsAndReferences() {
-    var entity = TeaMapper.toEntity(tea(new Price(7.29f), List.of(new byte[]{1})), USER, VENDOR, TYPES, TAGS);
+    var entity = TeaMapper.toEntity(
+      tea(new Price(7.29f), List.of(new byte[]{1})), SLUG, USER, VENDOR, TYPES, TAGS);
 
     assertNull(entity.getId());
     assertEquals(USER, entity.getUser());
     assertEquals(VENDOR, entity.getVendor());
     assertEquals(TYPES, entity.getTypes());
     assertEquals(TAGS, entity.getTags());
+    assertEquals("mei-leaf-luminary-misfit-2022", entity.getSlug());
     assertEquals("Luminary Misfit", entity.getTitle());
     assertEquals("Lancang Gushu Sheng PuErh", entity.getName());
     assertEquals("Ultra-fruity and fragrant PuErh.", entity.getDescription());
@@ -67,7 +71,7 @@ class TeaMapperTests {
 
   @Test
   void toEntity_nullPrice_mapsToNullEntityPrice() {
-    assertNull(TeaMapper.toEntity(tea(null, List.of(new byte[]{1})), USER, VENDOR, TYPES, TAGS).getPrice());
+    assertNull(TeaMapper.toEntity(tea(null, List.of(new byte[]{1})), SLUG, USER, VENDOR, TYPES, TAGS).getPrice());
   }
 
   @Test
@@ -75,7 +79,7 @@ class TeaMapperTests {
     var first = new byte[]{1, 2, 3};
     var second = new byte[]{4, 5};
 
-    var entity = TeaMapper.toEntity(tea(null, List.of(first, second)), USER, VENDOR, TYPES, TAGS);
+    var entity = TeaMapper.toEntity(tea(null, List.of(first, second)), SLUG, USER, VENDOR, TYPES, TAGS);
 
     var images = entity.getImages().stream().sorted(comparingInt(TeaImageEntity::getIndex)).toList();
     assertEquals(2, images.size());

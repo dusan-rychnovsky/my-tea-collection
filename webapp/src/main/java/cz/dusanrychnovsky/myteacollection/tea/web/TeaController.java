@@ -112,7 +112,8 @@ public class TeaController {
         new HashSet<>(tagIds != null ? tagIds : emptyList()),
         compressImages(images));
 
-      return "redirect:/teas/" + this.addTea.handle(command);
+      var addedTea = this.addTea.handle(command);
+      return "redirect:/teas/" + addedTea.slug().value();
     }
     catch (IllegalArgumentException ex) {
       addReferenceData(model);
