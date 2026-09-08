@@ -30,6 +30,7 @@ class TeaDetailTests {
 
     var detail = TeaDetail.from(tea);
 
+    assertEquals("mei-leaf-luminary-misfit-2022", detail.slug());
     assertEquals("Luminary Misfit", detail.title());
     assertEquals("Lancang Gushu Sheng PuErh Spring 2022", detail.name());
     assertEquals("A fruity puerh.", detail.description());

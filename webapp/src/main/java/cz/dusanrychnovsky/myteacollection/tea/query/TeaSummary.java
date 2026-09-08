@@ -4,6 +4,7 @@ import java.util.List;
 
 public record TeaSummary(
   Long id,
+  String slug,
   String title,
   String name,
   String vendorName,

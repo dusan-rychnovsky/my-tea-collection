@@ -17,6 +17,7 @@ import static java.util.Comparator.comparingLong;
 
 public record TeaDetail(
   Long id,
+  String slug,
   String title,
   String name,
   String description,
@@ -39,6 +40,7 @@ public record TeaDetail(
       .toList();
     return new TeaDetail(
       tea.getId(),
+      tea.getSlug(),
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),

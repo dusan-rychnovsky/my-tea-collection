@@ -61,6 +61,7 @@ class TeaQueryRepositoryIT {
     assertEquals(2, page.size());
 
     var first = page.get(0);
+    assertEquals("meetea-doubleshot-2022", first.slug());
     assertEquals("Doubleshot", first.title());
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.name());
     assertEquals("Meetea", first.vendorName());
@@ -69,6 +70,7 @@ class TeaQueryRepositoryIT {
     assertNotNull(first.tags());
     assertEquals(mainImageIdOf("Doubleshot"), first.mainImageId());
 
+    assertEquals("mei-leaf-luminary-misfit-2022", page.get(1).slug());
     assertEquals("Luminary Misfit", page.get(1).title());
     assertEquals("Dark Tea, Sheng Puerh", page.get(1).typeNames());
   }
