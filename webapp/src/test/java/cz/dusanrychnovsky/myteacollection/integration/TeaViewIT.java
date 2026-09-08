@@ -219,6 +219,7 @@ class TeaViewIT {
       "<meta property=\"og:image\" content=\"http://localhost/images/" + mainImageId + "\"",
       "<meta name=\"twitter:card\" content=\"summary_large_image\"",
       "<title>Luminary Misfit — My tea collection</title>");
+    doesNotContainStrings(actions, "attacker.example");
   }
 
   @Test

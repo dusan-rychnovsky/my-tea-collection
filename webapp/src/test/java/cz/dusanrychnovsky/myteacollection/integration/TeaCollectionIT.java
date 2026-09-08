@@ -139,7 +139,7 @@ class TeaCollectionIT {
 
     doesNotContainStrings(
       actions,
-      "Douleshot",
+      "Doubleshot",
       "Luminary Misfit"
     );
 
@@ -202,7 +202,7 @@ class TeaCollectionIT {
 
     doesNotContainStrings(
       actions,
-      "Douleshot",
+      "Doubleshot",
       "Luminary Misfit",
       "Simple Dreams 2"
     );
@@ -239,7 +239,7 @@ class TeaCollectionIT {
 
     doesNotContainStrings(
       actions,
-      "Douleshot",
+      "Doubleshot",
       "Fujian Shoumei Bingcha 2017",
       "Jade Star 8"
     );
