@@ -102,6 +102,7 @@ class TeaDetailTests {
       null,
       new VendorEntity(1L, "Mei Leaf", null),
       Set.of(new TeaTypeEntity(1L, "Blend")),
+      "mei-leaf-luminary-misfit-2022",
       "Luminary Misfit",
       "Lancang Gushu Sheng PuErh Spring 2022",
       "A fruity puerh.",

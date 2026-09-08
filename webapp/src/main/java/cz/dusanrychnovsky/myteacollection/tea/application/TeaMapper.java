@@ -9,6 +9,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
+import cz.dusanrychnovsky.myteacollection.domain.TeaSlug;
 
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public final class TeaMapper {
 
   public static TeaEntity toEntity(
     Tea tea,
+    TeaSlug slug,
     UserEntity user,
     VendorEntity vendor,
     Set<TeaTypeEntity> types,
@@ -35,6 +37,7 @@ public final class TeaMapper {
       user,
       vendor,
       types,
+      slug.value(),
       tea.getTitle(),
       tea.getName(),
       tea.getDescription(),

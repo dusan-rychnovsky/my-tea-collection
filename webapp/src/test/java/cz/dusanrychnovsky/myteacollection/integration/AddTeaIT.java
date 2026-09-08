@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.persistence.*;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.tea.ingest.TeaRecord;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -80,24 +83,11 @@ class AddTeaIT {
     var secondImage = new MockMultipartFile(
       "images", "02.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/02.jpg").toPath()));
 
-    mvc.perform(multipart("/teas/add")
-      .file(firstImage)
-      .file(secondImage)
-      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
-      .with(csrf())
-      .param("url", tea.getUrl())
-      .param("name", tea.getName())
-      .param("title", tea.getTitle())
-      .param("description", tea.getDescription())
+    mvc.perform(validSubmission(tea, firstImage, secondImage)
       .param("vendorId", toVendorId(tea.getVendor(), vendors))
-      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypes))
-      .param("origin", tea.getOrigin())
-      .param("cultivar", tea.getCultivar())
-      .param("season", tea.getSeason())
-      .param("elevation", tea.getElevation())
-      .param("price", tea.getPrice())
-      .param("brewingInstructions", tea.getBrewingInstructions()))
-      .andExpect(status().is3xxRedirection());
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypes)))
+      .andExpect(status().isFound())
+      .andExpect(redirectedUrl("/teas/meetea-doubleshot-2022"));
 
     var teaEntity = teaRepository.findAll().stream()
       .filter(entity -> tea.getName().equals(entity.getName()))
@@ -108,6 +98,7 @@ class AddTeaIT {
     assertEquals(tea.getName(), teaEntity.getName());
     assertEquals(tea.getTitle(), teaEntity.getTitle());
     assertEquals(tea.getDescription(), teaEntity.getDescription());
+    assertEquals("meetea-doubleshot-2022", teaEntity.getSlug());
 
     assertEquals(tea.getVendor(), teaEntity.getVendor().getName());
     assertEquals(
@@ -127,6 +118,30 @@ class AddTeaIT {
     assertEquals(tea.getBrewingInstructions(), teaEntity.getBrewingInstructions());
     assertTrue(teaEntity.isInStock());
     assertEquals(2, teaEntity.getImages().size());
+  }
+
+  @Test
+  @Transactional
+  void addTea_duplicateSlug_showsFormErrorAndDoesNotInsertSecondTea() throws Exception {
+    var tea = loadFrom(toFile("teas/01"));
+    var imageBytes = Files.readAllBytes(toFile("teas/01/01.jpg").toPath());
+    var vendorId = toVendorId(tea.getVendor(), vendorRepository.findAll());
+    var typeIds = toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll());
+
+    mvc.perform(validSubmission(tea, new MockMultipartFile("images", "01.jpg", "image/jpeg", imageBytes))
+      .param("vendorId", vendorId)
+      .param("teaTypes", typeIds))
+      .andExpect(status().isFound());
+
+    var result = mvc.perform(validSubmission(
+        tea, new MockMultipartFile("images", "01.jpg", "image/jpeg", imageBytes))
+      .param("vendorId", vendorId)
+      .param("teaTypes", typeIds))
+      .andExpect(status().isOk())
+      .andExpect(view().name("tea-add"));
+
+    ITUtils.containsStrings(result, "meetea-doubleshot-2022", "already exists");
+    assertEquals(1, teaRepository.count());
   }
 
   @Test
@@ -204,6 +219,26 @@ class AddTeaIT {
       .filter(type -> teaTypeNames.contains(type.getName()))
       .map(type -> String.valueOf(type.getId()))
       .toArray(String[]::new);
+  }
+
+  private MockMultipartHttpServletRequestBuilder validSubmission(TeaRecord tea, MockMultipartFile... images) {
+    var request = multipart("/teas/add");
+    for (var image : images) {
+      request.file(image);
+    }
+    request.with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE));
+    request.with(csrf());
+    request.param("url", tea.getUrl());
+    request.param("name", tea.getName());
+    request.param("title", tea.getTitle());
+    request.param("description", tea.getDescription());
+    request.param("origin", tea.getOrigin());
+    request.param("cultivar", tea.getCultivar());
+    request.param("season", tea.getSeason());
+    request.param("elevation", tea.getElevation());
+    request.param("price", tea.getPrice());
+    request.param("brewingInstructions", tea.getBrewingInstructions());
+    return request;
   }
 
   private String toVendorId(String vendorName, List<VendorEntity> vendors) {
