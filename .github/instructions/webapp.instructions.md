@@ -24,6 +24,22 @@ Integration tests run against in-memory **H2**, so no Docker/database is needed 
 
 Verified green baseline (2026-09-08, `./mvnw clean verify`): **133 unit tests (19 classes) + 65 integration tests (11 classes), 0 failures/errors/skipped.**
 
+## Schema evolution and production rebuilds
+
+- Git-held tea and tasting-note files are the source of truth. Backward-incompatible DDL and brief
+  maintenance downtime are accepted; do not add Flyway, Liquibase, incremental migrations, or a
+  backfill CLI unless this policy changes.
+- Before dropping production, create and test a restorable database backup. Rehearse the complete
+  rebuild against a disposable PostgreSQL database using the Git fixtures; slug validation and the
+  full tea/tasting-note import must succeed there before production work begins. Keep the backup
+  until production smoke checks pass.
+- Rebuild in this order: drop and recreate the database/schema; generate and apply JPA DDL; load
+  `src/test/resources/data.sql`; run `CreateUser`; run `UploadNewTeas`; then run
+  `UploadTastingNotes`. The latter is the runnable adapter around `ReplaceTeaTastingNotes`.
+- After importing, verify the tea count, tasting-note count, non-null and unique slugs, one known
+  canonical tea page, and one legacy numeric redirect. Restore the backup if import or smoke checks
+  fail rather than leaving production on a partial dataset.
+
 ## Green mainline = deployable to PROD (IMPORTANT)
 
 - **On the mainline branch (`main`), every change must leave the full suite green — all unit AND integration tests passing** — so `main` can be deployed to PROD at any moment. Run `./mvnw clean verify` and confirm BUILD SUCCESS before committing to `main`.

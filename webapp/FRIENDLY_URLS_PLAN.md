@@ -12,8 +12,8 @@ Introduce a persisted, globally unique slug for each tea, generated automaticall
 - [x] Step 6: add canonical slug routing and numeric redirects.
 - [x] Step 7: generate canonical links and metadata.
 - [x] Step 8: complete read/web integration coverage.
-- [ ] **Next: Step 9, document and verify the rebuild workflow.**
-- [ ] Step 10: run final verification and independent review.
+- [x] Step 9: document and verify the rebuild workflow.
+- [ ] **Next: Step 10, run final verification and independent review.**
 
 **Steps**
 
