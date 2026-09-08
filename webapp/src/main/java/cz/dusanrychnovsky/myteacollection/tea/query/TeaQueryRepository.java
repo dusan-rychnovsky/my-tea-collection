@@ -46,6 +46,7 @@ public class TeaQueryRepository {
         var id = row.get("id", Long.class);
         return new TeaSummary(
           id,
+          row.get("slug", String.class),
           row.get("title", String.class),
           row.get("name", String.class),
           row.get("vendorName", String.class),
@@ -76,6 +77,7 @@ public class TeaQueryRepository {
 
     query.multiselect(
       teaParent.get("id").alias("id"),
+      teaParent.get("slug").alias("slug"),
       teaParent.get("title").alias("title"),
       teaParent.get("name").alias("name"),
       teaParent.get("description").alias("description"),
