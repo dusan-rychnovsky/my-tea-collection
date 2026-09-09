@@ -71,7 +71,7 @@ The existing adapter behavior handles validation failures: `TeaController` catch
 
 Completed: `domain/TeaScope` now carries a non-null `Optional<Season>`; ingest maps `N/A` to absence, the add form maps null/blank input to absence, and persistence stores absence as SQL `NULL`. Focused unit and integration suites pass with no failures, errors, or skips.
 
-## 4. Extract the shared tea title/year policy
+## 4. Extract the shared tea title/year policy [Completed]
 
 Add `src/main/java/cz/dusanrychnovsky/myteacollection/domain/TeaTitleYear.java` as a stateless domain policy. This cross-field rule belongs neither to `Season` nor to either output formatter because it compares a tea title with its optional season.
 
@@ -93,6 +93,8 @@ Add `TeaTitleYearTests` covering all four outcomes plus an equal single title/se
 Refactor `TeaSlug` to remove its year regex, extraction, and title/season comparison. Use `TeaTitleYear.suffixFor(tea.getTitle(), tea.getScope().season())` solely to decide whether to append a year before slug normalization. Preserve normalization, reserved-slug, all-numeric, and length-limit behavior unchanged.
 
 Update `TeaSlugTests` to use `Season` and retain slug-specific regression cases without duplicating the complete `TeaTitleYear` test matrix. Add or adjust a case proving that constructing a tea with a multi-year season is rejected before slug generation.
+
+Completed: added `TeaTitleYear`, moved title/season year comparison and suffix selection out of `TeaSlug`, and removed `TeaSlug`'s duplicate regex and extraction method. Focused `TeaTitleYearTests` and `TeaSlugTests` pass all 19 tests with no failures, errors, or skips.
 
 ## 5. Add a social metadata read model
 
