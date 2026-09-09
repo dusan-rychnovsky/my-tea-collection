@@ -230,6 +230,76 @@ class TeaViewIT {
 
   @Test
   @Transactional
+  void teaView_socialTitleDoesNotRepeatYearAlreadyInTitle() throws Exception {
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Shou Mei 2017")))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<meta property=\"og:title\" content=\"Shou Mei 2017 (Meetea)\"",
+      "<meta name=\"twitter:title\" content=\"Shou Mei 2017 (Meetea)\"");
+  }
+
+  @Test
+  @Transactional
+  void teaView_socialTitleWithoutSeasonOmitsYear() throws Exception {
+    var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Jade Star 8")))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<meta property=\"og:title\" content=\"Jade Star 8 (Mei Leaf)\"",
+      "<meta name=\"twitter:title\" content=\"Jade Star 8 (Mei Leaf)\"");
+  }
+
+  @Test
+  @Transactional
+  void teaView_socialTitlesExtractYearFromVariedSeasonDescriptions() throws Exception {
+    var doubleshot = mvc.perform(get("/teas/" + getTeaSlugByTitle("Doubleshot")))
+      .andExpect(status().isOk());
+    var simpleDreams = mvc.perform(get("/teas/" + getTeaSlugByTitle("Simple Dreams 2")))
+      .andExpect(status().isOk());
+
+    containsStrings(doubleshot,
+      "<meta property=\"og:title\" content=\"Doubleshot (Meetea, 2022)\"",
+      "<meta name=\"twitter:title\" content=\"Doubleshot (Meetea, 2022)\"");
+    containsStrings(simpleDreams,
+      "<meta property=\"og:title\" content=\"Simple Dreams 2 (Mei Leaf, 2021)\"",
+      "<meta name=\"twitter:title\" content=\"Simple Dreams 2 (Mei Leaf, 2021)\"");
+  }
+
+  @Test
+  @Transactional
+  void teaView_approximateSeasonAndBlankNameRenderMetadataFallbacks() throws Exception {
+    var tea = teaByTitle("Approximate Season Fixture");
+
+    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
+      .andExpect(status().isOk());
+    var description = "A tea used to verify metadata fallbacks for an approximate production season "
+      + "and a missing technical name.";
+
+    containsStrings(actions,
+      "<meta property=\"og:title\" content=\"Approximate Season Fixture (Mei Leaf)\"",
+      "<meta name=\"twitter:title\" content=\"Approximate Season Fixture (Mei Leaf)\"",
+      "<meta property=\"og:description\" content=\"" + description + "\"",
+      "<meta name=\"twitter:description\" content=\"" + description + "\"");
+  }
+
+  @Test
+  @Transactional
+  void teaView_longSocialDescriptionIsAbbreviatedForBothProtocols() throws Exception {
+    var tea = teaByTitle("Long Description Fixture");
+    var longDescription = "Long description ".repeat(25);
+
+    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
+      .andExpect(status().isOk());
+    var abbreviated = longDescription.substring(0, 297) + "...";
+
+    containsStrings(actions,
+      "<meta property=\"og:description\" content=\"" + abbreviated + "\"",
+      "<meta name=\"twitter:description\" content=\"" + abbreviated + "\"");
+  }
+
+  @Test
+  @Transactional
   void teaView_rendersTags() throws Exception {
     var actions = mvc.perform(get("/teas/" + getTeaSlugByTitle("Doubleshot")))
       .andExpect(status().isOk());

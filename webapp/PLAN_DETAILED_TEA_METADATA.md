@@ -145,7 +145,7 @@ Use `${socialMetadata.title}` for both title tags. Guard both description tags w
 
 Completed: `TeaQueryController` now supplies `TeaSocialMetadata`, and the template renders identical Open Graph and Twitter title/description values while preserving canonical URL, image, card type, and browser title behavior. Focused `TeaViewIT` passes all 12 tests with no failures, errors, or skips.
 
-## 7. Extend integration coverage
+## 7. Extend integration coverage [Completed]
 
 Update `integration/TeaViewIT` to assert the complete metadata values for representative teas:
 
@@ -160,6 +160,8 @@ Update `integration/TeaViewIT` to assert the complete metadata values for repres
 - Existing canonical URL, image URL, hostile-host rejection, and card-type assertions remain green.
 
 Use HTML-aware assertions or exact escaped fragments where practical so punctuation and conditional separators are covered.
+
+Completed: expanded `TeaViewIT` to cover duplicate title years, absent seasons, approximate seasons, varied exact-date season descriptions, blank technical names, 300-character description abbreviation, and identical Open Graph/Twitter values. The focused integration suite passes all 17 tests with no failures, errors, or skips.
 
 ## 8. Validate the complete change
 
