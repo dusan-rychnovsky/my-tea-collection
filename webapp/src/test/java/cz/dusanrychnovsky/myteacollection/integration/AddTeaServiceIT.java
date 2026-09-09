@@ -9,6 +9,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
@@ -67,7 +69,11 @@ class AddTeaServiceIT {
       "Name",
       "Description",
       "https://example.com/tea",
-      new TeaScope(season, "Da Ye Zhong", "Yunnan", "1500m"),
+      new TeaScope(
+        season == null ? Optional.empty() : Optional.of(new Season(season)),
+        "Da Ye Zhong",
+        "Yunnan",
+        "1500m"),
       price,
       "95°C",
       true,

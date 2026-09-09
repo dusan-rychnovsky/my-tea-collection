@@ -36,7 +36,7 @@ public record TeaSlug(String value) {
     }
 
     var title = tea.getTitle();
-    var season = tea.getScope().season();
+    var season = tea.getScope().season().map(Season::value).orElse(null);
     var normalizedVendor = normalize(vendorName, "vendor name");
     var normalizedTitle = normalize(title, "title");
     var titleYears = yearsIn(title);

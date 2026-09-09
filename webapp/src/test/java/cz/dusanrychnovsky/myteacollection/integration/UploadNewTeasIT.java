@@ -80,6 +80,7 @@ class UploadNewTeasIT {
     assertEquals(UploadNewTeas.USER_EMAIL, fifth.getUser().getEmail());
     assertEquals("Jade Star 8", fifth.getTitle());
     assertEquals("mei-leaf-jade-star-8", fifth.getSlug());
+    assertNull(fifth.getScope().getSeason());
   }
 
   @Test
