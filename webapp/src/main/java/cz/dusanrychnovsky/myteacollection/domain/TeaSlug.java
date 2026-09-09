@@ -1,9 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.domain;
 
 import java.text.Normalizer;
-import java.util.LinkedHashSet;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public record TeaSlug(String value) {
@@ -11,8 +9,6 @@ public record TeaSlug(String value) {
   private static final int MAX_LENGTH = 255;
   private static final Pattern VALID_SLUG = Pattern.compile("[a-z0-9]+(?:-[a-z0-9]+)+");
   private static final Pattern ALL_NUMERIC = Pattern.compile("[0-9]+(?:-[0-9]+)+");
-  private static final Pattern YEAR = Pattern.compile(
-    "(?<![A-Za-z0-9])((?:19|20)[0-9]{2})(?![A-Za-z0-9])");
 
   public TeaSlug {
     if (value == null || !VALID_SLUG.matcher(value).matches()) {
@@ -36,24 +32,13 @@ public record TeaSlug(String value) {
     }
 
     var title = tea.getTitle();
-    var season = tea.getScope().season().map(Season::value).orElse(null);
     var normalizedVendor = normalize(vendorName, "vendor name");
     var normalizedTitle = normalize(title, "title");
-    var titleYears = yearsIn(title);
-    var seasonYears = yearsIn(season);
-
-    if (titleYears.size() == 1 && seasonYears.size() == 1) {
-      var titleYear = titleYears.iterator().next();
-      var seasonYear = seasonYears.iterator().next();
-      if (!titleYear.equals(seasonYear)) {
-        throw new IllegalArgumentException(
-          "Tea title year " + titleYear + " does not match season year " + seasonYear + ".");
-      }
-    }
 
     var value = normalizedVendor + "-" + normalizedTitle;
-    if (titleYears.isEmpty() && seasonYears.size() == 1) {
-      value += "-" + seasonYears.iterator().next();
+    var suffixYear = TeaTitleYear.suffixFor(title, tea.getScope().season());
+    if (suffixYear.isPresent()) {
+      value += "-" + suffixYear.get();
     }
     return new TeaSlug(value);
   }
@@ -98,15 +83,4 @@ public record TeaSlug(String value) {
     return normalized.toString();
   }
 
-  private static Set<String> yearsIn(String text) {
-    var years = new LinkedHashSet<String>();
-    if (text == null) {
-      return years;
-    }
-    var matcher = YEAR.matcher(text);
-    while (matcher.find()) {
-      years.add(matcher.group(1));
-    }
-    return years;
-  }
 }
