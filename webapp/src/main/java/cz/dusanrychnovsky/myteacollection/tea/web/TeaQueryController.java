@@ -14,6 +14,7 @@ import cz.dusanrychnovsky.myteacollection.tastingnotes.query.RatingSummary;
 import cz.dusanrychnovsky.myteacollection.tastingnotes.query.TastingNoteItem;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaDetail;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaQueryRepository;
+import cz.dusanrychnovsky.myteacollection.tea.query.TeaSocialMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -148,6 +149,7 @@ public class TeaQueryController {
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     var notes = tastingNoteRepository.findByTeaIdNewestFirst(tea.id());
     model.addAttribute("tea", tea);
+    model.addAttribute("socialMetadata", TeaSocialMetadata.from(tea));
     model.addAttribute("tastingNotes", notes.stream().map(TastingNoteItem::from).toList());
     model.addAttribute("ratingSummary", RatingSummary.of(notes));
     model.addAttribute("canonicalUrl", publicBaseUrl.teaUrl(tea.slug()));
