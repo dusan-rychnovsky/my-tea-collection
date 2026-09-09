@@ -17,7 +17,7 @@ Open Graph and Twitter cards use the same values.
 
 A tea may have no season. A present season contains meaningful nonblank descriptive text and may contain zero or one distinct exact year. Exact years retain the current `TeaSlug` semantics: standalone values from 1900 through 2099. Approximate values such as `Early 2000s`, `1990s`, and `1980s` are valid seasons with no exact year. Attached values such as `Spring2022` and `2022abc` also do not count as exact years.
 
-## 1. Correct the existing blend data
+## 1. Correct the existing blend data [Completed]
 
 Before enforcing the new invariant, change Jade Star 8's season from `Spring 2013, 2014 and 2018` to `N/A` in both data sources:
 
@@ -25,6 +25,8 @@ Before enforcing the new invariant, change Jade Star 8's season from `Spring 201
 - `src/test/resources/teas/5/info.json`
 
 Keep its technical name unchanged because it remains useful descriptive information about the blend components. Verify the production tea-data audit then reports no season with more than one distinct exact year.
+
+Completed: both records now use `N/A`, the technical name is unchanged, and all 144 production tea JSON files parse with zero seasons containing multiple distinct exact years.
 
 ## 2. Introduce the `Season` domain value object
 
