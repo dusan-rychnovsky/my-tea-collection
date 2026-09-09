@@ -89,7 +89,7 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void count_returnsTotalNumberOfTeas() {
-    assertEquals(5, teaQueryRepository.count(FilterCriteria.EMPTY, SearchCriteria.EMPTY));
+    assertEquals(7, teaQueryRepository.count(FilterCriteria.EMPTY, SearchCriteria.EMPTY));
   }
 
   @Test
@@ -119,7 +119,7 @@ class TeaQueryRepositoryIT {
   void getPage_filterByInStockAvailability_returnsInStockTeas() {
     var page = teaQueryRepository.getPage(new FilterCriteria(0, 0, 1), SearchCriteria.EMPTY, 0, 9);
 
-    assertEquals(5, page.size());
+    assertEquals(7, page.size());
   }
 
   @Test

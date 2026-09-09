@@ -78,7 +78,7 @@ class TeaCollectionIT {
       "Dark Tea, Sheng Puerh"
     );
 
-    verifyPagingMenu(actions, 3);
+    verifyPagingMenu(actions, 4);
   }
 
   @Test
@@ -107,7 +107,7 @@ class TeaCollectionIT {
       "White Tea"
     );
 
-    verifyPagingMenu(actions, 3);
+    verifyPagingMenu(actions, 4);
   }
 
   @Test()
@@ -244,7 +244,7 @@ class TeaCollectionIT {
       "Jade Star 8"
     );
 
-    verifyPagingMenu(actions, 2);
+    verifyPagingMenu(actions, 3);
   }
 
   @Test

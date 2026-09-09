@@ -47,7 +47,7 @@ class UploadNewTeasIT {
     createUser.run(UploadNewTeas.USER_EMAIL, "pwd", "Dušan", "Rychnovský");
     uploadNewTeas.run(toFile("teas"));
     var teas = teaRepository.findAll();
-    assertEquals(5, teas.size());
+    assertEquals(7, teas.size());
     var first = teas.get(0);
     assertEquals(UploadNewTeas.USER_EMAIL, first.getUser().getEmail());
     assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.getName());
@@ -81,6 +81,14 @@ class UploadNewTeasIT {
     assertEquals("Jade Star 8", fifth.getTitle());
     assertEquals("mei-leaf-jade-star-8", fifth.getSlug());
     assertNull(fifth.getScope().getSeason());
+    var sixth = teas.get(5);
+    assertEquals("Approximate Season Fixture", sixth.getTitle());
+    assertEquals("mei-leaf-approximate-season-fixture", sixth.getSlug());
+    assertEquals("Early 2000s", sixth.getScope().getSeason());
+    var seventh = teas.get(6);
+    assertEquals("Long Description Fixture", seventh.getTitle());
+    assertEquals("mei-leaf-long-description-fixture", seventh.getSlug());
+    assertNull(seventh.getScope().getSeason());
   }
 
   @Test
