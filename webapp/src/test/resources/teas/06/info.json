@@ -1,0 +1,15 @@
+{
+  "title": "Approximate Season Fixture",
+  "name": "",
+  "description": "A tea used to verify metadata fallbacks for an approximate production season and a missing technical name.",
+  "types": [ "Dark Tea" ],
+  "vendor": "Mei Leaf",
+  "url": "https://example.com/approximate-season-fixture",
+  "origin": "Yunnan, China",
+  "cultivar": "Da Ye Zhong",
+  "season": "Early 2000s",
+  "elevation": "1000m",
+  "price": "N/A",
+  "brewingInstructions": "95°C, 5g/100ml",
+  "inStock": true
+}
