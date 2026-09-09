@@ -96,7 +96,7 @@ Update `TeaSlugTests` to use `Season` and retain slug-specific regression cases 
 
 Completed: added `TeaTitleYear`, moved title/season year comparison and suffix selection out of `TeaSlug`, and removed `TeaSlug`'s duplicate regex and extraction method. Focused `TeaTitleYearTests` and `TeaSlugTests` pass all 19 tests with no failures, errors, or skips.
 
-## 5. Add a social metadata read model
+## 5. Add a social metadata read model [Completed]
 
 Add a small read-side type such as `tea/query/TeaSocialMetadata` with `title` and `description` fields and a factory from `TeaDetail`.
 
@@ -123,6 +123,8 @@ Add unit tests covering:
 - Absent and approximate seasons.
 - Present, blank, and null technical names.
 - Combined-description punctuation.
+
+Completed: added `TeaSocialMetadata` as a pure read model that formats the social title and full description while delegating year suffix decisions to `TeaTitleYear`. Its 6 focused unit tests cover exact, duplicate, absent, approximate, and invalid seasons plus technical-name description fallbacks, with no failures, errors, or skips.
 
 ## 6. Wire metadata into the tea page
 
