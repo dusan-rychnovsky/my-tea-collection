@@ -8,6 +8,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaScopeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
 import cz.dusanrychnovsky.myteacollection.domain.TeaSlug;
 
@@ -42,7 +43,11 @@ public final class TeaMapper {
       tea.getName(),
       tea.getDescription(),
       tea.getUrl(),
-      new TeaScopeEntity(scope.season(), scope.cultivar(), scope.origin(), scope.elevation()),
+      new TeaScopeEntity(
+        scope.season().map(Season::value).orElse(null),
+        scope.cultivar(),
+        scope.origin(),
+        scope.elevation()),
       tea.getPrice() == null ? null : tea.getPrice().amountPerGram(),
       tea.getBrewingInstructions(),
       tea.isInStock(),

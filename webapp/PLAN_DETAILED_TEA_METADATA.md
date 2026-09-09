@@ -54,7 +54,7 @@ Add `SeasonTests` covering:
 
 Completed: added `Season` and its focused unit tests. `SeasonTests` passes all 5 tests with no failures, errors, or skips.
 
-## 3. Promote season inside the write-side domain
+## 3. Promote season inside the write-side domain [Completed]
 
 Change `domain/TeaScope` from a `String season` component to an `Optional<Season> season` component. Require the `Optional` itself to be non-null. Keep `tea/query/TeaScope` unchanged because it is a display-oriented read model and should continue exposing nullable persisted text.
 
@@ -68,6 +68,8 @@ Update write-side construction and mapping boundaries:
 No database or DDL shape change is required: `TeaScopeEntity.season` remains a nullable string column containing meaningful season text. A rebuilt import stores SQL `NULL`, rather than `N/A`, for an absent season.
 
 The existing adapter behavior handles validation failures: `TeaController` catches `IllegalArgumentException` and re-renders the form error, while `UploadNewTeas` logs the rejected tea and aborts the import. Add focused assertions only where existing tests do not already prove these paths.
+
+Completed: `domain/TeaScope` now carries a non-null `Optional<Season>`; ingest maps `N/A` to absence, the add form maps null/blank input to absence, and persistence stores absence as SQL `NULL`. Focused unit and integration suites pass with no failures, errors, or skips.
 
 ## 4. Extract the shared tea title/year policy
 

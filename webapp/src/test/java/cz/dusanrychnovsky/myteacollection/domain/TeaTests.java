@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.domain;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -11,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TeaTests {
 
-  private static final TeaScope SCOPE = new TeaScope("Spring 2024", "Da Ye Zhong", "Yunnan", "1500m");
+  private static final TeaScope SCOPE = new TeaScope(
+    Optional.of(new Season("Spring 2024")), "Da Ye Zhong", "Yunnan", "1500m");
   private static final List<byte[]> IMAGES = List.of(new byte[]{1, 2});
   private static final Long VENDOR_ID = 2L;
   private static final Set<Long> TYPE_IDS = Set.of(25L);

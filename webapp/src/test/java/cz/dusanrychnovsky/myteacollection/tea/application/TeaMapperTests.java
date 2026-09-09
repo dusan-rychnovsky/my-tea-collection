@@ -6,12 +6,14 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import cz.dusanrychnovsky.myteacollection.domain.Tea;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.domain.TeaSlug;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Comparator.comparingInt;
@@ -35,7 +37,7 @@ class TeaMapperTests {
       "Lancang Gushu Sheng PuErh",
       "Ultra-fruity and fragrant PuErh.",
       "https://meileaf.com/tea/luminary-misfit/",
-      new TeaScope("April 2022", "Da Ye Zhong", "Lancang", "1740-1970m"),
+      new TeaScope(Optional.of(new Season("April 2022")), "Da Ye Zhong", "Lancang", "1740-1970m"),
       price,
       "95°C, 5g/100ml, 25+5s",
       true,
@@ -72,6 +74,27 @@ class TeaMapperTests {
   @Test
   void toEntity_nullPrice_mapsToNullEntityPrice() {
     assertNull(TeaMapper.toEntity(tea(null, List.of(new byte[]{1})), SLUG, USER, VENDOR, TYPES, TAGS).getPrice());
+  }
+
+  @Test
+  void toEntity_absentSeason_mapsToNullEntitySeason() {
+    var tea = new Tea(
+      "Luminary Misfit",
+      "Lancang Gushu Sheng PuErh",
+      "Ultra-fruity and fragrant PuErh.",
+      "https://meileaf.com/tea/luminary-misfit/",
+      new TeaScope(Optional.empty(), "Da Ye Zhong", "Lancang", "1740-1970m"),
+      null,
+      "95°C, 5g/100ml, 25+5s",
+      true,
+      1L,
+      Set.of(25L),
+      Set.of(1L),
+      List.of(new byte[]{1}));
+
+    var entity = TeaMapper.toEntity(tea, SLUG, USER, VENDOR, TYPES, TAGS);
+
+    assertNull(entity.getScope().getSeason());
   }
 
   @Test

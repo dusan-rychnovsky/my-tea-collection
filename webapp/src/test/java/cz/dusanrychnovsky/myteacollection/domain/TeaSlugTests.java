@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.domain;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,10 +65,8 @@ class TeaSlugTests {
   }
 
   @Test
-  void from_multipleDistinctSeasonYears_doesNotAppendSuffix() {
-    assertEquals(
-      new TeaSlug("vendor-tea"),
-      TeaSlug.from(tea("Tea", "2020-2022"), "Vendor"));
+  void from_multipleDistinctSeasonYears_rejectsSeasonBeforeSlugGeneration() {
+    assertThrows(IllegalArgumentException.class, () -> tea("Tea", "2020-2022"));
   }
 
   @Test
@@ -122,7 +121,11 @@ class TeaSlugTests {
       "",
       "Description",
       "https://example.com/tea",
-      new TeaScope(season, "Cultivar", "Origin", "1000m"),
+      new TeaScope(
+        season == null ? Optional.empty() : Optional.of(new Season(season)),
+        "Cultivar",
+        "Origin",
+        "1000m"),
       null,
       "95°C",
       true,
