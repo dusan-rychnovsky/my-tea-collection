@@ -199,7 +199,7 @@ class TeaViewIT {
 
   @Test
   @Transactional
-  void teaView_rendersOpenGraphMetaTags() throws Exception {
+  void teaView_rendersSocialMetaTags() throws Exception {
     var tea = teaRepository.findAll().stream()
       .filter(t -> t.getTitle().equals("Luminary Misfit"))
       .findFirst().orElseThrow();
@@ -208,16 +208,22 @@ class TeaViewIT {
     var actions = mvc.perform(get("/teas/" + tea.getSlug())
         .header("Host", "attacker.example"))
       .andExpect(status().isOk());
+    var socialTitle = "Luminary Misfit (Mei Leaf, 2022)";
+    var socialDescription = "Lancang Gushu Sheng PuErh Spring 2022. "
+      + "Ultra-fruity and fragrant PuErh made from ancient trees growing in Lancang. "
+      + "Toffee apples, pear compote, cardamom buns, canned pineapple and banana.";
 
     containsStrings(actions,
       "<link rel=\"canonical\" href=\"http://localhost/teas/" + tea.getSlug() + "\"",
       "<meta property=\"og:type\" content=\"website\"",
       "<meta property=\"og:site_name\" content=\"My Tea Collection\"",
-      "<meta property=\"og:title\" content=\"Luminary Misfit\"",
+      "<meta property=\"og:title\" content=\"" + socialTitle + "\"",
       "<meta property=\"og:url\" content=\"http://localhost/teas/" + tea.getSlug() + "\"",
-      "<meta property=\"og:description\" content=\"Ultra-fruity and fragrant PuErh",
+      "<meta property=\"og:description\" content=\"" + socialDescription + "\"",
       "<meta property=\"og:image\" content=\"http://localhost/images/" + mainImageId + "\"",
       "<meta name=\"twitter:card\" content=\"summary_large_image\"",
+      "<meta name=\"twitter:title\" content=\"" + socialTitle + "\"",
+      "<meta name=\"twitter:description\" content=\"" + socialDescription + "\"",
       "<title>Luminary Misfit — My tea collection</title>");
     doesNotContainStrings(actions, "attacker.example");
   }
