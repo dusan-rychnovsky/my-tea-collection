@@ -28,7 +28,7 @@ Keep its technical name unchanged because it remains useful descriptive informat
 
 Completed: both records now use `N/A`, the technical name is unchanged, and all 144 production tea JSON files parse with zero seasons containing multiple distinct exact years.
 
-## 2. Introduce the `Season` domain value object
+## 2. Introduce the `Season` domain value object [Completed]
 
 Add `src/main/java/cz/dusanrychnovsky/myteacollection/domain/Season.java` as a record that preserves meaningful season text for display and persistence.
 
@@ -51,6 +51,8 @@ Add `SeasonTests` covering:
 - Rejection of two or more distinct exact years.
 - `Spring and Autumn 2022` as one season value with one exact year.
 - `Early 2000s` as a present valid season with no exact year.
+
+Completed: added `Season` and its focused unit tests. `SeasonTests` passes all 5 tests with no failures, errors, or skips.
 
 ## 3. Promote season inside the write-side domain
 
