@@ -5,10 +5,12 @@ import cz.dusanrychnovsky.myteacollection.persistence.TagEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.getOrThrow;
 import static cz.dusanrychnovsky.myteacollection.util.MapUtils.mapAll;
@@ -44,7 +46,7 @@ public final class TeaRecordMapper {
       tea.getName(),
       tea.getDescription(),
       tea.getUrl(),
-      new TeaScope(tea.getSeason(), tea.getCultivar(), tea.getOrigin(), tea.getElevation()),
+      new TeaScope(season(tea.getSeason()), tea.getCultivar(), tea.getOrigin(), tea.getElevation()),
       price,
       tea.getBrewingInstructions(),
       tea.isInStock(),
@@ -53,5 +55,9 @@ public final class TeaRecordMapper {
       typeIds,
       tagIds,
       images);
+  }
+
+  private static Optional<Season> season(String value) {
+    return "N/A".equals(value) ? Optional.empty() : Optional.of(new Season(value));
   }
 }

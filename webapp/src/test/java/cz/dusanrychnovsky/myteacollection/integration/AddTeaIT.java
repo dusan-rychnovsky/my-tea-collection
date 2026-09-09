@@ -24,6 +24,7 @@ import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static cz.dusanrychnovsky.myteacollection.tea.ingest.TeaRecord.loadFrom;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -222,6 +223,41 @@ class AddTeaIT {
     assertEquals(0, teaRepository.count());
   }
 
+  @Test
+  @Transactional
+  void addTea_blankSeason_persistsNullSeason() throws Exception {
+    var tea = loadFrom(toFile("teas/01"));
+    var image = new MockMultipartFile(
+      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
+
+    mvc.perform(validSubmission(tea, "", image)
+      .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll())))
+      .andExpect(status().isFound())
+      .andExpect(redirectedUrl("/teas/meetea-doubleshot"));
+
+    var savedTea = teaRepository.findAll().stream().findFirst().orElseThrow();
+    assertEquals("Doubleshot", savedTea.getTitle());
+    assertNull(savedTea.getScope().getSeason());
+  }
+
+  @Test
+  @Transactional
+  void addTea_multipleSeasonYears_showsFormError() throws Exception {
+    var tea = loadFrom(toFile("teas/01"));
+    var image = new MockMultipartFile(
+      "images", "01.jpg", "image/jpeg", Files.readAllBytes(toFile("teas/01/01.jpg").toPath()));
+
+    var result = mvc.perform(validSubmission(tea, "Spring 2021 and 2022", image)
+      .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
+      .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll())))
+      .andExpect(status().isOk())
+      .andExpect(view().name("tea-add"));
+
+    ITUtils.containsStrings(result, "at most one exact year", "2021", "2022");
+    assertEquals(0, teaRepository.count());
+  }
+
   private String[] toTeaTypeIds(Set<String> teaTypeNames, List<TeaTypeEntity> entities) {
     return entities.stream()
       .filter(type -> teaTypeNames.contains(type.getName()))
@@ -230,6 +266,11 @@ class AddTeaIT {
   }
 
   private MockMultipartHttpServletRequestBuilder validSubmission(TeaRecord tea, MockMultipartFile... images) {
+    return validSubmission(tea, tea.getSeason(), images);
+  }
+
+  private MockMultipartHttpServletRequestBuilder validSubmission(
+    TeaRecord tea, String season, MockMultipartFile... images) {
     var request = multipart("/teas/add");
     for (var image : images) {
       request.file(image);
@@ -242,7 +283,9 @@ class AddTeaIT {
     request.param("description", tea.getDescription());
     request.param("origin", tea.getOrigin());
     request.param("cultivar", tea.getCultivar());
-    request.param("season", tea.getSeason());
+    if (season != null) {
+      request.param("season", season);
+    }
     request.param("elevation", tea.getElevation());
     request.param("price", tea.getPrice());
     request.param("brewingInstructions", tea.getBrewingInstructions());

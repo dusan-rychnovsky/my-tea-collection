@@ -8,6 +8,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import cz.dusanrychnovsky.myteacollection.domain.TeaScope;
 import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
@@ -102,7 +104,7 @@ public class TeaController {
         name,
         description,
         url,
-        new TeaScope(season, cultivar, origin, elevation),
+        new TeaScope(season(season), cultivar, origin, elevation),
         price != null ? new Price(price) : null,
         brewingInstructions,
         true,
@@ -120,6 +122,12 @@ public class TeaController {
       model.addAttribute("error", ex.getMessage());
       return "tea-add";
     }
+  }
+
+  private static Optional<Season> season(String value) {
+    return value == null || value.isBlank()
+      ? Optional.empty()
+      : Optional.of(new Season(value));
   }
 
   private List<byte[]> compressImages(List<MultipartFile> images) throws IOException {

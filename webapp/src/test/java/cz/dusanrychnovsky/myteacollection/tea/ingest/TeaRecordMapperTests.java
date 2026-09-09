@@ -5,15 +5,18 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaTypeEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.VendorEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.domain.Price;
+import cz.dusanrychnovsky.myteacollection.domain.Season;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TeaRecordMapperTests {
 
@@ -70,7 +73,7 @@ class TeaRecordMapperTests {
     assertEquals(TEA.getName(), command.name());
     assertEquals(TEA.getDescription(), command.description());
     assertEquals(TEA.getUrl(), command.url());
-    assertEquals(TEA.getSeason(), command.scope().season());
+    assertEquals(Optional.of(new Season(TEA.getSeason())), command.scope().season());
     assertEquals(TEA.getCultivar(), command.scope().cultivar());
     assertEquals(TEA.getOrigin(), command.scope().origin());
     assertEquals(TEA.getElevation(), command.scope().elevation());
@@ -92,6 +95,25 @@ class TeaRecordMapperTests {
   }
 
   @Test
+  void toCommand_notAvailableSeason_mapsToEmptySeason() {
+    var tea = withSeason(TEA, "N/A");
+
+    var command = TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS);
+
+    assertTrue(command.scope().season().isEmpty());
+  }
+
+  @Test
+  void toCommand_approximateSeason_preservesSeasonWithoutExactYear() {
+    var tea = withSeason(TEA, "Early 2000s");
+
+    var command = TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS);
+
+    assertEquals(Optional.of(new Season("Early 2000s")), command.scope().season());
+    assertTrue(command.scope().season().orElseThrow().year().isEmpty());
+  }
+
+  @Test
   void toCommand_invalidVendor_throws() {
     var tea = withVendor(TEA, "Meileaf");
     assertThrows(IllegalArgumentException.class,
@@ -110,6 +132,26 @@ class TeaRecordMapperTests {
     var tea = withTags(TEA, Set.of("meetea-2025-jan", "unknown-tag"));
     assertThrows(IllegalArgumentException.class,
       () -> TeaRecordMapper.toCommand(USER_ID, tea, IMAGES, VENDORS, TEA_TYPES, TAGS));
+  }
+
+  private static TeaRecord withSeason(TeaRecord tea, String season) {
+    return new TeaRecord(
+      tea.getTitle(),
+      tea.getName(),
+      tea.getDescription(),
+      tea.getTypes(),
+      tea.getVendor(),
+      tea.getUrl(),
+      tea.getOrigin(),
+      tea.getCultivar(),
+      season,
+      tea.getElevation(),
+      tea.getPrice(),
+      tea.getBrewingInstructions(),
+      tea.isInStock(),
+      tea.getTags()
+    )
+      .setId(tea.getId());
   }
 
   private static TeaRecord withTags(TeaRecord tea, Set<String> tags) {
