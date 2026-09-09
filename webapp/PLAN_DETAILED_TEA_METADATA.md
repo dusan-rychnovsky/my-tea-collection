@@ -126,7 +126,7 @@ Add unit tests covering:
 
 Completed: added `TeaSocialMetadata` as a pure read model that formats the social title and full description while delegating year suffix decisions to `TeaTitleYear`. Its 6 focused unit tests cover exact, duplicate, absent, approximate, and invalid seasons plus technical-name description fallbacks, with no failures, errors, or skips.
 
-## 6. Wire metadata into the tea page
+## 6. Wire metadata into the tea page [Completed]
 
 In `TeaQueryController.viewTeaBySlug`, create `TeaSocialMetadata` from the loaded `TeaDetail` and add it to the model.
 
@@ -142,6 +142,8 @@ Keep the existing `og:url`, `og:image`, `twitter:card`, canonical URL, trusted `
 Emit the description tags only when the computed description is nonblank. Explicit Twitter title and description tags avoid relying on Open Graph fallback behavior.
 
 Use `${socialMetadata.title}` for both title tags. Guard both description tags with `!#strings.isEmpty(socialMetadata.description)` and use `${#strings.abbreviate(socialMetadata.description, 300)}` for both values; do not retain the old guard or abbreviation against `tea.description`.
+
+Completed: `TeaQueryController` now supplies `TeaSocialMetadata`, and the template renders identical Open Graph and Twitter title/description values while preserving canonical URL, image, card type, and browser title behavior. Focused `TeaViewIT` passes all 12 tests with no failures, errors, or skips.
 
 ## 7. Extend integration coverage
 
