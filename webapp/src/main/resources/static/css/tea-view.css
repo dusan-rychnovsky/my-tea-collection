@@ -8,6 +8,12 @@ padding: 0px 15px 3rem;
 
 #tea-images {
   width: 470px;
+  max-width: 100%;
+}
+
+#tea-images img {
+  max-width: 100%;
+  height: auto;
 }
 
 #tea-details p strong {
