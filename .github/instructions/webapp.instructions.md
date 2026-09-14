@@ -22,7 +22,7 @@ Integration tests run against in-memory **H2**, so no Docker/database is needed 
 
 **Always `clean` before trusting a full run** (`./mvnw clean verify`) — see Gotchas.
 
-Verified green baseline (2026-09-08, `./mvnw clean verify`): **133 unit tests (19 classes) + 65 integration tests (11 classes), 0 failures/errors/skipped.**
+Verified green baseline (2026-09-14, `./mvnw clean verify`): **159 unit tests (24 classes) + 75 integration tests (12 classes), 0 failures/errors/skipped.**
 
 ## Schema evolution and production rebuilds
 
@@ -65,7 +65,10 @@ deliberately mixes **layer-named** packages (`domain`, `persistence`, `security`
 oversight. `tastingnotes` has no `web`/`domain`/`persistence` of its own: notes render inside the tea
 detail page (`tea/web/TeaQueryController`) and their model lives in the shared `domain`/`persistence`.
 
-- (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`, `SecurityConfig`.
+- (root) `MyTeaCollectionApplication` — just `@SpringBootApplication` + `main`. Also `AuthController`,
+  `SecurityConfig`, and the cross-cutting `RequestLoggingFilter` (one method/URL/status/duration completion
+  log for every HTTP request; 5xx completions are ERROR, while embedded Tomcat owns the single stack-trace
+  log for exceptions that escape request processing).
 - `domain/` — write-side domain model (flat, shared): the `Tea` and `TastingNote` aggregates (classes — identity, not value, semantics; the seam where write invariants live; `TastingNote` holds only rating/date/body, its tea+owner supplied as context by `ReplaceTeaTastingNotes`) plus the `Price`, `Season`, `TeaScope`, `Rating`, and `TeaSlug` value objects (records; `Rating` owns the 0–10 half-star ↔ 0.0–5.0 conversion; `Season` preserves meaningful season text and permits at most one distinct exact 1900–2099 year; `TeaSlug` owns deterministic friendly-URL generation and validation) and the `TeaTitleYear` policy shared by title-derived labels.
 - `persistence/` — JPA entities (flat, shared): `TeaEntity` (including its non-null, globally unique friendly-URL slug), `TeaImageEntity`, `TeaImageDataEntity`, `TagEntity`, `TeaTypeEntity`, `VendorEntity`, embeddable `TeaScopeEntity`, `TastingNoteEntity` (table `TastingNotes`, `body` TEXT, `@ManyToOne` tea+user, deliberately not mapped as a collection on `TeaEntity`), `persistence/users/UserEntity` + Spring Data repositories (`TeaRepository` supports slug lookup/collision checks; `TastingNoteRepository` fetches a tea's notes newest-first with a `join fetch` on the owner).
 - `tea/` — the tea feature's behavior:
@@ -91,6 +94,9 @@ detail page (`tea/web/TeaQueryController`) and their model lives in the shared `
 ## Conventions
 
 - Idiomatic Spring / Java. Constructor injection. Match the existing **2-space indentation**.
+- Console logs use Spring Boot's human-readable text format at INFO by default. Opt into DEBUG with the
+  standard `logging.level.*` properties / `LOGGING_LEVEL_*` environment variables; do not enable SQL DEBUG
+  globally.
 - `app.public-base-url` is required and must be supplied through `APP_PUBLIC_BASE_URL` in production; integration tests set it to `http://localhost`. Canonical and Open Graph URLs must use `PublicBaseUrl`, never request host or forwarded headers.
 - **Naming.** Infrastructure/adapter classes carry a role suffix — `…Controller`, `…Repository`, `…Entity`, `…Mapper`. Application **use-case** classes are named as bare imperative verb phrases — `AddTea` (handling `AddTeaCommand`), mirroring the CLI apps `CreateUser` / `UploadNewTeas` — **not** `AddTeaService`; a `…Service` suffix is reserved for framework-contract impls (e.g. `EmailBasedUserDetailsService` implements `UserDetailsService`). Value objects / read models / DTOs use plain domain names (`Price`, `TeaDetail`, `AddTeaCommand`).
 - Test naming drives the runner: `*Tests.java` → surefire (unit), `integration/*IT.java` → failsafe (integration). Keep new tests to this pattern so they run in the right phase.
