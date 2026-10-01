@@ -47,10 +47,10 @@
         </div>
       </div>
       <div id="tea-images" class="float-end">
-        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="img-thumbnail mb-2" width="470" height="304" data-toggle="modal" data-target="#imgModal" />
-        <img th:each="imgId : ${tea.additionalImageIds}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${imgId})}" class="img-thumbnail mb-2" width="156" height="101" data-toggle="modal" data-target="#imgModal" />
+        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="img-thumbnail mb-2 tea-gallery-image" width="470" height="304" data-toggle="modal" data-target="#imgModal" />
+        <img th:each="imgId : ${tea.additionalImageIds}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${imgId})}" class="img-thumbnail mb-2 tea-gallery-image" width="156" height="101" data-toggle="modal" data-target="#imgModal" />
       </div>
-      <div class="modal fade fullscreen-modal" id="imgModal" tabindex="-1" aria-hidden="true">
+      <div class="modal fade fullscreen-modal" id="imgModal" tabindex="-1" role="dialog" aria-label="Tea image gallery" aria-modal="true" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -59,7 +59,14 @@
               </button>
             </div>
             <div class="modal-body">
-              <img id="modal-image" src="" alt="" class="img-fullsize" />
+              <button id="gallery-previous" type="button" class="gallery-navigation gallery-previous" aria-label="Previous image">
+                <span aria-hidden="true">&#10094;</span>
+              </button>
+              <img id="modal-image" src="" alt="" class="img-fullsize" draggable="false" />
+              <button id="gallery-next" type="button" class="gallery-navigation gallery-next" aria-label="Next image">
+                <span aria-hidden="true">&#10095;</span>
+              </button>
+              <div id="gallery-counter" class="gallery-counter" aria-live="polite"></div>
             </div>
           </div>
         </div>
@@ -173,16 +180,7 @@
     <script src="../js/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../js/bootstrap.min.js"></script>
-    <script>
-      $(function () {
-        $('#tea-images img').on('click', function () {
-          var $img = $(this);
-          $('#modal-image')
-            .attr('src', $img.attr('src'))
-            .attr('alt', $img.attr('alt'));
-        });
-      });
-    </script>
+    <script src="../js/tea-gallery.js"></script>
     <script data-goatcounter="https://dusanrychnovsky-cz.goatcounter.com/count"
       async
       src="//gc.zgo.at/count.js"
