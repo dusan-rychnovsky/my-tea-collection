@@ -11,5 +11,5 @@
   "elevation": "1700",
   "price": "3.7",
   "brewingInstructions": "85-90°C, 5g/500ml, 3-5m",
-  "inStock": true
+  "inStock": false
 }
