@@ -118,8 +118,8 @@ class TeaViewIT {
     containsStrings(actions,
       "<h2 class=\"tasting-notes-title\">Tasting notes</h2>",
       "<span class=\"tasting-notes-count\">4 tasting notes</span>",
-      "<div class=\"tasting-notes-average-score\">4.4</div>",
-      "<div class=\"tasting-notes-average-caption\">out of 5 · based on 4 tasting notes</div>",
+      "<div class=\"tasting-notes-average-score\">5.0</div>",
+      "<div class=\"tasting-notes-average-caption\">out of 5 · based on the notes of 1 taster</div>",
       // six-row distribution, newly including the 0★ row; 5★ and 4★ each hold two notes
       "<span class=\"dist-label\">5 <span class=\"dist-star\" aria-hidden=\"true\">★</span></span>",
       "<span class=\"dist-label\">0 <span class=\"dist-star\" aria-hidden=\"true\">★</span></span>",
@@ -138,6 +138,28 @@ class TeaViewIT {
     // the hard-coded mockup reviewers must be gone
     doesNotContainStrings(actions,
       "Ada K.", "Marek D.", "Lena V.", "Tomáš R.");
+  }
+
+  @Test
+  @Transactional
+  void teaView_averageUsesLatestRatingFromEachTaster() throws Exception {
+    var firstTaster = userRepository.findByEmailIgnoreCase(UploadNewTeas.USER_EMAIL).orElseThrow();
+    var secondTaster = userRepository.save(new UserEntity(
+      "second-taster@example.com", "pwd", "Ada", "Kovářová", null, null, null));
+    var tea = teaByTitle("Jade Star 8");
+    tastingNoteRepository.saveAll(List.of(
+      new TastingNoteEntity(tea, firstTaster, 4, LocalDate.of(2026, 1, 1), "First older."),
+      new TastingNoteEntity(tea, firstTaster, 10, LocalDate.of(2026, 2, 1), "First latest."),
+      new TastingNoteEntity(tea, secondTaster, 8, LocalDate.of(2026, 1, 15), "Second older."),
+      new TastingNoteEntity(tea, secondTaster, 6, LocalDate.of(2026, 2, 15), "Second latest.")
+    ));
+
+    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<div class=\"tasting-notes-average-score\">4.0</div>",
+      "<div class=\"tasting-notes-average-caption\">out of 5 · based on the notes of 2 tasters</div>");
   }
 
   @Test

@@ -1,6 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.tastingnotes.query;
 
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -10,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RatingSummaryTests {
 
@@ -19,6 +22,7 @@ class RatingSummaryTests {
     assertEquals(0, summary.count());
     assertFalse(summary.hasNotes());
     assertNull(summary.averageLabel());
+    assertEquals("0 tasters", summary.averageCountLabel());
     assertEquals("0 tasting notes", summary.countLabel());
     assertTrue(summary.distribution().isEmpty());
   }
@@ -36,9 +40,35 @@ class RatingSummaryTests {
   @Test
   void of_averageRoundsHalfUpToOneDecimal() {
     // 5.0, 4.5, 4.0, 4.0 -> 4.375 -> "4.4"
-    var summary = RatingSummary.of(List.of(note(10), note(9), note(8), note(8)));
+    var summary = RatingSummary.of(List.of(
+      note(1, 1, 10, LocalDate.of(2026, 1, 1)),
+      note(2, 2, 9, LocalDate.of(2026, 1, 1)),
+      note(3, 3, 8, LocalDate.of(2026, 1, 1)),
+      note(4, 4, 8, LocalDate.of(2026, 1, 1))));
     assertTrue(summary.hasNotes());
     assertEquals("4.4", summary.averageLabel());
+    assertEquals("4 tasters", summary.averageCountLabel());
+  }
+
+  @Test
+  void of_averageUsesLatestRatingFromEachTaster() {
+    var summary = RatingSummary.of(List.of(
+      note(1, 1, 4, LocalDate.of(2026, 1, 1)),
+      note(2, 1, 10, LocalDate.of(2026, 2, 1)),
+      note(3, 2, 8, LocalDate.of(2026, 1, 15))));
+
+    assertEquals("4.5", summary.averageLabel());
+    assertEquals("2 tasters", summary.averageCountLabel());
+  }
+
+  @Test
+  void of_averageUsesHigherIdForSameTasterAndDate() {
+    var summary = RatingSummary.of(List.of(
+      note(1, 1, 4, LocalDate.of(2026, 1, 1)),
+      note(2, 1, 10, LocalDate.of(2026, 1, 1))));
+
+    assertEquals("5.0", summary.averageLabel());
+    assertEquals("1 taster", summary.averageCountLabel());
   }
 
   @Test
@@ -85,6 +115,19 @@ class RatingSummaryTests {
   }
 
   private static TastingNoteEntity note(int halfStars) {
-    return new TastingNoteEntity(null, null, halfStars, LocalDate.of(2026, 1, 1), "body");
+    return note(halfStars, halfStars, halfStars, LocalDate.of(2026, 1, 1));
+  }
+
+  private static TastingNoteEntity note(
+    long noteId, long userId, int halfStars, LocalDate tastedOn) {
+
+    var user = mock(UserEntity.class);
+    when(user.getId()).thenReturn(userId);
+    var note = mock(TastingNoteEntity.class);
+    when(note.getId()).thenReturn(noteId);
+    when(note.getUser()).thenReturn(user);
+    when(note.getRatingHalfStars()).thenReturn(halfStars);
+    when(note.getTastedOn()).thenReturn(tastedOn);
+    return note;
   }
 }

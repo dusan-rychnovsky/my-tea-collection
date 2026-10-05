@@ -138,7 +138,7 @@
                 <span class="stars-fill"></span>
               </span>
               <div class="tasting-notes-average-caption"
-                   th:text="'out of 5 · based on ' + ${ratingSummary.countLabel}">out of 5 · based on 4 tasting notes</div>
+                   th:text="'out of 5 · based on the notes of ' + ${ratingSummary.averageCountLabel}">out of 5 · based on the notes of 1 taster</div>
             </div>
             <div class="tasting-notes-distribution">
               <div class="dist-row" th:each="row : ${ratingSummary.distribution}">
