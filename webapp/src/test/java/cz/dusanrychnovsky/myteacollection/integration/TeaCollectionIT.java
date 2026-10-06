@@ -263,6 +263,19 @@ class TeaCollectionIT {
     );
   }
 
+  @Test
+  @Transactional
+  void index_rendersSortControlWithNewestTeaSelectedByDefault() throws Exception {
+    var actions = mvc.perform(get("/index"))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<label for=\"select-tea-sort\">Sort by:</label>",
+      "<option value=\"newest\" selected>Newest first</option>",
+      "<option value=\"score\">Highest score first</option>"
+    );
+  }
+
   private void verifyHeader(ResultActions actions) throws Exception {
     containsStrings(actions,"<h1 class=\"jumbotron-heading\">My Tea Collection</h1>");
   }

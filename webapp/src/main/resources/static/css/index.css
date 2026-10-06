@@ -27,6 +27,47 @@
   font-weight: bold;
 }
 
+.tea-sort-section {
+  padding-bottom: 0.5rem;
+  background-color: #fff;
+}
+
+.tea-sort-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.tea-sort-control label {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+.tea-sort-control select {
+  width: 13rem;
+  appearance: auto;
+}
+
+@media (max-width: 575.98px) {
+  .tea-sort-section {
+    padding-top: 0.5rem;
+  }
+
+  .tea-sort-control {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-right: 1rem;
+    margin-left: 1rem;
+    text-align: left;
+  }
+
+  .tea-sort-control select {
+    width: 100%;
+  }
+}
+
 .tea-card h2 {
   font-size: 1rem;
 }
