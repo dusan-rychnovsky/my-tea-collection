@@ -29,6 +29,7 @@ public record TeaDetail(
   TeaScope scope,
   String priceLabel,
   String brewingInstructions,
+  Double averageRatingHalfStars,
   Long mainImageId,
   List<Long> additionalImageIds
 ) {
@@ -58,6 +59,7 @@ public record TeaDetail(
       scope(tea.getScope()),
       priceLabel(tea.getPrice()),
       tea.getBrewingInstructions(),
+      tea.getAverageRatingHalfStars(),
       imageIdsByIndex.stream().findFirst().orElse(null),
       imageIdsByIndex.stream().skip(1).toList()
     );

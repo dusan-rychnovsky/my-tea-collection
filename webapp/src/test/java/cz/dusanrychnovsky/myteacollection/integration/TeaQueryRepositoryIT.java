@@ -6,6 +6,7 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.tea.query.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.tea.query.SearchCriteria;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaQueryRepository;
+import cz.dusanrychnovsky.myteacollection.tea.query.TeaSort;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaSummary;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaTag;
 import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
@@ -55,34 +56,64 @@ class TeaQueryRepositoryIT {
 
   @Test
   @Transactional
-  void getPage_firstPage_projectsFieldsAndOrdersById() {
-    var page = teaQueryRepository.getPage(FilterCriteria.EMPTY, SearchCriteria.EMPTY, 0, 2);
+  void getPage_newest_projectsFieldsAndOrdersByDescendingId() {
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, SearchCriteria.EMPTY, TeaSort.NEWEST, 0, 9);
 
-    assertEquals(2, page.size());
+    assertEquals(7, page.size());
+    assertEquals(
+      List.of("Long Description Fixture", "Approximate Season Fixture"),
+      page.stream().limit(2).map(TeaSummary::title).toList()
+    );
 
-    var first = page.get(0);
-    assertEquals("meetea-doubleshot-2022", first.slug());
-    assertEquals("Doubleshot", first.title());
-    assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", first.name());
-    assertEquals("Meetea", first.vendorName());
-    assertEquals("Dark Tea, Shu Puerh", first.typeNames());
-    assertNotNull(first.description());
-    assertNotNull(first.tags());
-    assertEquals(mainImageIdOf("Doubleshot"), first.mainImageId());
-
-    assertEquals("mei-leaf-luminary-misfit-2022", page.get(1).slug());
-    assertEquals("Luminary Misfit", page.get(1).title());
-    assertEquals("Dark Tea, Sheng Puerh", page.get(1).typeNames());
+    var doubleshot = summaryByTitle(page, "Doubleshot");
+    assertEquals("meetea-doubleshot-2022", doubleshot.slug());
+    assertEquals("Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022", doubleshot.name());
+    assertEquals("Meetea", doubleshot.vendorName());
+    assertEquals("Dark Tea, Shu Puerh", doubleshot.typeNames());
+    assertNotNull(doubleshot.description());
+    assertNotNull(doubleshot.tags());
+    assertEquals(mainImageIdOf("Doubleshot"), doubleshot.mainImageId());
   }
 
   @Test
   @Transactional
-  void getPage_secondPage_returnsNextTeasInIdOrder() {
-    var page = teaQueryRepository.getPage(FilterCriteria.EMPTY, SearchCriteria.EMPTY, 1, 2);
+  void getPage_newestSecondPage_returnsNextTeasInDescendingIdOrder() {
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, SearchCriteria.EMPTY, TeaSort.NEWEST, 1, 2);
 
     assertEquals(
-      List.of("Simple Dreams 2", "Shou Mei 2017"),
+      List.of("Jade Star 8", "Shou Mei 2017"),
       page.stream().map(TeaSummary::title).toList()
+    );
+  }
+
+  @Test
+  @Transactional
+  void getPage_highestScore_ordersByMaterializedAverageAndPlacesUnratedTeasLast() {
+    var doubleshot = teaByTitle("Doubleshot");
+    var luminary = teaByTitle("Luminary Misfit");
+    var shouMei = teaByTitle("Shou Mei 2017");
+    doubleshot.setAverageRatingHalfStars(8.0);
+    luminary.setAverageRatingHalfStars(9.0);
+    shouMei.setAverageRatingHalfStars(8.0);
+    teaRepository.saveAllAndFlush(List.of(doubleshot, luminary, shouMei));
+
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, SearchCriteria.EMPTY, TeaSort.HIGHEST_SCORE, 0, 9);
+
+    assertEquals(
+      List.of("Luminary Misfit", "Shou Mei 2017", "Doubleshot"),
+      page.stream().limit(3).map(TeaSummary::title).toList()
+    );
+    assertEquals(
+      List.of(
+        "Long Description Fixture",
+        "Approximate Season Fixture",
+        "Jade Star 8",
+        "Simple Dreams 2"
+      ),
+      page.stream().skip(3).map(TeaSummary::title).toList()
     );
   }
 
@@ -95,7 +126,8 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void getPage_filterByType_returnsOnlyMatchingSummaries() {
-    var page = teaQueryRepository.getPage(new FilterCriteria(4, 2, 0), SearchCriteria.EMPTY, 0, 9);
+    var page = teaQueryRepository.getPage(
+      new FilterCriteria(4, 2, 0), SearchCriteria.EMPTY, TeaSort.NEWEST, 0, 9);
 
     assertEquals(
       List.of("Shou Mei 2017"),
@@ -106,10 +138,11 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void getPage_search_returnsOnlyMatchingSummaries() {
-    var page = teaQueryRepository.getPage(FilterCriteria.EMPTY, new SearchCriteria("shou mei"), 0, 9);
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, new SearchCriteria("shou mei"), TeaSort.NEWEST, 0, 9);
 
     assertEquals(
-      List.of("Simple Dreams 2", "Shou Mei 2017", "Jade Star 8"),
+      List.of("Jade Star 8", "Shou Mei 2017", "Simple Dreams 2"),
       page.stream().map(TeaSummary::title).toList()
     );
   }
@@ -117,7 +150,8 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void getPage_filterByInStockAvailability_returnsInStockTeas() {
-    var page = teaQueryRepository.getPage(new FilterCriteria(0, 0, 1), SearchCriteria.EMPTY, 0, 9);
+    var page = teaQueryRepository.getPage(
+      new FilterCriteria(0, 0, 1), SearchCriteria.EMPTY, TeaSort.NEWEST, 0, 9);
 
     assertEquals(7, page.size());
   }
@@ -125,7 +159,8 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void getPage_filterByOutOfStockAvailability_returnsEmptyPage() {
-    var page = teaQueryRepository.getPage(new FilterCriteria(0, 0, 2), SearchCriteria.EMPTY, 0, 9);
+    var page = teaQueryRepository.getPage(
+      new FilterCriteria(0, 0, 2), SearchCriteria.EMPTY, TeaSort.NEWEST, 0, 9);
 
     assertTrue(page.isEmpty());
   }
@@ -133,7 +168,8 @@ class TeaQueryRepositoryIT {
   @Test
   @Transactional
   void getPage_populatesTags() {
-    var page = teaQueryRepository.getPage(FilterCriteria.EMPTY, SearchCriteria.EMPTY, 0, 9);
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, SearchCriteria.EMPTY, TeaSort.NEWEST, 0, 9);
 
     var doubleshot = summaryByTitle(page, "Doubleshot");
     assertEquals(

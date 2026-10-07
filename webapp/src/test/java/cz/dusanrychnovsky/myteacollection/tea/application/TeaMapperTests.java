@@ -69,6 +69,7 @@ class TeaMapperTests {
     assertEquals(7.29f, entity.getPrice());
     assertEquals("95°C, 5g/100ml, 25+5s", entity.getBrewingInstructions());
     assertTrue(entity.isInStock());
+    assertNull(entity.getAverageRatingHalfStars());
   }
 
   @Test

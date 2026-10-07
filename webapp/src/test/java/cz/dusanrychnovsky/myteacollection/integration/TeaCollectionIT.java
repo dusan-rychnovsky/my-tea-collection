@@ -1,6 +1,7 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
 import cz.dusanrychnovsky.myteacollection.persistence.TeaImageRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
@@ -16,11 +17,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.containsStrings;
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotContainStrings;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -65,17 +68,17 @@ class TeaCollectionIT {
 
     verifyTea(
       actions,
-      "Doubleshot",
-      "Ming Feng Shan Lao Shu Shu Puer Bing Cha 2022",
-      "Meetea",
-      "Dark Tea, Shu Puerh"
+      "Long Description Fixture",
+      "",
+      "Mei Leaf",
+      "Dark Tea"
     );
     verifyTea(
       actions,
-      "Luminary Misfit",
-      "Lancang Gushu Sheng PuErh Spring 2022",
+      "Approximate Season Fixture",
+      "",
       "Mei Leaf",
-      "Dark Tea, Sheng Puerh"
+      "Dark Tea"
     );
 
     verifyPagingMenu(actions, 4);
@@ -94,10 +97,10 @@ class TeaCollectionIT {
 
     verifyTea(
       actions,
-      "Simple Dreams 2",
-      "2021 Zhenghe Shou Mei Blend",
+      "Jade Star 8",
+      "2013/2014 Fuding Bai Mu Dan &amp; 2018 Pan Xi Shou Mei",
       "Mei Leaf",
-      "Blend, White Tea"
+      "Blend, White Tea, Bai Mu Dan, Shou Mei"
     );
     verifyTea(
       actions,
@@ -124,10 +127,10 @@ class TeaCollectionIT {
 
     verifyTea(
       actions,
-      "Simple Dreams 2",
-      "2021 Zhenghe Shou Mei Blend",
+      "Jade Star 8",
+      "2013/2014 Fuding Bai Mu Dan &amp; 2018 Pan Xi Shou Mei",
       "Mei Leaf",
-      "Blend, White Tea"
+      "Blend, White Tea, Bai Mu Dan, Shou Mei"
     );
     verifyTea(
       actions,
@@ -224,24 +227,25 @@ class TeaCollectionIT {
 
     verifyTea(
       actions,
-      "Luminary Misfit",
-      "Lancang Gushu Sheng PuErh Spring 2022",
+      "Long Description Fixture",
+      "",
       "Mei Leaf",
-      "Dark Tea, Sheng Puerh"
+      "Dark Tea"
     );
     verifyTea(
       actions,
-      "Simple Dreams 2",
-      "2021 Zhenghe Shou Mei Blend",
+      "Approximate Season Fixture",
+      "",
       "Mei Leaf",
-      "Blend, White Tea"
+      "Dark Tea"
     );
 
     doesNotContainStrings(
       actions,
       "Doubleshot",
       "Fujian Shoumei Bingcha 2017",
-      "Jade Star 8"
+      "Jade Star 8",
+      "Luminary Misfit"
     );
 
     verifyPagingMenu(actions, 3);
@@ -252,7 +256,7 @@ class TeaCollectionIT {
   void index_rendersCanonicalDetailsLinksOnTeaImageTitleAndViewButton() throws Exception {
     var teaSlug = getTeaSlugByTitle("Doubleshot");
     var actions = mvc.perform(get("/index")
-      .param("pageSize", "2"))
+      .param("pageSize", "9"))
       .andExpect(status().isOk());
 
     containsStrings(actions,
@@ -271,9 +275,36 @@ class TeaCollectionIT {
 
     containsStrings(actions,
       "<label for=\"select-tea-sort\">Sort by:</label>",
-      "<option value=\"newest\" selected>Newest first</option>",
-      "<option value=\"score\">Highest score first</option>"
+      "<option value=\"newest\" selected=\"selected\">Newest first</option>",
+      "<option value=\"highest_score\">Highest score first</option>"
     );
+  }
+
+  @Test
+  @Transactional
+  void index_highestScoreSort_ordersRatedTeasAndKeepsSelectionInPagingLinks() throws Exception {
+    var doubleshot = teaByTitle("Doubleshot").setAverageRatingHalfStars(10.0);
+    var luminary = teaByTitle("Luminary Misfit").setAverageRatingHalfStars(8.0);
+    teaRepository.saveAllAndFlush(List.of(doubleshot, luminary));
+
+    var actions = mvc.perform(get("/index")
+        .param("sort", "highest_score")
+        .param("pageSize", "2"))
+      .andExpect(status().isOk());
+
+    verifyTeaOrder(actions, "Doubleshot", "Luminary Misfit");
+    containsStrings(actions,
+      "<option value=\"highest_score\" selected=\"selected\">Highest score first</option>",
+      "<input type=\"hidden\" name=\"sort\" value=\"highest_score\">",
+      "sort=highest_score&amp;pageNo=1"
+    );
+  }
+
+  @Test
+  @Transactional
+  void index_unknownSort_returnsBadRequest() throws Exception {
+    mvc.perform(get("/index").param("sort", "oldest"))
+      .andExpect(status().isBadRequest());
   }
 
   private void verifyHeader(ResultActions actions) throws Exception {
@@ -321,11 +352,24 @@ class TeaCollectionIT {
     );
   }
 
+  private void verifyTeaOrder(ResultActions actions, String firstTitle, String secondTitle)
+    throws Exception {
+
+    var html = actions.andReturn().getResponse().getContentAsString();
+    var firstIndex = html.indexOf("<span>" + firstTitle + "</span>");
+    var secondIndex = html.indexOf("<span>" + secondTitle + "</span>");
+    assertTrue(firstIndex >= 0);
+    assertTrue(secondIndex > firstIndex);
+  }
+
   private String getTeaSlugByTitle(String title) {
+    return teaByTitle(title).getSlug();
+  }
+
+  private TeaEntity teaByTitle(String title) {
     return teaRepository.findAll().stream()
       .filter(tea -> tea.getTitle().equals(title))
       .findFirst()
-      .orElseThrow(() -> new IllegalStateException("Tea not found in DB."))
-      .getSlug();
+      .orElseThrow(() -> new IllegalStateException("Tea not found in DB."));
   }
 }

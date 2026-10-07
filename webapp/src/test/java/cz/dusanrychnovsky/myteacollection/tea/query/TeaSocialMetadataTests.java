@@ -75,6 +75,7 @@ class TeaSocialMetadataTests {
       new TeaScope(season, "Cultivar", "Origin", "1000m"),
       "N/A",
       "95C",
+      null,
       1L,
       List.of());
   }

@@ -22,6 +22,7 @@
           </li>
         </ul>
         <form th:object="${search}" th:action="@{/search}" class="form-inline my-2 my-lg-0" method="get">
+          <input type="hidden" name="sort" th:value="${sort.queryValue}">
           <input th:field="*{query}" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
@@ -46,6 +47,7 @@
             Press View to see all details about particular tea.
           </p>
           <form th:object="${filter}" th:action="@{/filter}" id="tea-filter-form" method="get">
+            <input type="hidden" name="sort" th:value="${sort.queryValue}">
             <div class="form-row justify-content-center">
               <div class="form-group col-md-3">
                 <label for="select-tea-type">Tea type:</label>
@@ -72,13 +74,18 @@
 
       <div class="tea-sort-section">
         <div class="container">
-          <div class="tea-sort-control">
+          <form th:action="@{__${requestPath}__}" class="tea-sort-control" method="get">
+            <input type="hidden" name="query" th:value="${search.query}">
+            <input type="hidden" name="teaTypeId" th:value="${filter.teaTypeId}">
+            <input type="hidden" name="vendorId" th:value="${filter.vendorId}">
+            <input type="hidden" name="availabilityId" th:value="${filter.availabilityId}">
             <label for="select-tea-sort">Sort by:</label>
-            <select class="form-control" id="select-tea-sort" aria-label="Sort teas">
-              <option value="newest" selected>Newest first</option>
-              <option value="score">Highest score first</option>
+            <select class="form-control" id="select-tea-sort" name="sort" aria-label="Sort teas"
+                    onchange="this.form.submit()">
+              <option value="newest" th:selected="${sort.queryValue == 'newest'}">Newest first</option>
+              <option value="highest_score" th:selected="${sort.queryValue == 'highest_score'}">Highest score first</option>
             </select>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -124,20 +131,20 @@
           <nav th:if="${pageInfo.totalPages > 1}" aria-label="Tea list pagination menu.">
             <ul class="pagination justify-content-center">
               <li class="page-item" th:classappend="${pageInfo.currentPageNo == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${pageInfo.currentPageNo - 1})}" tabindex="-1">Previous</a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, sort=${sort.queryValue}, pageNo=${pageInfo.currentPageNo - 1})}" tabindex="-1">Previous</a>
               </li>
               <li class="page-item disabled" th:if="${pageInfo.showStartEllipsis()}">
                 <span class="page-link">...</span>
               </li>
               <li class="page-item" th:each="i : ${pageInfo.visiblePages}"
                   th:classappend="${i} == ${pageInfo.currentPageNo} ? 'active'">
-                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${i})}" th:text="${i + 1}"></a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, sort=${sort.queryValue}, pageNo=${i})}" th:text="${i + 1}"></a>
               </li>
               <li class="page-item disabled" th:if="${pageInfo.showEndEllipsis()}">
                 <span class="page-link">...</span>
               </li>
               <li class="page-item" th:classappend="${pageInfo.currentPageNo >= pageInfo.totalPages - 1} ? 'disabled'">
-                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, pageNo=${pageInfo.currentPageNo + 1})}">Next</a>
+                <a class="page-link" th:href="@{__${requestPath}__(query=${search.query}, teaTypeId=${filter.teaTypeId}, vendorId=${filter.vendorId}, availabilityId=${filter.availabilityId}, sort=${sort.queryValue}, pageNo=${pageInfo.currentPageNo + 1})}">Next</a>
               </li>
             </ul>
           </nav>

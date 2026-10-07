@@ -31,6 +31,7 @@ import java.util.List;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -99,8 +100,11 @@ class UploadTastingNotesIT {
     assertEquals("Clean and layered.\n\nA favourite.", firstNotes.get(0).getBody());
     assertEquals(10, firstNotes.get(0).getRatingHalfStars());
     assertEquals(1, tastingNoteRepository.findByTeaIdNewestFirst(second).size());
+    assertEquals(10.0, teaRepository.findById(first).orElseThrow().getAverageRatingHalfStars());
+    assertEquals(8.0, teaRepository.findById(second).orElseThrow().getAverageRatingHalfStars());
     // a tea whose folder was never present keeps no notes
     assertEquals(0, tastingNoteRepository.findByTeaIdNewestFirst(teas.get(2).getId()).size());
+    assertNull(teas.get(2).getAverageRatingHalfStars());
   }
 
   @Test
@@ -151,6 +155,7 @@ class UploadTastingNotesIT {
     uploadTastingNotes.run(root.toFile());
 
     assertEquals(0, tastingNoteRepository.findByTeaIdNewestFirst(teaId).size());
+    assertNull(teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
   }
 
   @Test

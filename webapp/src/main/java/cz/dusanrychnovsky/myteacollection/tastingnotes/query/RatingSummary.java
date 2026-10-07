@@ -1,21 +1,21 @@
 package cz.dusanrychnovsky.myteacollection.tastingnotes.query;
 
+import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings;
+import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings.RatedTasting;
 import cz.dusanrychnovsky.myteacollection.domain.Rating;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteEntity;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Read model aggregating a tea's tasting notes: the count, the average of each taster's latest
- * rating and the per-star distribution shown above the notes list. Computed from the notes on the
- * read side (nothing is stored). The distribution has six rows, 5★ down to 0★; each note rounds
- * half-up into exactly one bucket, so the bar counts always sum to {@link #count()}. Absence of
- * notes is represented by {@link #hasNotes()} being {@code false} and a {@code null}
- * {@link #averageLabel()} — never a 0.0 average, which is a valid rating.
+ * Read model for the rating summary shown above a tea's complete tasting-note history. The average
+ * label comes from the tea's materialized sorting score; taster count and distribution are derived
+ * from one latest rating per taster via {@link LatestTasterRatings}. The six distribution rows run
+ * from 5★ down to 0★ and represent current opinions, while {@link #count()} counts all historical
+ * tasting notes. Absence of notes is represented by {@link #hasNotes()} being {@code false} and a
+ * {@code null} {@link #averageLabel()} — never a 0.0 average, which is a valid rating.
  */
 public record RatingSummary(
   int count,
@@ -29,37 +29,53 @@ public record RatingSummary(
   public record DistributionRow(int stars, int count, int pct) {
   }
 
-  public static RatingSummary of(List<TastingNoteEntity> notes) {
+  public static RatingSummary of(
+    Double averageRatingHalfStars, List<TastingNoteEntity> notes) {
+
+    if (notes == null) {
+      throw new IllegalArgumentException("Tasting notes must not be null.");
+    }
+
     var count = notes.size();
     var countLabel = count + (count == 1 ? " tasting note" : " tasting notes");
     if (count == 0) {
+      if (averageRatingHalfStars != null) {
+        throw new IllegalStateException("Tea without tasting notes must not have an average rating.");
+      }
       return new RatingSummary(0, countLabel, false, null, "0 tasters", List.of());
     }
 
-    var ratings = notes.stream().map(note -> new Rating(note.getRatingHalfStars())).toList();
-    var latestRatings = latestRatingsByUser(notes);
-    var sumHalfStars = latestRatings.stream().mapToInt(Rating::halfStars).sum();
-    var average = sumHalfStars / 2.0 / latestRatings.size();
-    var averageLabel = String.format(Locale.ENGLISH, "%.1f", average);
-    var averageCountLabel = latestRatings.size() + (latestRatings.size() == 1 ? " taster" : " tasters");
+    if (averageRatingHalfStars == null) {
+      throw new IllegalStateException("Tea with tasting notes must have an average rating.");
+    }
+    if (!Double.isFinite(averageRatingHalfStars)
+      || averageRatingHalfStars < 0
+      || averageRatingHalfStars > 10) {
+      throw new IllegalStateException(
+        "Materialized average rating must be between 0 and 10 half-stars: "
+          + averageRatingHalfStars);
+    }
+
+    var latestRatings = LatestTasterRatings.of(notes.stream()
+      .map(note -> new RatedTasting(
+        note.getUser().getId(),
+        note.getId(),
+        note.getTastedOn(),
+        new Rating(note.getRatingHalfStars())
+      ))
+      .toList());
+    var averageLabel = String.format(Locale.ENGLISH, "%.1f", averageRatingHalfStars / 2.0);
+    var averageCountLabel = latestRatings.tasterCount()
+      + (latestRatings.tasterCount() == 1 ? " taster" : " tasters");
 
     return new RatingSummary(
-      count, countLabel, true, averageLabel, averageCountLabel, distribution(ratings, count));
-  }
-
-  private static List<Rating> latestRatingsByUser(List<TastingNoteEntity> notes) {
-    var newestFirst = Comparator
-      .comparing(TastingNoteEntity::getTastedOn)
-      .thenComparing(TastingNoteEntity::getId)
-      .reversed();
-    var latestByUser = new HashMap<Long, TastingNoteEntity>();
-    for (var note : notes) {
-      latestByUser.merge(note.getUser().getId(), note,
-        (current, candidate) -> newestFirst.compare(current, candidate) <= 0 ? current : candidate);
-    }
-    return latestByUser.values().stream()
-      .map(note -> new Rating(note.getRatingHalfStars()))
-      .toList();
+      count,
+      countLabel,
+      true,
+      averageLabel,
+      averageCountLabel,
+      distribution(latestRatings.ratings(), latestRatings.tasterCount())
+    );
   }
 
   private static List<DistributionRow> distribution(List<Rating> ratings, int total) {

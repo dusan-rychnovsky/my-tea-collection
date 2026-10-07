@@ -1,5 +1,8 @@
 package cz.dusanrychnovsky.myteacollection.tastingnotes.application;
 
+import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings;
+import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings.RatedTasting;
+import cz.dusanrychnovsky.myteacollection.domain.Rating;
 import cz.dusanrychnovsky.myteacollection.domain.TastingNote;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
@@ -12,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Application service for the "replace a tea's tasting notes" use case, used by the tasting-note
  * ingest. Builds each {@link TastingNote} aggregate from the command (enforcing its invariants),
  * validates that the referenced tea and owner exist, then atomically replaces the tea's notes —
- * deleting the existing ones and saving the new ones in a single transaction,
- * so a failure leaves the tea's previous notes intact.
+ * deleting the existing ones, saving the new ones and updating the tea's materialized average
+ * rating in a single transaction, so a failure leaves the tea's previous state intact.
  */
 @Service
 public class ReplaceTeaTastingNotes {
@@ -50,6 +53,19 @@ public class ReplaceTeaTastingNotes {
       .toList();
 
     tastingNoteRepository.deleteByTeaId(tea.getId());
-    tastingNoteRepository.saveAll(entities);
+    var savedEntities = tastingNoteRepository.saveAllAndFlush(entities);
+
+    var latestRatings = LatestTasterRatings.of(savedEntities.stream()
+      .map(note -> new RatedTasting(
+        note.getUser().getId(),
+        note.getId(),
+        note.getTastedOn(),
+        new Rating(note.getRatingHalfStars())
+      ))
+      .toList());
+    var average = latestRatings.averageHalfStars();
+    var averageRatingHalfStars = average.isPresent() ? average.getAsDouble() : null;
+    tea.setAverageRatingHalfStars(averageRatingHalfStars);
+    teaRepository.saveAndFlush(tea);
   }
 }

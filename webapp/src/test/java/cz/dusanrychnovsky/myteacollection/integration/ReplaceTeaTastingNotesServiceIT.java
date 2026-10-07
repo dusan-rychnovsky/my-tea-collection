@@ -23,6 +23,7 @@ import java.util.List;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,6 +73,7 @@ class ReplaceTeaTastingNotesServiceIT {
       note(8, "2026-06-08", "Good.")));
 
     assertEquals(2, tastingNoteRepository.findByTeaIdNewestFirst(teaId).size());
+    assertEquals(10.0, teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
   }
 
   @Test
@@ -86,6 +88,28 @@ class ReplaceTeaTastingNotesServiceIT {
     var notes = tastingNoteRepository.findByTeaIdNewestFirst(teaId);
     assertEquals(1, notes.size());
     assertEquals("Second round only.", notes.get(0).getBody());
+    assertEquals(9.0, teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
+  }
+
+  @Test
+  @Transactional
+  void handle_sameDate_materializesRatingRecordedLater() {
+    replaceTeaTastingNotes.handle(command(
+      note(4, "2026-07-21", "Recorded first."),
+      note(10, "2026-07-21", "Recorded later.")));
+
+    assertEquals(10.0, teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
+  }
+
+  @Test
+  @Transactional
+  void handle_noNotes_materializesNoAverage() {
+    replaceTeaTastingNotes.handle(command(note(10, "2026-07-21", "Existing.")));
+
+    replaceTeaTastingNotes.handle(command());
+
+    assertTrue(tastingNoteRepository.findByTeaIdNewestFirst(teaId).isEmpty());
+    assertNull(teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
   }
 
   @Test

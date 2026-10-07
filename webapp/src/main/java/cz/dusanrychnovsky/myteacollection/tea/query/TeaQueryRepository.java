@@ -29,9 +29,9 @@ public class TeaQueryRepository {
   private EntityManager entityManager;
 
   public List<TeaSummary> getPage(
-    FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo, int pageSize) {
+    FilterCriteria filterCriteria, SearchCriteria searchCriteria, TeaSort sort, int pageNo, int pageSize) {
 
-    var page = fetchPage(filterCriteria, searchCriteria, pageNo, pageSize);
+    var page = fetchPage(filterCriteria, searchCriteria, sort, pageNo, pageSize);
     if (page.isEmpty()) {
       return List.of();
     }
@@ -69,7 +69,7 @@ public class TeaQueryRepository {
   }
 
   private List<Tuple> fetchPage(
-    FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo, int pageSize) {
+    FilterCriteria filterCriteria, SearchCriteria searchCriteria, TeaSort sort, int pageNo, int pageSize) {
 
     var builder = entityManager.getCriteriaBuilder();
     var query = builder.createTupleQuery();
@@ -83,8 +83,7 @@ public class TeaQueryRepository {
       teaParent.get("description").alias("description"),
       teaParent.get("vendor").get("name").alias("vendorName")
     );
-    query.distinct(true);
-    query.orderBy(builder.asc(teaParent.get("id")));
+    withOrdering(builder, query, teaParent, sort);
 
     withPredicates(builder, query, teaParent, filterCriteria, searchCriteria);
 
@@ -92,6 +91,25 @@ public class TeaQueryRepository {
     typedQuery.setFirstResult(pageNo * pageSize);
     typedQuery.setMaxResults(pageSize);
     return typedQuery.getResultList();
+  }
+
+  private void withOrdering(
+    CriteriaBuilder builder, CriteriaQuery<Tuple> query, Root<TeaEntity> tea, TeaSort sort) {
+
+    switch (sort) {
+      case NEWEST -> query.orderBy(builder.desc(tea.get("id")));
+      case HIGHEST_SCORE -> {
+        var average = tea.<Double>get("averageRatingHalfStars");
+        var unrated = builder.<Integer>selectCase()
+          .when(average.isNull(), 1)
+          .otherwise(0);
+        query.orderBy(
+          builder.asc(unrated),
+          builder.desc(average),
+          builder.desc(tea.get("id"))
+        );
+      }
+    }
   }
 
   private Map<Long, Long> fetchMainImageIds(List<Long> teaIds) {

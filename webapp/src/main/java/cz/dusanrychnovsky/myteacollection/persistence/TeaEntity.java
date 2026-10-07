@@ -61,6 +61,13 @@ public class TeaEntity {
   @Column(name = "in_stock")
   private Boolean inStock;
 
+  /**
+   * Denormalized read projection maintained transactionally by ReplaceTeaTastingNotes.
+   * Null means that the tea has no ratings; zero is a valid average.
+   */
+  @Column(name = "average_rating_half_stars")
+  private Double averageRatingHalfStars;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     schema = "myteacollection",
@@ -185,5 +192,14 @@ public class TeaEntity {
 
   public boolean isInStock() {
     return inStock;
+  }
+
+  public Double getAverageRatingHalfStars() {
+    return averageRatingHalfStars;
+  }
+
+  public TeaEntity setAverageRatingHalfStars(Double averageRatingHalfStars) {
+    this.averageRatingHalfStars = averageRatingHalfStars;
+    return this;
   }
 }

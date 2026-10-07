@@ -10,6 +10,7 @@ import cz.dusanrychnovsky.myteacollection.tea.query.Availability;
 import cz.dusanrychnovsky.myteacollection.tea.query.FilterCriteria;
 import cz.dusanrychnovsky.myteacollection.tea.query.PageInfo;
 import cz.dusanrychnovsky.myteacollection.tea.query.SearchCriteria;
+import cz.dusanrychnovsky.myteacollection.tea.query.TeaSort;
 import cz.dusanrychnovsky.myteacollection.tastingnotes.query.RatingSummary;
 import cz.dusanrychnovsky.myteacollection.tastingnotes.query.TastingNoteItem;
 import cz.dusanrychnovsky.myteacollection.tea.query.TeaDetail;
@@ -60,6 +61,7 @@ public class TeaQueryController {
 
   @GetMapping({"/", "/index"})
   public String index(
+    @RequestParam(value = "sort", defaultValue = "newest") TeaSort sort,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
@@ -68,6 +70,7 @@ public class TeaQueryController {
       model,
       FilterCriteria.EMPTY,
       SearchCriteria.EMPTY,
+      sort,
       pageNo,
       pageSize
     );
@@ -76,6 +79,7 @@ public class TeaQueryController {
   @GetMapping("/filter")
   public String filter(
     @ModelAttribute FilterCriteria criteria,
+    @RequestParam(value = "sort", defaultValue = "newest") TeaSort sort,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
@@ -84,6 +88,7 @@ public class TeaQueryController {
       model,
       criteria,
       SearchCriteria.EMPTY,
+      sort,
       pageNo,
       pageSize
     );
@@ -92,6 +97,7 @@ public class TeaQueryController {
   @GetMapping("/search")
   public String search(
     @ModelAttribute SearchCriteria criteria,
+    @RequestParam(value = "sort", defaultValue = "newest") TeaSort sort,
     @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
     @RequestParam(value = "pageSize", defaultValue = PAGE_SIZE) int pageSize,
     Model model) {
@@ -100,13 +106,15 @@ public class TeaQueryController {
       model,
       FilterCriteria.EMPTY,
       criteria,
+      sort,
       pageNo,
       pageSize
     );
   }
 
   private String handleIndexView(
-    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria, int pageNo, int pageSize) {
+    Model model, FilterCriteria filterCriteria, SearchCriteria searchCriteria, TeaSort sort,
+    int pageNo, int pageSize) {
 
     if (pageNo < 0) {
       pageNo = 0;
@@ -115,8 +123,9 @@ public class TeaQueryController {
     populateDropdowns(model);
     model.addAttribute("filter", filterCriteria);
     model.addAttribute("search", searchCriteria);
+    model.addAttribute("sort", sort);
 
-    var teas = teaQueryRepository.getPage(filterCriteria, searchCriteria, pageNo, pageSize);
+    var teas = teaQueryRepository.getPage(filterCriteria, searchCriteria, sort, pageNo, pageSize);
     model.addAttribute("teas", teas);
 
     var totalCount = (int) teaQueryRepository.count(filterCriteria, searchCriteria);
@@ -151,7 +160,7 @@ public class TeaQueryController {
     model.addAttribute("tea", tea);
     model.addAttribute("socialMetadata", TeaSocialMetadata.from(tea));
     model.addAttribute("tastingNotes", notes.stream().map(TastingNoteItem::from).toList());
-    model.addAttribute("ratingSummary", RatingSummary.of(notes));
+    model.addAttribute("ratingSummary", RatingSummary.of(tea.averageRatingHalfStars(), notes));
     model.addAttribute("canonicalUrl", publicBaseUrl.teaUrl(tea.slug()));
     model.addAttribute("baseUrl", publicBaseUrl.value());
     return "tea-view";

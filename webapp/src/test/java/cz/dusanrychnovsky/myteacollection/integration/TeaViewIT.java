@@ -80,11 +80,13 @@ class TeaViewIT {
       new TastingNoteEntity(luminary, owner, 8, LocalDate.of(2026, 4, 30),
         "A dependable daily drinker.")
     ));
+    teaRepository.save(luminary.setAverageRatingHalfStars(10.0));
 
     // "Shou Mei 2017" gets a single note whose body contains HTML, to prove it is escaped.
     var shouMei = teaByTitle("Shou Mei 2017");
     tastingNoteRepository.save(new TastingNoteEntity(shouMei, owner, 6, LocalDate.of(2026, 3, 15),
       "Contains <b>bold</b> & <script>evil</script> markup."));
+    teaRepository.save(shouMei.setAverageRatingHalfStars(6.0));
 
     // "Doubleshot" is deliberately left without notes (empty-state coverage).
   }
@@ -120,10 +122,10 @@ class TeaViewIT {
       "<span class=\"tasting-notes-count\">4 tasting notes</span>",
       "<div class=\"tasting-notes-average-score\">5.0</div>",
       "<div class=\"tasting-notes-average-caption\">out of 5 · based on the notes of 1 taster</div>",
-      // six-row distribution, newly including the 0★ row; 5★ and 4★ each hold two notes
+      // six-row distribution of current opinions; only the taster's latest 5★ rating counts
       "<span class=\"dist-label\">5 <span class=\"dist-star\" aria-hidden=\"true\">★</span></span>",
       "<span class=\"dist-label\">0 <span class=\"dist-star\" aria-hidden=\"true\">★</span></span>",
-      "--pct: 50%;",
+      "--pct: 100%;",
       // notes are attributed to the owning user, newest first
       "<span class=\"tasting-note-author\">Dušan R.</span>",
       "<span class=\"tasting-note-date\">21 Jul 2026</span>",
@@ -153,6 +155,7 @@ class TeaViewIT {
       new TastingNoteEntity(tea, secondTaster, 8, LocalDate.of(2026, 1, 15), "Second older."),
       new TastingNoteEntity(tea, secondTaster, 6, LocalDate.of(2026, 2, 15), "Second latest.")
     ));
+    teaRepository.saveAndFlush(tea.setAverageRatingHalfStars(8.0));
 
     var actions = mvc.perform(get("/teas/" + tea.getSlug()))
       .andExpect(status().isOk());
@@ -172,6 +175,7 @@ class TeaViewIT {
       new TastingNoteEntity(tea, owner, 7, LocalDate.of(2026, 2, 10), "Newest by date."),
       new TastingNoteEntity(tea, owner, 8, LocalDate.of(2026, 2, 10), "Same date, inserted later.")
     ));
+    teaRepository.saveAndFlush(tea.setAverageRatingHalfStars(8.0));
 
     var body = mvc.perform(get("/teas/" + tea.getSlug()))
       .andExpect(status().isOk())

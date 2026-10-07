@@ -22,6 +22,7 @@ class TeaDetailTests {
   @Test
   void from_flattensScalarAndAssociationFields() {
     var tea = teaBuilder()
+      .setAverageRatingHalfStars(8.5)
       .setTypes(Set.of(
         new TeaTypeEntity(7L, "Dark Tea"),
         new TeaTypeEntity(1L, "Blend"),
@@ -43,6 +44,7 @@ class TeaDetailTests {
     assertEquals("1740-1970m", detail.scope().elevation());
     assertEquals("Da Ye Zhong", detail.scope().cultivar());
     assertEquals("95C, 5g/100ml", detail.brewingInstructions());
+    assertEquals(8.5, detail.averageRatingHalfStars());
   }
 
   @Test
