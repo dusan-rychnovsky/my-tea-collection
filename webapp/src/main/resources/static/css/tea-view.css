@@ -51,37 +51,6 @@ padding: 0px 15px 3rem;
   margin: 0;
 }
 
-/* reusable star meter, driven by --rating (0..5) */
-
-.stars {
-  --rating: 0;
-  position: relative;
-  display: inline-block;
-  font-size: 1rem;
-  line-height: 1;
-  letter-spacing: 2px;
-  color: #dfe1e5;
-  white-space: nowrap;
-}
-
-.stars::before {
-  content: "\2605\2605\2605\2605\2605";
-}
-
-.stars .stars-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: calc(var(--rating) / 5 * 100%);
-  overflow: hidden;
-  color: #e0a439;
-}
-
-.stars .stars-fill::before {
-  content: "\2605\2605\2605\2605\2605";
-}
-
 .stars-lg {
   font-size: 1.6rem;
   letter-spacing: 3px;

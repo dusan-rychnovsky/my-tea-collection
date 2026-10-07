@@ -101,6 +101,13 @@
               <div class="card mb-4 box-shadow">
                 <a th:href="@{/teas/{slug}(slug=${tea.slug})}" class="tea-image-link tea-details-link">
                   <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="card-img-top" width="348" height="225">
+                  <!-- Template-only preview; not yet bound to the tea's materialized rating. -->
+                  <span class="tea-card-rating" role="img" aria-label="Rating preview: 4.5 out of 5"
+                        title="Rating preview: 4.5 out of 5">
+                    <span class="stars" style="--rating: 4.5;" aria-hidden="true">
+                      <span class="stars-fill"></span>
+                    </span>
+                  </span>
                 </a>
                 <div class="tea-card card-body">
                   <h2>

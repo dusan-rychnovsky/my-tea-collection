@@ -23,6 +23,7 @@ import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.containsStr
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotContainStrings;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -265,6 +266,22 @@ class TeaCollectionIT {
       "formaction=\"/teas/" + teaSlug
         + "\" type=\"submit\" class=\"btn btn-sm btn-outline-secondary\">View</button>"
     );
+  }
+
+  @Test
+  @Transactional
+  void index_rendersHalfStarRatingPreviewOnEveryCard() throws Exception {
+    var actions = mvc.perform(get("/index").param("pageSize", "2"))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "class=\"tea-card-rating\" role=\"img\" aria-label=\"Rating preview: 4.5 out of 5\"",
+      "<span class=\"stars\" style=\"--rating: 4.5;\" aria-hidden=\"true\">",
+      "<span class=\"stars-fill\"></span>"
+    );
+
+    var html = actions.andReturn().getResponse().getContentAsString();
+    assertEquals(2, html.split("class=\"tea-card-rating\"", -1).length - 1);
   }
 
   @Test
