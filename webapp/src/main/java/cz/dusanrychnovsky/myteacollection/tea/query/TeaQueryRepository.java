@@ -52,6 +52,7 @@ public class TeaQueryRepository {
           row.get("vendorName", String.class),
           typeNames.getOrDefault(id, ""),
           row.get("description", String.class),
+          row.get("averageRatingHalfStars", Double.class),
           mainImageIds.get(id),
           tags.getOrDefault(id, List.of())
         );
@@ -81,6 +82,7 @@ public class TeaQueryRepository {
       teaParent.get("title").alias("title"),
       teaParent.get("name").alias("name"),
       teaParent.get("description").alias("description"),
+      teaParent.get("averageRatingHalfStars").alias("averageRatingHalfStars"),
       teaParent.get("vendor").get("name").alias("vendorName")
     );
     withOrdering(builder, query, teaParent, sort);

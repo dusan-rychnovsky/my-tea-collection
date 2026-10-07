@@ -8,6 +8,8 @@ import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,12 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.containsStrings;
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotContainStrings;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -268,20 +272,40 @@ class TeaCollectionIT {
     );
   }
 
-  @Test
+  @ParameterizedTest
+  @ValueSource(strings = {"/", "/index", "/filter", "/search"})
   @Transactional
-  void index_rendersHalfStarRatingPreviewOnEveryCard() throws Exception {
-    var actions = mvc.perform(get("/index").param("pageSize", "2"))
+  void collection_rendersStoredRatingsOnTheirCardsAndHidesUnratedBadges(String path) throws Exception {
+    var luminary = teaByTitle("Luminary Misfit").setAverageRatingHalfStars(8.6);
+    var doubleshot = teaByTitle("Doubleshot").setAverageRatingHalfStars(10.0);
+    var approximateSeason = teaByTitle("Approximate Season Fixture").setAverageRatingHalfStars(0.0);
+    teaRepository.saveAllAndFlush(List.of(luminary, doubleshot, approximateSeason));
+
+    var actions = mvc.perform(get(path)
+        .param("query", "yunnan")
+        .param("teaTypeId", "25")
+        .param("vendorId", "0")
+        .param("availabilityId", "1")
+        .param("pageSize", "9"))
       .andExpect(status().isOk());
 
-    containsStrings(actions,
-      "class=\"tea-card-rating\" role=\"img\" aria-label=\"Rating preview: 4.5 out of 5\"",
-      "<span class=\"stars\" style=\"--rating: 4.5;\" aria-hidden=\"true\">",
-      "<span class=\"stars-fill\"></span>"
-    );
+    verifyCardRating(actions, "Luminary Misfit", "4.3");
+    verifyCardRating(actions, "Doubleshot", "5.0");
+    verifyCardRating(actions, "Approximate Season Fixture", "0.0");
+    verifyCardRating(actions, "Long Description Fixture", null);
+    doesNotContainStrings(actions, "Rating preview:");
 
     var html = actions.andReturn().getResponse().getContentAsString();
-    assertEquals(2, html.split("class=\"tea-card-rating\"", -1).length - 1);
+    assertEquals(3, html.split("class=\"tea-card-rating\"", -1).length - 1);
+  }
+
+  @Test
+  @Transactional
+  void index_unratedTeas_haveNoRatingBadges() throws Exception {
+    var actions = mvc.perform(get("/index"))
+      .andExpect(status().isOk());
+
+    doesNotContainStrings(actions, "class=\"tea-card-rating\"", "--rating:", "Rating preview:");
   }
 
   @Test
@@ -310,6 +334,8 @@ class TeaCollectionIT {
       .andExpect(status().isOk());
 
     verifyTeaOrder(actions, "Doubleshot", "Luminary Misfit");
+    verifyCardRating(actions, "Doubleshot", "5.0");
+    verifyCardRating(actions, "Luminary Misfit", "4.0");
     containsStrings(actions,
       "<option value=\"highest_score\" selected=\"selected\">Highest score first</option>",
       "<input type=\"hidden\" name=\"sort\" value=\"highest_score\">",
@@ -377,6 +403,30 @@ class TeaCollectionIT {
     var secondIndex = html.indexOf("<span>" + secondTitle + "</span>");
     assertTrue(firstIndex >= 0);
     assertTrue(secondIndex > firstIndex);
+  }
+
+  private void verifyCardRating(ResultActions actions, String title, String expectedLabel)
+    throws Exception {
+
+    var html = actions.andReturn().getResponse().getContentAsString();
+    var pattern = Pattern.compile(
+      "<a href=\"/teas/" + Pattern.quote(getTeaSlugByTitle(title))
+        + "\" class=\"tea-image-link tea-details-link\">(.*?)</a>",
+      Pattern.DOTALL
+    );
+    var imageLink = pattern.matcher(html);
+    assertTrue(imageLink.find(), "Missing tea image link for " + title);
+    var imageContent = imageLink.group(1);
+
+    if (expectedLabel == null) {
+      assertFalse(imageContent.contains("class=\"tea-card-rating\""));
+    } else {
+      assertTrue(imageContent.contains("class=\"tea-card-rating\""));
+      assertTrue(imageContent.contains("role=\"img\""));
+      assertTrue(imageContent.contains("aria-label=\"Average rating " + expectedLabel + " out of 5\""));
+      assertTrue(imageContent.contains("title=\"Average rating " + expectedLabel + " out of 5\""));
+      assertTrue(imageContent.contains("style=\"--rating: " + expectedLabel + ";\""));
+    }
   }
 
   private String getTeaSlugByTitle(String title) {

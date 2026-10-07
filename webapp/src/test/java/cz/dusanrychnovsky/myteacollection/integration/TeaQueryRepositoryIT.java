@@ -14,6 +14,8 @@ import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -28,6 +30,7 @@ import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
@@ -115,6 +118,22 @@ class TeaQueryRepositoryIT {
       ),
       page.stream().skip(3).map(TeaSummary::title).toList()
     );
+  }
+
+  @ParameterizedTest
+  @EnumSource(TeaSort.class)
+  @Transactional
+  void getPage_projectsStoredFractionalZeroAndMissingRatings(TeaSort sort) {
+    var luminary = teaByTitle("Luminary Misfit").setAverageRatingHalfStars(8.6);
+    var doubleshot = teaByTitle("Doubleshot").setAverageRatingHalfStars(0.0);
+    teaRepository.saveAllAndFlush(List.of(luminary, doubleshot));
+
+    var page = teaQueryRepository.getPage(
+      FilterCriteria.EMPTY, SearchCriteria.EMPTY, sort, 0, 9);
+
+    assertEquals(8.6, summaryByTitle(page, "Luminary Misfit").averageRatingHalfStars());
+    assertEquals(0.0, summaryByTitle(page, "Doubleshot").averageRatingHalfStars());
+    assertNull(summaryByTitle(page, "Shou Mei 2017").averageRatingHalfStars());
   }
 
   @Test
