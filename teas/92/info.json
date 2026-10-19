@@ -11,6 +11,6 @@
   "elevation": "N/A",
   "price": "6.4",
   "brewingInstructions": "5g/100ml, 100°C, 20s-10s-15s-25s-30s",
-  "inStock": true,
+  "inStock": false,
   "tags": [ "meetea-2025-dec" ]
 }
