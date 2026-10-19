@@ -12,8 +12,8 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
+      <div class="navbar-collapse">
+        <ul class="navbar-nav mr-auto d-none d-md-flex">
           <li class="nav-item active">
             <a class="nav-link" href="index">All Teas<span class="sr-only">(current)</span></a>
           </li>
@@ -21,15 +21,15 @@
             <a class="nav-link" href="/teas/add">Add Tea</a>
           </li>
         </ul>
-        <form th:object="${search}" th:action="@{/search}" class="form-inline my-2 my-lg-0" method="get">
+        <form th:object="${search}" th:action="@{/search}" id="tea-search-form" class="form-inline my-md-2 my-lg-0" role="search" method="get">
           <input type="hidden" name="sort" th:value="${sort.queryValue}">
           <input th:field="*{query}" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        <span sec:authorize="!isAuthenticated()">
+        <span sec:authorize="!isAuthenticated()" class="d-none d-md-block">
           <a href="/login" class="btn btn-outline-success my-2 my-sm-0 ml-2">Log In</a>
         </span>
-        <span sec:authorize="isAuthenticated()">
+        <span sec:authorize="isAuthenticated()" class="d-none d-md-block">
           <form th:action="@{/logout}" method="post" style="display:inline;">
             <button type="submit" class="btn btn-outline-success my-2 my-sm-0 ml-2">Log Out</button>
           </form>

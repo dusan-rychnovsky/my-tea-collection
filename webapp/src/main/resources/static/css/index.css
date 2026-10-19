@@ -19,6 +19,38 @@
   max-width: 40rem;
 }
 
+@media (max-width: 767.98px) {
+  body {
+    padding-top: 3.5rem;
+  }
+
+  .jumbotron {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .jumbotron .lead {
+    margin-bottom: 1.5rem;
+  }
+
+  #tea-search-form {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  #tea-search-form .form-control {
+    flex: 1;
+    min-width: 0;
+    margin-right: 0;
+  }
+
+  #tea-search-form .btn {
+    flex-shrink: 0;
+  }
+}
+
 #tea-filter-form select {
   appearance: auto;
 }
