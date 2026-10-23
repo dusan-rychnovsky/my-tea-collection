@@ -105,3 +105,5 @@ INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (27, 'globalteahut-2026-summer', 'Global Tea Hut Subscription, Summer 2026');
 INSERT INTO myteacollection.Tags (id, label, description)
 VALUES (28, 'gift-honza', 'Dárek od Honzy Žáčka');
+INSERT INTO myteacollection.Tags (id, label, description)
+VALUES (29, 'globalteahut-2026-autumn', 'Global Tea Hut Subscription, Autumn 2026');
