@@ -4,11 +4,15 @@ import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTas
 import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand;
 import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand.NoteData;
 import cz.dusanrychnovsky.myteacollection.domain.Rating;
+import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings;
 import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteMapper;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
+import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import java.util.List;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +59,9 @@ class ReplaceTeaTastingNotesServiceIT {
   @Autowired
   private TastingNoteRepository tastingNoteRepository;
 
+  @Autowired
+  private EntityManager entityManager;
+
   private Long userId;
   private Long teaId;
 
@@ -72,8 +80,38 @@ class ReplaceTeaTastingNotesServiceIT {
       note(10, "2026-07-21", "Excellent."),
       note(8, "2026-06-08", "Good.")));
 
-    assertEquals(2, tastingNoteRepository.findByTeaIdNewestFirst(teaId).size());
+    entityManager.clear();
+    var notes = tastingNoteRepository.findByTeaIdNewestFirst(teaId).stream()
+      .map(TastingNoteMapper::toDomain)
+      .toList();
+
+    assertEquals(2, notes.size());
+    for (var note : notes) {
+      assertEquals(teaId, note.getTeaId());
+      assertEquals(userId, note.getTasterId());
+    }
+    assertEquals(new Rating(10), notes.get(0).getRating());
+    assertEquals(LocalDate.of(2026, 7, 21), notes.get(0).getTastedOn());
+    assertEquals("Excellent.", notes.get(0).getBody());
     assertEquals(10.0, teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
+  }
+
+  @Test
+  @Transactional
+  void handle_usesSuppliedTasterRatherThanTeaOwner() {
+    var tasterId = userRepository.saveAndFlush(new UserEntity(
+      "another-taster@example.com", "pwd", "Another", "Taster", null, null, null)).getId();
+
+    replaceTeaTastingNotes.handle(new ReplaceTeaTastingNotesCommand(
+      teaId, tasterId, List.of(note(9, "2026-07-21", "Another taster's note."))));
+
+    entityManager.clear();
+    var note = TastingNoteMapper.toDomain(
+      tastingNoteRepository.findByTeaIdNewestFirst(teaId).get(0));
+
+    assertEquals(teaId, note.getTeaId());
+    assertEquals(tasterId, note.getTasterId());
+    assertNotEquals(userId, note.getTasterId());
   }
 
   @Test
@@ -93,12 +131,18 @@ class ReplaceTeaTastingNotesServiceIT {
 
   @Test
   @Transactional
-  void handle_sameDate_materializesRatingRecordedLater() {
+  void handle_sameDate_materializesOneOfTheTiedRatingsConsistently() {
     replaceTeaTastingNotes.handle(command(
       note(4, "2026-07-21", "Recorded first."),
       note(10, "2026-07-21", "Recorded later.")));
 
-    assertEquals(10.0, teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars());
+    var average = teaRepository.findById(teaId).orElseThrow().getAverageRatingHalfStars();
+    assertTrue(List.of(4.0, 10.0).contains(average));
+
+    var latest = LatestTasterRatings.of(tastingNoteRepository.findByTeaIdNewestFirst(teaId).stream()
+      .map(TastingNoteMapper::toDomain)
+      .toList());
+    assertEquals(latest.averageHalfStars().orElseThrow(), average);
   }
 
   @Test
@@ -134,6 +178,26 @@ class ReplaceTeaTastingNotesServiceIT {
     var command = new ReplaceTeaTastingNotesCommand(teaId, 999_999L, List.of(note(8, "2026-01-01", "x")));
     var ex = assertThrows(IllegalArgumentException.class, () -> replaceTeaTastingNotes.handle(command));
     assertTrue(ex.getMessage().toLowerCase().contains("user"));
+  }
+
+  @Test
+  @Transactional
+  void handle_nullTeaReference_throws() {
+    var command = new ReplaceTeaTastingNotesCommand(
+      null, userId, List.of(note(8, "2026-01-01", "Body.")));
+    var ex = assertThrows(IllegalArgumentException.class,
+      () -> replaceTeaTastingNotes.handle(command));
+    assertTrue(ex.getMessage().toLowerCase().contains("tea"));
+  }
+
+  @Test
+  @Transactional
+  void handle_nullTasterReference_throws() {
+    var command = new ReplaceTeaTastingNotesCommand(
+      teaId, null, List.of(note(8, "2026-01-01", "Body.")));
+    var ex = assertThrows(IllegalArgumentException.class,
+      () -> replaceTeaTastingNotes.handle(command));
+    assertTrue(ex.getMessage().toLowerCase().contains("taster"));
   }
 
   private ReplaceTeaTastingNotesCommand command(NoteData... notes) {

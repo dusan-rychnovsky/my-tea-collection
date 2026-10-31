@@ -3,24 +3,26 @@ package cz.dusanrychnovsky.myteacollection.domain;
 import java.time.LocalDate;
 
 /**
- * Write-side aggregate for a single tasting note: its rating, the date it was tasted and its
- * free-text body (paragraphs separated by blank lines). Like {@link Tea}, it deliberately does not
- * hold its tea or its owner — those are context supplied by the {@code ReplaceTeaTastingNotes}
- * application service (a tasting note is always authored as part of replacing one tea's notes), not
- * properties of the note itself.
- *
- * <p>The constructor enforces every invariant checkable from the note's own state, throwing
- * {@link IllegalArgumentException} on violation: {@code rating} and {@code tastedOn} must be
- * non-null and {@code body} must not be blank (i.e. at least one non-blank paragraph). The rating's
- * range/step invariant is guarded by the {@link Rating} value object.
+ * A tasting of one tea by one taster, with its rating, tasting date and free-text body.
+ * Tea and taster are intrinsic references held by id; the application verifies their existence.
  */
 public final class TastingNote {
 
+  private final Long teaId;
+  private final Long tasterId;
   private final Rating rating;
   private final LocalDate tastedOn;
   private final String body;
 
-  public TastingNote(Rating rating, LocalDate tastedOn, String body) {
+  public TastingNote(
+    Long teaId, Long tasterId, Rating rating, LocalDate tastedOn, String body) {
+
+    if (teaId == null) {
+      throw new IllegalArgumentException("Tasting note must reference a tea.");
+    }
+    if (tasterId == null) {
+      throw new IllegalArgumentException("Tasting note must reference a taster.");
+    }
     if (rating == null) {
       throw new IllegalArgumentException("Tasting note rating must not be null.");
     }
@@ -31,9 +33,19 @@ public final class TastingNote {
       throw new IllegalArgumentException("Tasting note body must not be blank.");
     }
 
+    this.teaId = teaId;
+    this.tasterId = tasterId;
     this.rating = rating;
     this.tastedOn = tastedOn;
     this.body = body;
+  }
+
+  public Long getTeaId() {
+    return teaId;
+  }
+
+  public Long getTasterId() {
+    return tasterId;
   }
 
   public Rating getRating() {

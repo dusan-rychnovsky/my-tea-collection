@@ -1,9 +1,9 @@
 package cz.dusanrychnovsky.myteacollection.tastingnotes.query;
 
 import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings;
-import cz.dusanrychnovsky.myteacollection.domain.LatestTasterRatings.RatedTasting;
 import cz.dusanrychnovsky.myteacollection.domain.Rating;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteEntity;
+import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +57,7 @@ public record RatingSummary(
     }
 
     var latestRatings = LatestTasterRatings.of(notes.stream()
-      .map(note -> new RatedTasting(
-        note.getUser().getId(),
-        note.getId(),
-        note.getTastedOn(),
-        new Rating(note.getRatingHalfStars())
-      ))
+      .map(TastingNoteMapper::toDomain)
       .toList());
     var averageLabel = String.format(Locale.ENGLISH, "%.1f", averageRatingHalfStars / 2.0);
     var averageCountLabel = latestRatings.tasterCount()

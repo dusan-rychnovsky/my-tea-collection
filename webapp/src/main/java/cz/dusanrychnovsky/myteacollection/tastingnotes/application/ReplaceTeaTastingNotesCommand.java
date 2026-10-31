@@ -6,11 +6,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Input to the {@link ReplaceTeaTastingNotes} use case: the target tea, the owning user and the full
+ * Input to the {@link ReplaceTeaTastingNotes} use case: the target tea, the taster's user id and the full
  * new set of notes for that tea. The operation is a replace — these notes become the tea's complete
- * list, superseding any existing ones. Reference data (tea, owner) is carried by id and resolved by
- * the use case; each {@link NoteData} carries the fields from which the service builds (and thereby
- * validates) a {@code TastingNote} aggregate
+ * list, superseding any existing ones. The service combines those intrinsic references with each
+ * {@link NoteData} to build and validate a {@code TastingNote}, then resolves the referenced entities.
  */
 public record ReplaceTeaTastingNotesCommand(
   Long teaId,

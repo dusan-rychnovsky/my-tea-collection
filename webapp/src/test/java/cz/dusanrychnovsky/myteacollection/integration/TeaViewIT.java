@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.myteacollection.integration;
 
+import cz.dusanrychnovsky.myteacollection.domain.Rating;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.TastingNoteRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.TeaEntity;
@@ -8,7 +9,12 @@ import cz.dusanrychnovsky.myteacollection.persistence.TeaRepository;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserEntity;
 import cz.dusanrychnovsky.myteacollection.persistence.users.UserRepository;
 import cz.dusanrychnovsky.myteacollection.tea.ingest.UploadNewTeas;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotes;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.application.ReplaceTeaTastingNotesCommand.NoteData;
+import cz.dusanrychnovsky.myteacollection.tastingnotes.query.RatingSummary;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,6 +33,9 @@ import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.containsStr
 import static cz.dusanrychnovsky.myteacollection.integration.ITUtils.doesNotContainStrings;
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static java.util.Comparator.comparingInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,6 +65,12 @@ class TeaViewIT {
 
   @Autowired
   private TastingNoteRepository tastingNoteRepository;
+
+  @Autowired
+  private ReplaceTeaTastingNotes replaceTeaTastingNotes;
+
+  @Autowired
+  private EntityManager entityManager;
 
   @BeforeEach
   void setup() throws IOException {
@@ -163,6 +178,43 @@ class TeaViewIT {
     containsStrings(actions,
       "<div class=\"tasting-notes-average-score\">4.0</div>",
       "<div class=\"tasting-notes-average-caption\">out of 5 · based on the notes of 2 tasters</div>");
+  }
+
+  @Test
+  @Transactional
+  void teaView_importedSameDateNotes_keepAverageAndDistributionConsistent() throws Exception {
+    var tasterId = userRepository.findByEmailIgnoreCase(UploadNewTeas.USER_EMAIL).orElseThrow().getId();
+    var tea = teaByTitle("Jade Star 8");
+    var date = LocalDate.of(2026, 2, 10);
+    replaceTeaTastingNotes.handle(new ReplaceTeaTastingNotesCommand(tea.getId(), tasterId, List.of(
+      new NoteData(new Rating(4), date, "Recorded first."),
+      new NoteData(new Rating(9), date, "Recorded later.")
+    )));
+    entityManager.clear();
+
+    var average = teaRepository.findById(tea.getId()).orElseThrow().getAverageRatingHalfStars();
+    assertTrue(List.of(4.0, 9.0).contains(average));
+    var selectedRating = new Rating(average.intValue());
+
+    var actions = mvc.perform(get("/teas/" + tea.getSlug()))
+      .andExpect(status().isOk());
+
+    containsStrings(actions,
+      "<span class=\"tasting-notes-count\">2 tasting notes</span>",
+      "<div class=\"tasting-notes-average-score\">" + selectedRating.label() + "</div>",
+      "<div class=\"tasting-notes-average-caption\">out of 5 · based on the notes of 1 taster</div>",
+      "<p>Recorded first.</p>",
+      "<p>Recorded later.</p>");
+
+    var modelAndView = actions.andReturn().getModelAndView();
+    assertNotNull(modelAndView);
+    var summary = assertInstanceOf(RatingSummary.class, modelAndView.getModel().get("ratingSummary"));
+    assertEquals(6, summary.distribution().size());
+    for (var row : summary.distribution()) {
+      var selectedBucket = row.stars() == selectedRating.roundedStars();
+      assertEquals(selectedBucket ? 1 : 0, row.count());
+      assertEquals(selectedBucket ? 100 : 0, row.pct());
+    }
   }
 
   @Test

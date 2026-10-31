@@ -3,9 +3,11 @@ package cz.dusanrychnovsky.myteacollection.domain;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LatestTasterRatingsTests {
@@ -22,9 +24,9 @@ class LatestTasterRatingsTests {
   @Test
   void of_selectsEachTastersLatestRating() {
     var latest = LatestTasterRatings.of(List.of(
-      tasting(1, 1, "2026-01-01", 4),
-      tasting(1, 2, "2026-02-01", 10),
-      tasting(2, 3, "2026-01-15", 8)
+      tasting(2, "2026-01-15", 8),
+      tasting(1, "2026-02-01", 10),
+      tasting(1, "2026-01-01", 4)
     ));
 
     assertEquals(2, latest.tasterCount());
@@ -33,23 +35,63 @@ class LatestTasterRatingsTests {
   }
 
   @Test
-  void of_sameDate_selectsRatingRecordedLater() {
-    var latest = LatestTasterRatings.of(List.of(
-      tasting(1, 1, "2026-01-01", 4),
-      tasting(1, 2, "2026-01-01", 10)
-    ));
+  void of_selectsLatestDateRegardlessOfInputOrder() {
+    var older = tasting(1, "2026-01-01", 4);
+    var latest = tasting(1, "2026-02-01", 10);
 
-    assertEquals(List.of(new Rating(10)), latest.ratings());
+    for (var notes : List.of(List.of(older, latest), List.of(latest, older))) {
+      assertEquals(List.of(new Rating(10)), LatestTasterRatings.of(notes).ratings());
+    }
   }
 
-  private static LatestTasterRatings.RatedTasting tasting(
-    long tasterId, long recordedOrder, String tastedOn, int halfStars) {
+  @Test
+  void of_sameDate_arbitrarilyKeepsFirstEncounteredNote() {
+    var first = tasting(1, "2026-01-01", 4);
+    var other = tasting(1, "2026-01-01", 10);
 
-    return new LatestTasterRatings.RatedTasting(
+    assertEquals(List.of(new Rating(4)), LatestTasterRatings.of(List.of(first, other)).ratings());
+    assertEquals(List.of(new Rating(10)), LatestTasterRatings.of(List.of(other, first)).ratings());
+  }
+
+  @Test
+  void of_nullNotes_throws() {
+    assertThrows(IllegalArgumentException.class, () -> LatestTasterRatings.of(null));
+  }
+
+  @Test
+  void of_nullNote_throws() {
+    assertThrows(IllegalArgumentException.class,
+      () -> LatestTasterRatings.of(Collections.singletonList(null)));
+  }
+
+  @Test
+  void of_noteWithoutPersistenceIdentity_isAccepted() {
+    var note = new TastingNote(100L, 1L, new Rating(8), LocalDate.of(2026, 1, 1), "Good.");
+    var latest = LatestTasterRatings.of(List.of(note));
+    assertEquals(List.of(new Rating(8)), latest.ratings());
+    assertEquals(1, latest.tasterCount());
+    assertEquals(8.0, latest.averageHalfStars().orElseThrow());
+  }
+
+  @Test
+  void of_notesFromDifferentTeas_throws() {
+    var first = tasting(1, "2026-01-01", 4);
+    var otherTea = new TastingNote(
+      200L, 1L, new Rating(10), LocalDate.of(2026, 2, 1), "Different tea.");
+
+    assertThrows(IllegalArgumentException.class,
+      () -> LatestTasterRatings.of(List.of(first, otherTea)));
+  }
+
+  private static TastingNote tasting(
+    long tasterId, String tastedOn, int halfStars) {
+
+    return new TastingNote(
+      100L,
       tasterId,
-      recordedOrder,
+      new Rating(halfStars),
       LocalDate.parse(tastedOn),
-      new Rating(halfStars)
+      "A tasting note."
     );
   }
 }

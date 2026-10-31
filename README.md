@@ -122,6 +122,8 @@ classDiagram
 
     class TastingNote {
         <<aggregate>>
+        Long teaId
+        Long tasterId
         LocalDate tastedOn
         String body
     }
@@ -137,17 +139,9 @@ classDiagram
         averageHalfStars()
     }
 
-    class RatedTasting {
-        <<input record>>
-        long tasterId
-        long recordedOrder
-        LocalDate tastedOn
-    }
-
     TastingNote "1" *-- "1" Rating : rating
     LatestTasterRatings "1" o-- "0..*" Rating : latest ratings
-    RatedTasting "1" --> "1" Rating : rating
-    LatestTasterRatings ..> RatedTasting : selects latest per taster
+    LatestTasterRatings ..> TastingNote : selects latest per taster
 ```
 
 ## How To

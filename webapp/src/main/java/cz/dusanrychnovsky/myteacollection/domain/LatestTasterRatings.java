@@ -1,32 +1,14 @@
 package cz.dusanrychnovsky.myteacollection.domain;
 
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.OptionalDouble;
 
 /**
- * One current rating per taster. A later tasting date supersedes an earlier one; when dates match,
- * the rating recorded later wins.
+ * One current rating per taster for a single tea's tasting notes. A later tasting date supersedes
+ * an earlier one; same-date ties arbitrarily keep the first note encountered.
  */
 public record LatestTasterRatings(List<Rating> ratings) {
-
-  public record RatedTasting(
-    long tasterId,
-    long recordedOrder,
-    LocalDate tastedOn,
-    Rating rating
-  ) {
-    public RatedTasting {
-      if (tastedOn == null) {
-        throw new IllegalArgumentException("Rated tasting date must not be null.");
-      }
-      if (rating == null) {
-        throw new IllegalArgumentException("Rated tasting rating must not be null.");
-      }
-    }
-  }
 
   public LatestTasterRatings {
     if (ratings == null) {
@@ -45,26 +27,32 @@ public record LatestTasterRatings(List<Rating> ratings) {
       .average();
   }
 
-  public static LatestTasterRatings of(List<RatedTasting> tastings) {
-    if (tastings == null) {
-      throw new IllegalArgumentException("Rated tastings must not be null.");
+  public static LatestTasterRatings of(List<TastingNote> notes) {
+    if (notes == null) {
+      throw new IllegalArgumentException("Tasting notes must not be null.");
     }
 
-    var latestFirst = Comparator
-      .comparing(RatedTasting::tastedOn)
-      .thenComparingLong(RatedTasting::recordedOrder)
-      .reversed();
-    var latestByTaster = new HashMap<Long, RatedTasting>();
-    for (var tasting : tastings) {
+    var latestByTaster = new HashMap<Long, TastingNote>();
+    Long teaId = null;
+    for (var note : notes) {
+      if (note == null) {
+        throw new IllegalArgumentException("Tasting notes must not contain null.");
+      }
+      if (teaId != null && !teaId.equals(note.getTeaId())) {
+        throw new IllegalArgumentException("Tasting notes must belong to the same tea.");
+      }
+      teaId = note.getTeaId();
+
       latestByTaster.merge(
-        tasting.tasterId(),
-        tasting,
-        (current, candidate) -> latestFirst.compare(current, candidate) <= 0 ? current : candidate
+        note.getTasterId(),
+        note,
+        (current, candidate) -> candidate.getTastedOn().isAfter(current.getTastedOn())
+          ? candidate : current
       );
     }
 
     return new LatestTasterRatings(latestByTaster.values().stream()
-      .map(RatedTasting::rating)
+      .map(TastingNote::getRating)
       .toList());
   }
 }
