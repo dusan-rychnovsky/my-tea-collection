@@ -56,6 +56,100 @@ flowchart TB
     persistence --> db
 ```
 
+### Domain
+
+The (write-side) domain model consists of two aggregates - `Tea` and `TastingNote`.
+
+##### Tea
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Tea {
+        <<aggregate>>
+        String title
+        String name
+        String description
+        String url
+        String brewingInstructions
+        boolean inStock
+        Long vendorId
+        Set~Long~ typeIds
+        Set~Long~ tagIds
+        List~byte[]~ images
+    }
+
+    class TeaScope {
+        <<value object>>
+        String cultivar
+        String origin
+        String elevation
+    }
+
+    class Season {
+        <<value object>>
+        String value
+    }
+
+    class Price {
+        <<value object>>
+        float amountPerGram
+    }
+
+    class TeaSlug {
+        <<value object>>
+        String value
+    }
+
+    class TeaTitleYear {
+        <<policy>>
+    }
+
+    Tea "1" *-- "1" TeaScope : scope
+    Tea "1" *-- "0..1" Price : price
+    TeaScope "1" *-- "0..1" Season : season
+    TeaSlug ..> Tea : tea + vendor name
+    TeaSlug ..> TeaTitleYear : year suffix
+    TeaTitleYear ..> Season
+```
+
+##### TastingNote
+
+```mermaid
+classDiagram
+    direction TB
+
+    class TastingNote {
+        <<aggregate>>
+        LocalDate tastedOn
+        String body
+    }
+
+    class Rating {
+        <<value object>>
+        int halfStars
+    }
+
+    class LatestTasterRatings {
+        <<value object>>
+        tasterCount()
+        averageHalfStars()
+    }
+
+    class RatedTasting {
+        <<input record>>
+        long tasterId
+        long recordedOrder
+        LocalDate tastedOn
+    }
+
+    TastingNote "1" *-- "1" Rating : rating
+    LatestTasterRatings "1" o-- "0..*" Rating : latest ratings
+    RatedTasting "1" --> "1" Rating : rating
+    LatestTasterRatings ..> RatedTasting : selects latest per taster
+```
+
 ## How To
 
 ### Build the Application
