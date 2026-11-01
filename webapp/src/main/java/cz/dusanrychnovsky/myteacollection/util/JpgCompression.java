@@ -13,7 +13,7 @@ public class JpgCompression {
 
   private static final float QUALITY = 0.5f; // 0.5 = 50%
 
-  private BufferedImage img;
+  private final BufferedImage img;
 
   public JpgCompression(BufferedImage img) {
     this.img = img;

@@ -25,20 +25,20 @@ public class TeaRecord {
   private static final Set<String> IMAGE_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png");
 
   private Long id;
-  private String title;
-  private String name;
-  private String description;
-  private Set<String> types;
-  private String vendor;
-  private String url;
-  private String origin;
-  private String cultivar;
-  private String season;
-  private String elevation;
-  private String price;
-  private String brewingInstructions;
-  private boolean inStock;
-  private Set<String> tags;
+  private final String title;
+  private final String name;
+  private final String description;
+  private final Set<String> types;
+  private final String vendor;
+  private final String url;
+  private final String origin;
+  private final String cultivar;
+  private final String season;
+  private final String elevation;
+  private final String price;
+  private final String brewingInstructions;
+  private final boolean inStock;
+  private final Set<String> tags;
 
   @JsonIgnore
   private File sourceDir;
