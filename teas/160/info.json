@@ -1,0 +1,15 @@
+{
+  "title": "Jade Star 9",
+  "name": "2008 Bai Mu Dan and Shou Mei",
+  "description": "The legendary Jade Star ship has arrived with our 9th Edition. Exclusive blend of 2008 Fuding White tea. Apricot danish pastry, ice wine, rum soaked raisins, summer forests, hot pavements and macerated strawberries.",
+  "types": [ "White Tea", "Bai Mu Dan", "Shou Mei" ],
+  "vendor": "Mei Leaf",
+  "url": "https://meileaf.com/tea/tea-jtic/",
+  "origin": "Fuding, Fujian, China",
+  "cultivar": "Da Bai",
+  "season": "Spring 2008",
+  "elevation": "900m approx",
+  "price": "14.65",
+  "brewingInstructions": "4g/100ml, 99°C, 20s+5s",
+  "inStock": true
+}

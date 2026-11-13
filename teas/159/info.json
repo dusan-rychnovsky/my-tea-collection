@@ -1,0 +1,15 @@
+{
+  "title": "Cherry Storm",
+  "name": "Rou Gui Yan Cha",
+  "description": "Fragrant and fruity Rou Gui Yancha. Cherries, custard apple, salty nougat and cassia with petrichor and ozone.",
+  "types": [ "Oolong", "Yan Cha" ],
+  "vendor": "Mei Leaf",
+  "url": "https://meileaf.com/tea/cherry-storm/",
+  "origin": "Yi Xian Tian, Ban Yan, Wuyi, China",
+  "cultivar": "Rou Gui",
+  "season": "May 2024",
+  "elevation": "570m",
+  "price": "11.23",
+  "brewingInstructions": "5g/100ml, 99°C, 25s+5s",
+  "inStock": true
+}
