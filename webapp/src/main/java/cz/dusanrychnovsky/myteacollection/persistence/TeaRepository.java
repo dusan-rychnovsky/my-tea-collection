@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TeaRepository extends JpaRepository<TeaEntity, Long> {
+public interface TeaRepository extends JpaRepository<TeaEntity, Long>, TeaResetOperations {
 
   Optional<TeaEntity> findBySlug(String slug);
 

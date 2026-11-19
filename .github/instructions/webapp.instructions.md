@@ -40,6 +40,19 @@ Verified green baseline (2026-10-07, `./mvnw clean verify`): **170 unit tests (2
   tea's materialized average rating against its imported notes, one canonical tea page, and one
   legacy numeric redirect. Restore the backup if import or smoke checks fail rather than leaving
   production on a partial dataset.
+- `UploadNewTeas <root-directory> [--reset]` is incremental by default. `--reset` clears all teas,
+  images/image data, tea tag/type links, and tasting notes, then restarts the tea identity at 1 and
+  reimports the complete collection. Users and lookup rows are retained. This is a destructive
+  maintenance operation: take a backup, stop concurrent writes, and run `UploadTastingNotes`
+  separately afterwards to restore file-backed notes (notes absent from files are lost).
+  The collection is trusted input: consecutive folder IDs starting at 1 are an import assumption,
+  not preflight validation. Reset clears dynamic tables before loading tea records or resolving
+  the import user; an empty or failing import can leave an empty or partial dataset. Imports
+  still commit per tea; fix rejected data and resume without `--reset` after a partial import.
+  Tea-data deletion is exposed as `TeaRepository.deleteAllTeas()` through the
+  `TeaResetOperations` custom fragment. `TeaResetOperationsImpl` keeps ordered native deletes and
+  the tea identity restart in one transaction. Flush before deletion and clear the persistence
+  context afterwards. Keep this method distinct from inherited `JpaRepository.deleteAll()`.
 
 ## Green mainline = deployable to PROD (IMPORTANT)
 
@@ -112,4 +125,7 @@ detail page (`tea/web/TeaQueryController`) and their model lives in the shared `
   reports the JVM actually running Maven/tests; `<java.version>17</java.version>` sets the compilation
   target, not that runtime.
 - **`clean` before trusting Maven test results.** `target/` is not wiped on branch switches, so stale compiled `*.class` files and old surefire/failsafe report `*.txt` from another branch (e.g. a feature branch's tests) linger and can pollute report parsing or appear to run. `./mvnw clean verify` avoids this.
+- **H2 identity-reset DDL commits implicitly.** `UploadNewTeasIT` runs reset coverage outside a test
+  transaction and uses `@DirtiesContext` with a dedicated H2 database. Do not share that database
+  with other cached Spring contexts: context shutdown drops its schema.
 - **CI builds with `-DskipTests`** — a green CI run does *not* mean the tests pass. Verify locally.

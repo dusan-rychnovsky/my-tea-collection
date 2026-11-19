@@ -17,6 +17,7 @@ import cz.dusanrychnovsky.myteacollection.util.JpgCompression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.DefaultApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -46,17 +47,33 @@ public class UploadNewTeas {
 
   public static void main(String[] args) throws IOException {
     logger.info("Starting UploadNewTeas.");
-    var context = SpringApplication.run(UploadNewTeas.class, args);
-    var bean = context.getBean(UploadNewTeas.class);
     try {
-      bean.run(new File(args[0]));
+      var arguments = parseArguments(args);
+      var context = SpringApplication.run(UploadNewTeas.class, args);
+      var bean = context.getBean(UploadNewTeas.class);
+      bean.run(arguments.rootDir(), arguments.reset());
       logger.info("UploadNewTeas successfully finished.");
     }
     catch (IllegalArgumentException ex) {
-      logger.error("UploadNewTeas aborted; a tea was rejected (see the error above).");
+      logger.error("UploadNewTeas aborted: {}", ex.getMessage());
       System.exit(1);
     }
   }
+
+  static UploadArguments parseArguments(String[] args) {
+    var arguments = new DefaultApplicationArguments(args);
+    if (arguments.getNonOptionArgs().size() != 1) {
+      throw new IllegalArgumentException("Usage: UploadNewTeas <root-directory> [--reset]");
+    }
+    var resetValues = arguments.getOptionValues("reset");
+    if (resetValues != null && !resetValues.isEmpty()) {
+      throw new IllegalArgumentException("--reset does not accept a value.");
+    }
+    return new UploadArguments(
+      new File(arguments.getNonOptionArgs().get(0)), arguments.containsOption("reset"));
+  }
+
+  record UploadArguments(File rootDir, boolean reset) {}
 
   @Autowired
   public UploadNewTeas(
@@ -76,9 +93,23 @@ public class UploadNewTeas {
   }
 
   public void run(File rootDir) throws IOException {
+    run(rootDir, false);
+  }
+
+  public void run(File rootDir, boolean reset) throws IOException {
     logger.info("Going to upload new teas to db from dir: {}.", rootDir);
 
-    var maxTeaId = getMaxTeaId();
+    if (!rootDir.isDirectory()) {
+      throw new IllegalArgumentException("Root directory does not exist or is not a directory: " + rootDir);
+    }
+
+    if (reset) {
+      logger.warn("Reset requested: deleting all teas, images and tasting notes. "
+        + "Run UploadTastingNotes separately to restore notes from files.");
+      teaRepository.deleteAllTeas();
+    }
+
+    var maxTeaId = reset ? 0L : getMaxTeaId();
     logger.info("max tea id: {}", maxTeaId);
 
     var teas = loadNewFrom(rootDir, maxTeaId + 1);
