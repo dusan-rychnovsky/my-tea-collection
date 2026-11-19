@@ -1,0 +1,15 @@
+{
+  "title": "Little Tong Mu",
+  "name": "Tong Mu Zhengshan Xiaozhong",
+  "description": "Unsmoked Lapsang from the famed Tong Mu village. Yellow roses, raspberries and orange almond cake and melted butter.",
+  "types": [ "Red Tea" ],
+  "vendor": "Mei Leaf",
+  "url": "https://meileaf.com/tea/little-tong-mu/",
+  "origin": "Tong Mu Xing Cun, Fujian, China",
+  "cultivar": "Xiao Zhong",
+  "season": "May 2026",
+  "elevation": "1300m",
+  "price": "7.68",
+  "brewingInstructions": "4.5g/100ml, 95°C, 20s+5s",
+  "inStock": true
+}
