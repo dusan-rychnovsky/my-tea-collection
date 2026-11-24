@@ -47,7 +47,7 @@
         </div>
       </div>
       <div id="tea-images" class="float-end">
-        <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="img-thumbnail mb-2 tea-gallery-image" width="470" height="304" data-toggle="modal" data-target="#imgModal" />
+        <img th:alt="${tea.title}" th:src="${tea.mainImageId != null} ? @{/images/{id}(id=${tea.mainImageId})} : @{/img/no-image.jpg}" class="img-thumbnail mb-2 tea-gallery-image" width="470" height="304" data-toggle="modal" data-target="#imgModal" />
         <img th:each="imgId : ${tea.additionalImageIds}" th:alt="${tea.title}" th:src="@{/images/{id}(id=${imgId})}" class="img-thumbnail mb-2 tea-gallery-image" width="156" height="101" data-toggle="modal" data-target="#imgModal" />
       </div>
       <div class="modal fade fullscreen-modal" id="imgModal" tabindex="-1" role="dialog" aria-label="Tea image gallery" aria-modal="true" aria-hidden="true">

@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -57,6 +58,17 @@ class ImageIT {
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.IMAGE_JPEG))
       .andExpect(content().bytes(image.getData()));
+  }
+
+  @Test
+  @Transactional
+  void placeholder_returnsJpegWithoutAuthentication() throws Exception {
+    var placeholderBytes = Files.readAllBytes(toFile("static/img/no-image.jpg").toPath());
+
+    mvc.perform(get("/img/no-image.jpg"))
+      .andExpect(status().isOk())
+      .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+      .andExpect(content().bytes(placeholderBytes));
   }
 
   @Test

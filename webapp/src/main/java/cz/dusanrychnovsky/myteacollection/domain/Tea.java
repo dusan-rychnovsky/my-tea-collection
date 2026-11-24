@@ -14,7 +14,7 @@ import java.util.Set;
  * <p>The constructor enforces every invariant checkable from the tea's own state, throwing
  * {@link IllegalArgumentException} on violation: {@code title}, {@code description} and {@code url}
  * must be present (and {@code url} well-formed), {@code scope} and {@code vendorId} must be non-null,
- * there must be at least one type and at least one image, and {@code tagIds} must be non-null (but
+ * there must be at least one type, and {@code tagIds} and {@code images} must be non-null (but
  * may be empty). {@code name} is optional (may be blank — some teas have only a technical title).
  * <em>Existence</em> of the referenced vendor/types/tags cannot be checked here (it needs a
  * repository) and is validated by {@code AddTea}.
@@ -67,8 +67,8 @@ public final class Tea {
     if (tagIds == null) {
       throw new IllegalArgumentException("Tea tags must not be null.");
     }
-    if (images == null || images.isEmpty()) {
-      throw new IllegalArgumentException("Tea must have at least one image.");
+    if (images == null) {
+      throw new IllegalArgumentException("Tea images must not be null.");
     }
 
     this.title = title;

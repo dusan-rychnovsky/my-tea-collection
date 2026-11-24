@@ -6,6 +6,8 @@ import cz.dusanrychnovsky.myteacollection.tea.ingest.TeaRecord;
 import cz.dusanrychnovsky.myteacollection.util.users.CreateUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -177,25 +178,29 @@ class AddTeaIT {
     assertEquals(0, teaRepository.count());
   }
 
-  @Test
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
   @Transactional
-  void addTea_noImages_showsFormError() throws Exception {
+  void addTea_noImages_insertsNewTeaAndRedirectsToTeaView(boolean emptyImagePart) throws Exception {
     var tea = loadFrom(toFile("teas/01"));
+    var request = validSubmission(tea);
+    if (emptyImagePart) {
+      request.file(new MockMultipartFile("images", "", "application/octet-stream", new byte[0]));
+    }
 
-    var result = mvc.perform(post("/teas/add")
-      .with(user(TEST_USER_EMAIL).roles(TEST_USER_ROLE))
-      .with(csrf())
-      .param("url", tea.getUrl())
-      .param("name", tea.getName())
-      .param("title", tea.getTitle())
-      .param("description", tea.getDescription())
+    mvc.perform(request
       .param("vendorId", toVendorId(tea.getVendor(), vendorRepository.findAll()))
       .param("teaTypes", toTeaTypeIds(tea.getTypes(), teaTypeRepository.findAll())))
-      .andExpect(status().isOk())
-      .andExpect(view().name("tea-add"));
+      .andExpect(status().isFound())
+      .andExpect(redirectedUrl("/teas/meetea-doubleshot-2022"));
 
-    ITUtils.containsStrings(result, "at least one image");
-    assertEquals(0, teaRepository.count());
+    var savedTea = teaRepository.findBySlug("meetea-doubleshot-2022").orElseThrow();
+    assertTrue(savedTea.getImages().isEmpty());
+    assertEquals(1, teaRepository.count());
+
+    var view = mvc.perform(get("/teas/" + savedTea.getSlug()))
+      .andExpect(status().isOk());
+    ITUtils.containsStrings(view, "src=\"/img/no-image.jpg\"");
   }
 
   @Test

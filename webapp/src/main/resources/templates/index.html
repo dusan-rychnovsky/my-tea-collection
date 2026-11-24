@@ -100,7 +100,7 @@
             <div th:each="tea : ${teas}" class="col-md-4">
               <div class="card mb-4 box-shadow">
                 <a th:href="@{/teas/{slug}(slug=${tea.slug})}" class="tea-image-link tea-details-link">
-                  <img th:alt="${tea.title}" th:src="@{/images/{id}(id=${tea.mainImageId})}" class="card-img-top" width="348" height="225">
+                  <img th:alt="${tea.title}" th:src="${tea.mainImageId != null} ? @{/images/{id}(id=${tea.mainImageId})} : @{/img/no-image.jpg}" class="card-img-top" width="348" height="225">
                   <span class="tea-card-rating" th:if="${tea.averageRatingHalfStars != null}"
                         th:with="ratingLabel=${tea.averageRatingLabel}" role="img"
                         th:aria-label="|Average rating ${ratingLabel} out of 5|"

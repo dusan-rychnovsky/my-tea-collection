@@ -87,10 +87,9 @@ class TeaTests {
   }
 
   @Test
-  void rejectsEmptyImages() {
-    var ex = assertThrows(IllegalArgumentException.class, () ->
+  void allowsEmptyImages() {
+    assertDoesNotThrow(() ->
       tea("Title", "name", "desc", "https://example.com/y", SCOPE, List.of()));
-    assertTrue(ex.getMessage().contains("image"));
   }
 
   @Test

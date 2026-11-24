@@ -23,6 +23,8 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
@@ -32,12 +34,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static cz.dusanrychnovsky.myteacollection.util.ClassLoaderUtils.toFile;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest()
 @AutoConfigureMockMvc
@@ -67,6 +73,9 @@ class UploadNewTeasIT {
 
   @Autowired
   private JdbcTemplate jdbcTemplate;
+
+  @Autowired
+  private MockMvc mvc;
 
   @Transactional
   @Test
@@ -120,6 +129,49 @@ class UploadNewTeasIT {
 
   @Test
   @Transactional
+  void noImages_uploadsTeaAndRendersSharedPlaceholder(@TempDir Path rootDir) throws Exception {
+    createUser.run(UploadNewTeas.USER_EMAIL, "pwd", "Test", "Owner");
+    createTeaFixture(rootDir, "1", "Tea Without Images");
+    Files.delete(rootDir.resolve("1").resolve("01.jpg"));
+    createTeaFixture(rootDir, "2", "Tea With Image");
+
+    uploadNewTeas.run(rootDir.toFile());
+
+    assertEquals(2, teaRepository.count());
+    var withoutImages = teaRepository.findBySlug("mei-leaf-tea-without-images-2024").orElseThrow();
+    var withImage = teaRepository.findBySlug("mei-leaf-tea-with-image-2024").orElseThrow();
+    assertTrue(withoutImages.getImages().isEmpty());
+    assertEquals(1, withImage.getImages().size());
+    assertEquals(1, countRows("TeaImages"));
+    assertEquals(1, countRows("TeaImageData"));
+    var imageId = withImage.getImages().stream().findFirst().orElseThrow().getId();
+
+    for (var endpoint : List.of("/", "/index", "/filter", "/search")) {
+      var gallery = mvc.perform(get(endpoint)
+        .param("query", "Tea")
+        .param("teaTypeId", "0")
+        .param("vendorId", "0")
+        .param("availabilityId", "0"))
+        .andExpect(status().isOk());
+      verifyImageSource(gallery, withoutImages.getTitle(), "/img/no-image.jpg");
+      verifyImageSource(gallery, withImage.getTitle(), "/images/" + imageId);
+      ITUtils.doesNotContainStrings(gallery, "/images/null");
+    }
+
+    var placeholderView = mvc.perform(get("/teas/" + withoutImages.getSlug()))
+      .andExpect(status().isOk());
+    verifyImageSource(placeholderView, withoutImages.getTitle(), "/img/no-image.jpg");
+    ITUtils.containsStrings(placeholderView, "tea-gallery-image", "data-target=\"#imgModal\"");
+    ITUtils.doesNotContainStrings(placeholderView, "/images/null");
+
+    var imageView = mvc.perform(get("/teas/" + withImage.getSlug()))
+      .andExpect(status().isOk());
+    verifyImageSource(imageView, withImage.getTitle(), "/images/" + imageId);
+    ITUtils.doesNotContainStrings(imageView, "/img/no-image.jpg");
+  }
+
+  @Test
+  @Transactional
   void duplicateSlug_isLoggedAndAbortsBatch(CapturedOutput output, @TempDir Path rootDir) throws IOException {
     createUser.run(UploadNewTeas.USER_EMAIL, "pwd", "Dušan", "Rychnovský");
     createTeaFixture(rootDir, "1", "Duplicate Tea");
@@ -143,9 +195,9 @@ class UploadNewTeasIT {
     var teaDir = Files.createDirectory(rootDir.resolve("1"));
     Files.writeString(teaDir.resolve(TeaRecord.INFO_FILE_NAME), """
       {
-        "title": "Invalid Tea",
-        "name": "No Images Tea",
-        "description": "A tea with no images.",
+        "title": "",
+        "name": "Invalid Tea",
+        "description": "A tea with a blank title.",
         "types": [ "Dark Tea" ],
         "vendor": "Meetea",
         "url": "https://example.com/invalid",
@@ -162,7 +214,7 @@ class UploadNewTeasIT {
     var ex = assertThrows(
       IllegalArgumentException.class, () -> uploadNewTeas.run(rootDir.toFile()));
 
-    assertTrue(ex.getMessage().toLowerCase().contains("image"));
+    assertTrue(ex.getMessage().toLowerCase().contains("title"));
     assertTrue(output.getAll().contains("Failed to upload tea #1"),
       "expected the rejected tea to be reported via the logger");
     assertEquals(0, teaRepository.count());
@@ -330,12 +382,12 @@ class UploadNewTeasIT {
     createTeaFixture(rootDir, "2", "Second Tea");
     uploadNewTeas.run(rootDir.toFile());
     createTeaFixture(rootDir, "1", "Corrected Tea");
-    Files.delete(rootDir.resolve("2").resolve("01.jpg"));
+    createTeaFixture(rootDir, "2", "");
 
     var ex = assertThrows(IllegalArgumentException.class,
       () -> uploadNewTeas.run(rootDir.toFile(), true));
 
-    assertTrue(ex.getMessage().toLowerCase().contains("image"));
+    assertTrue(ex.getMessage().toLowerCase().contains("title"));
     assertEquals(1, teaRepository.count());
     assertEquals("Corrected Tea", teaRepository.findById(1L).orElseThrow().getTitle());
 
@@ -345,6 +397,14 @@ class UploadNewTeasIT {
     assertEquals(2, teaRepository.count());
     assertEquals("Corrected Tea", teaRepository.findById(1L).orElseThrow().getTitle());
     assertEquals("Second Tea", teaRepository.findById(2L).orElseThrow().getTitle());
+  }
+
+  private void verifyImageSource(ResultActions actions, String title, String source) throws Exception {
+    var html = actions.andReturn().getResponse().getContentAsString();
+    var image = Pattern.compile("<img\\b[^>]*\\balt=\"" + Pattern.quote(title) + "\"[^>]*>")
+      .matcher(html);
+    assertTrue(image.find(), "Missing image for tea: " + title);
+    assertTrue(image.group().contains("src=\"" + source + "\""), image.group());
   }
 
   private long countRows(String table) {

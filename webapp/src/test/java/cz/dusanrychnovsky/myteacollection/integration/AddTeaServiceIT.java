@@ -185,10 +185,14 @@ class AddTeaServiceIT {
 
   @Test
   @Transactional
-  void handle_noImages_throws() {
-    var ex = assertThrows(IllegalArgumentException.class,
-      () -> addTea.handle(command(userId, 1L, Set.of(25L), Set.of(), new Price(5f), List.of())));
-    assertTrue(ex.getMessage().contains("image"));
+  void handle_noImages_persistsTeaWithoutImages() {
+    var result = addTea.handle(command(
+      userId, 1L, Set.of(25L), Set.of(), new Price(5f), List.of()));
+
+    var entity = teaRepository.findById(result.id()).orElseThrow();
+    assertEquals("mei-leaf-title-2024", entity.getSlug());
+    assertTrue(entity.getImages().isEmpty());
+    assertEquals(1, teaRepository.count());
   }
 
   @Test
