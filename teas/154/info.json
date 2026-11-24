@@ -11,6 +11,6 @@
   "elevation": "350m",
   "price": "9.2",
   "brewingInstructions": "5g/200ml, 65°C/70°C/90°C - 90s/60s/30s",
-  "inStock": true,
+  "inStock": false,
   "tags": [ "gift-tomas" ]
 }
