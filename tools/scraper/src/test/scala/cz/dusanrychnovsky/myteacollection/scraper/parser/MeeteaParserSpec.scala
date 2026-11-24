@@ -55,6 +55,29 @@ object MeeteaParserSpec extends ZIOSpecDefault:
         )
       }
     },
+    test("parses the harvest year from Doba sklizně") {
+      val html = sampleHtml
+        .replace("Sklizeň:", "Doba sklizně:")
+        .replace("Březen 2026", "2014")
+      parseMeeteaTea(html, sampleUrl).map { info =>
+        assertTrue(info.season.contains(Season.Year(2014)))
+      }
+    },
+    test("prefers Sklizeň when both harvest labels are present") {
+      val html = sampleHtml.replace(
+        "<strong>Sklizeň:</strong>",
+        "<strong>Doba sklizně:</strong> 2014<br /><strong>Sklizeň:</strong>"
+      )
+      parseMeeteaTea(html, sampleUrl).map { info =>
+        assertTrue(info.season.contains(Season.MonthOfYear(Month.March, 2026)))
+      }
+    },
+    test("leaves season empty when neither harvest label is present") {
+      val html = sampleHtml.replace("<strong>Sklizeň:</strong>&nbsp;Březen 2026<br />", "")
+      parseMeeteaTea(html, sampleUrl).map { info =>
+        assertTrue(info.season.isEmpty)
+      }
+    },
     test("recognizes shu puer within a contextual tea type label") {
       val html = sampleHtml.replace("Zelený čaj", "Tmavý čaj (Shu Puer)")
       parseMeeteaTea(html, sampleUrl).map { info =>

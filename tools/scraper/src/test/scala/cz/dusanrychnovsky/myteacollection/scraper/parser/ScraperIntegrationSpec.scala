@@ -40,35 +40,23 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
         )
       }
     },
-    test("parses Esence 2014 shu puer from store.meetea.cz") {
+    test("parses Esence 2014 from store.meetea.cz") {
       val raw      = "https://store.meetea.cz/shu-puer/esence-2014/"
       val expected = URL.decode(raw).toOption.get
       scrapeUrl(raw).map { info =>
         assertTrue(
-          info.title == Title("Esence 2014"),
-          info.types == Set(TeaType.ShuPuerh),
-          info.vendor == Vendor.Meetea,
-          info.url == expected
-        )
-      }
-    },
-    test("parses Heritage Green 2026 from store.meetea.cz") {
-      val raw      = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/"
-      val expected = URL.decode(raw).toOption.get
-      scrapeUrl(raw).map { info =>
-        assertTrue(
           info == TeaInfo(
-            title = Title("Heritage Green 2026"),
-            name = Name("Móc Câu Thái Nguyên 2026"),
+            title = Title("Esence 2014"),
+            name = Name("2014 Haiwan Laochatou 9908 Fangcha"),
             description = Description(
-              "Robustní, ale elegantní zelený čaj s příjemně hořko-sladkou chutí a vůní připomínající trávu, hrášek, Pak Choi a kukuřici, s velmi dlouhou a lehce slanou dochutí."
+              "Likérový, hřejivý shu puer s hustě sladkou chutí a vůní připomínající vanilkový pudink, višně a třtinový cukr, s dlouhou sametovou dochutí."
             ),
-            types = Set(TeaType.GreenTea),
+            types = Set(TeaType.ShuPuerh),
             vendor = Vendor.Meetea,
             url = expected,
-            season = Some(Season.MonthOfYear(Month.March, 2026)),
-            cultivar = Some("Trung Du – vypěstováno ze semínek"),
-            origin = Some(Location("Vietnam", "Thái Nguyên")),
+            season = Some(Season.Year(2014)),
+            cultivar = Some("Dayezhong - Velkolistý čajovník, staré stromy"),
+            origin = Some(Location("Čína", "provincie Yunnan", "Menghai")),
             elevation = None,
             price = "N/A",
             brewingInstructions = "N/A",
