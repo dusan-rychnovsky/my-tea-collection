@@ -3,6 +3,7 @@ package cz.dusanrychnovsky.myteacollection.scraper.parser
 import cz.dusanrychnovsky.myteacollection.scraper.domain.*
 
 import java.util.Locale
+import java.util.regex.Pattern
 import zio.*
 
 val teaTypeVocabulary: Map[String, TeaType] = Map(
@@ -30,6 +31,7 @@ val teaTypeVocabulary: Map[String, TeaType] = Map(
   "dian hong"   -> TeaType.DianHong,
   "dark tea"    -> TeaType.DarkTea,
   "sheng puerh" -> TeaType.ShengPuerh,
+  "shu puer"    -> TeaType.ShuPuerh,
   "shu puerh"   -> TeaType.ShuPuerh,
   "liu bao"     -> TeaType.LiuBao,
   "fu zhuan"    -> TeaType.FuZhuan,
@@ -41,10 +43,19 @@ val teaTypeVocabulary: Map[String, TeaType] = Map(
   "purple tea"  -> TeaType.PurpleTea
 )
 
-def lookupTeaType(label: String): Option[TeaType] =
-  teaTypeVocabulary.get(label.toLowerCase(Locale.ROOT))
+private val teaTypePatterns = teaTypeVocabulary.toList.map { case (name, teaType) =>
+  s"(?U)\\b${Pattern.quote(name)}\\b".r -> teaType
+}
+
+def lookupTeaType(label: String): Either[ParseError, TeaType] =
+  val normalizedLabel = label.toLowerCase(Locale.ROOT)
+  val matchingTypes = teaTypePatterns.collect {
+    case (pattern, teaType) if pattern.findFirstIn(normalizedLabel).nonEmpty => teaType
+  }.toSet
+  matchingTypes.toList match
+    case Nil            => Left(ParseError(s"unknown tea type: $label"))
+    case teaType :: Nil => Right(teaType)
+    case _              => Left(ParseError(s"ambiguous tea type: $label"))
 
 def resolveTeaType(label: String): IO[ParseError, TeaType] =
-  ZIO
-    .fromOption(lookupTeaType(label))
-    .orElseFail(ParseError(s"unknown tea type: $label"))
+  ZIO.fromEither(lookupTeaType(label))

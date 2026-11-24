@@ -55,6 +55,18 @@ object MeeteaParserSpec extends ZIOSpecDefault:
         )
       }
     },
+    test("recognizes shu puer within a contextual tea type label") {
+      val html = sampleHtml.replace("Zelený čaj", "Tmavý čaj (Shu Puer)")
+      parseMeeteaTea(html, sampleUrl).map { info =>
+        assertTrue(info.types == Set(TeaType.ShuPuerh))
+      }
+    },
+    test("fails with ParseError when the tea type label is ambiguous") {
+      val html = sampleHtml.replace("Zelený čaj", "Zelený čaj / Oolong")
+      parseMeeteaTea(html, sampleUrl).flip.map { err =>
+        assertTrue(err == ParseError("ambiguous tea type: Zelený čaj / Oolong"))
+      }
+    },
     test("ignores unknown <strong> labels (besides Druh podle zpracování)") {
       parseMeeteaTea(sampleHtml, sampleUrl).map { info =>
         assertTrue(

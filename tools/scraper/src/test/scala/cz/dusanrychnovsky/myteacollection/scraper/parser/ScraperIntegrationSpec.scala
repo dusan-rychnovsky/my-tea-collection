@@ -40,6 +40,18 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
         )
       }
     },
+    test("parses Esence 2014 shu puer from store.meetea.cz") {
+      val raw      = "https://store.meetea.cz/shu-puer/esence-2014/"
+      val expected = URL.decode(raw).toOption.get
+      scrapeUrl(raw).map { info =>
+        assertTrue(
+          info.title == Title("Esence 2014"),
+          info.types == Set(TeaType.ShuPuerh),
+          info.vendor == Vendor.Meetea,
+          info.url == expected
+        )
+      }
+    },
     test("parses Heritage Green 2026 from store.meetea.cz") {
       val raw      = "https://store.meetea.cz/zeleny-caj/heritage-green-2026/"
       val expected = URL.decode(raw).toOption.get

@@ -85,6 +85,18 @@ object MeileafParserSpec extends ZIOSpecDefault:
         )
       }
     },
+    test("recognizes a tea type within a contextual breadcrumb") {
+      val html = sampleHtml.replace("White Tea", "Loose leaf (WHITE TEA)")
+      parseMeileafTea(html, sampleUrl).map { info =>
+        assertTrue(info.types == Set(TeaType.WhiteTea))
+      }
+    },
+    test("fails with ParseError when the tea type breadcrumb is ambiguous") {
+      val html = sampleHtml.replace("White Tea", "White Tea / Oolong")
+      parseMeileafTea(html, sampleUrl).flip.map { err =>
+        assertTrue(err == ParseError("ambiguous tea type: White Tea / Oolong"))
+      }
+    },
     test("leaves missing details as None") {
       val html =
         """<html><body>
