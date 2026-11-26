@@ -1,37 +1,25 @@
 package cz.dusanrychnovsky.myteacollection.scraper
 
-import cz.dusanrychnovsky.myteacollection.scraper.domain.*
-import cz.dusanrychnovsky.myteacollection.scraper.parser.*
+import cz.dusanrychnovsky.myteacollection.scraper.parse.*
+import cz.dusanrychnovsky.myteacollection.scraper.render.*
 
 import zio.*
-import zio.http.{Client, URL}
-
-enum ArgError extends ScraperError:
-  case MissingArg(usage: String)
-  case BadUrl(raw: String, reason: String)
-
-  def message: String = this match
-    case ArgError.MissingArg(u)  => u
-    case ArgError.BadUrl(raw, r) => s"invalid URL '$raw': $r"
+import zio.http.Client
 
 object Main extends ZIOAppDefault:
-
-  def parseUrlArg(args: Chunk[String]): IO[ArgError, URL] =
-    for
-      raw <- ZIO
-        .fromOption(args.headOption)
-        .orElseFail(ArgError.MissingArg("Usage: scraper <url>"))
-      url <- ZIO.fromEither(URL.decode(raw)).mapError(e => ArgError.BadUrl(raw, e.getMessage))
-    yield url
 
   def program(
     args: Chunk[String]
   ): ZIO[Client, ArgError | HttpError | ParseError | UnsupportedVendorError, Unit] =
-    for
-      url  <- parseUrlArg(args)
-      info <- scrape(url)
-      _    <- Console.printLine(renderTeaInfo(info)).orDie
-    yield ()
+    parseArgs(args).flatMap {
+      case CliResult.Parsed(cli) =>
+        for
+          info <- scrape(cli.url)
+          _    <- Console.printLine(renderTeaInfo(info, cli.format)).orDie
+        yield ()
+      case CliResult.Help(usage) =>
+        Console.printLine(usage).orDie
+    }
 
   def run =
     for

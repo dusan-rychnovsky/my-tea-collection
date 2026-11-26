@@ -1,9 +1,12 @@
-package cz.dusanrychnovsky.myteacollection.scraper.parser
+package cz.dusanrychnovsky.myteacollection.scraper.parse
 
 import cz.dusanrychnovsky.myteacollection.scraper.domain.*
+import cz.dusanrychnovsky.myteacollection.scraper.Main
 
 import zio.*
 import zio.http.*
+import zio.json.*
+import zio.json.ast.Json
 import zio.test.*
 import zio.test.TestAspect.*
 
@@ -39,6 +42,43 @@ object ScraperIntegrationSpec extends ZIOSpecDefault:
           )
         )
       }
+    },
+    test("prints a complete JSON document by default") {
+      for
+        _      <- Main.program(Chunk("https://meileaf.com/tea/tea-jtic/"))
+        output <- TestConsole.output
+      yield assertTrue(
+        output.size == 1,
+        output.mkString.fromJson[Map[String, Json]].exists(fields =>
+          fields.get("title").contains(Json.Str("Jade Star 9")) &&
+            fields.get("types").contains(Json.Arr(Json.Str("White Tea"))) &&
+            fields.get("inStock").contains(Json.Bool(true))
+        )
+      )
+    },
+    test("prints JSON when explicitly selected for a tea with missing metadata") {
+      for
+        _ <- Main.program(Chunk("--format=json", "https://store.meetea.cz/shu-puer/esence-2014/"))
+        output <- TestConsole.output
+      yield assertTrue(
+        output.size == 1,
+        output.mkString.fromJson[Map[String, Json]].exists(fields =>
+          fields.get("title").contains(Json.Str("Esence 2014")) &&
+            fields.get("elevation").contains(Json.Str("N/A"))
+        )
+      )
+    },
+    test("preserves plain text output when selected") {
+      for
+        _      <- Main.program(Chunk("--format", "text", "https://meileaf.com/tea/tea-jtic/"))
+        output <- TestConsole.output
+      yield assertTrue(
+        output.size == 1,
+        output.mkString.startsWith("title: Jade Star 9\n"),
+        output.mkString.contains("types: White Tea\n"),
+        output.mkString.contains("origin: Fuding, Fujian, China\n"),
+        output.mkString.endsWith("inStock: true\n")
+      )
     },
     test("parses Esence 2014 from store.meetea.cz") {
       val raw      = "https://store.meetea.cz/shu-puer/esence-2014/"

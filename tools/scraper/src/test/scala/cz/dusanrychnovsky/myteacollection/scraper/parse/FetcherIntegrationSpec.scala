@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.scraper.parser
+package cz.dusanrychnovsky.myteacollection.scraper.parse
 
 import zio.*
 import zio.http.*

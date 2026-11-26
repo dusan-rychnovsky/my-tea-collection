@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.myteacollection.scraper.parser
+package cz.dusanrychnovsky.myteacollection.scraper.parse
 
 import cz.dusanrychnovsky.myteacollection.scraper.ScraperError
 
@@ -7,7 +7,7 @@ import zio.*
 
 final case class ParseError(message: String) extends ScraperError
 
-private[parser] def cleanText(s: String): String =
+private[parse] def cleanText(s: String): String =
   s.replace(' ', ' ').trim
 
 def parseElementText(doc: Document, selector: String): IO[ParseError, String] =
