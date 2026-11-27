@@ -6,6 +6,8 @@ import zio.*
 import zio.http.URL
 import zio.test.*
 
+import java.nio.file.Paths
+
 object CliSpec extends ZIOSpecDefault:
 
   private val rawUrl    = "https://meileaf.com/tea/tea-jtic/"
@@ -14,7 +16,7 @@ object CliSpec extends ZIOSpecDefault:
   def spec = suite("parseArgs")(
     test("decodes the URL and defaults to JSON") {
       parseArgs(Chunk(rawUrl)).map { parsed =>
-        assertTrue(parsed == CliResult.Parsed(CliArgs(sampleUrl, OutputFormat.Json)))
+        assertTrue(parsed == CliResult.Parsed(CliArgs.SingleUrl(sampleUrl, OutputFormat.Json)))
       }
     },
     test("accepts both option syntaxes before the URL") {
@@ -27,7 +29,7 @@ object CliSpec extends ZIOSpecDefault:
         )
       ) { (input, expectedFormat) =>
         parseArgs(input).map { parsed =>
-          assertTrue(parsed == CliResult.Parsed(CliArgs(sampleUrl, expectedFormat)))
+          assertTrue(parsed == CliResult.Parsed(CliArgs.SingleUrl(sampleUrl, expectedFormat)))
         }
       }.map(results => results.reduce(_ && _))
     },
@@ -109,6 +111,47 @@ object CliSpec extends ZIOSpecDefault:
         }
       }.map(results => results.reduce(_ && _))
     },
+    test("accepts batch mode with either option syntax and relative or absolute paths") {
+      val roots = List(Paths.get("."), Paths.get(".").toAbsolutePath)
+      ZIO.foreach(roots) { root =>
+        ZIO.foreach(List(Chunk("--batch", root.toString), Chunk(s"--batch=$root"))) { input =>
+          parseArgs(input).map { parsed =>
+            assertTrue(parsed == CliResult.Parsed(CliArgs.Batch(root)))
+          }
+        }.map(results => results.reduce(_ && _))
+      }.map(results => results.reduce(_ && _))
+    },
+    test("rejects combining batch mode with a URL or output format") {
+      ZIO.foreach(
+        List(
+          Chunk("--batch", ".", rawUrl),
+          Chunk("--batch", ".", "--format=json"),
+          Chunk("--format=text", "--batch=.")
+        )
+      ) { input =>
+        parseArgs(input).flip.map { err =>
+          assertTrue(err.reason.contains("--batch"))
+        }
+      }.map(results => results.reduce(_ && _))
+    },
+    test("rejects invalid batch arguments rather than selecting single-URL mode") {
+      ZIO.foreach(
+        List(
+          Chunk("--batch"),
+          Chunk("--batch="),
+          Chunk("--batch", ""),
+          Chunk("--batch", "nonexistent-scraper-root-24f05bf9"),
+          Chunk("--batch=.", "--batch", "."),
+          Chunk("--BATCH", "."),
+          Chunk("--batch", ".", "--other"),
+          Chunk("--batch", ".", rawUrl, rawUrl)
+        )
+      ) { input =>
+        parseArgs(input).flip.map { err =>
+          assertTrue(err.reason.nonEmpty)
+        }
+      }.map(results => results.reduce(_ && _))
+    },
     test("returns formatted usage for both help options without requiring a URL") {
       ZIO.foreach(List(Chunk("--help"), Chunk("-h"))) { input =>
         parseArgs(input).map { parsed =>
@@ -117,6 +160,8 @@ object CliSpec extends ZIOSpecDefault:
               usage.toLowerCase.contains("usage") &&
               usage.contains("scraper") &&
               usage.contains("--format") &&
+              usage.contains("--batch") &&
+              usage.contains("index.txt") &&
               usage.contains("json") &&
               usage.contains("text") &&
               usage.contains("<url>")
@@ -133,6 +178,8 @@ object CliSpec extends ZIOSpecDefault:
         Chunk("--format=json", "--format=text", rawUrl),
         Chunk("--format=text", "not a url"),
         Chunk(rawUrl, "--other"),
+        Chunk("--batch"),
+        Chunk("--batch", ".", rawUrl),
         Chunk("--wizard")
       )
       for

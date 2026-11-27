@@ -10,13 +10,19 @@ object Main extends ZIOAppDefault:
 
   def program(
     args: Chunk[String]
-  ): ZIO[Client, ArgError | HttpError | ParseError | UnsupportedVendorError, Unit] =
+  ): ZIO[
+    Client,
+    ArgError | HttpError | ParseError | UnsupportedVendorError | IndexError | FileError | BatchError,
+    Unit
+  ] =
     parseArgs(args).flatMap {
-      case CliResult.Parsed(cli) =>
+      case CliResult.Parsed(CliArgs.SingleUrl(url, format)) =>
         for
-          info <- scrape(cli.url)
-          _    <- Console.printLine(renderTeaInfo(info, cli.format)).orDie
+          info <- scrape(url)
+          _    <- Console.printLine(renderTeaInfo(info, format)).orDie
         yield ()
+      case CliResult.Parsed(CliArgs.Batch(rootDir)) =>
+        scrapeBatch(rootDir)
       case CliResult.Help(usage) =>
         Console.printLine(usage).orDie
     }
